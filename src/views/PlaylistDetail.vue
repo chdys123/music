@@ -187,6 +187,7 @@
             //点击播放图标
             playMusic(id){
                 console.log("点击了播放图标",id)
+                
             }
         },
 

@@ -186,6 +186,7 @@
             },
             //点击播放图标
             playMusic(id){
+                console.log("裂开了")
                 console.log("123点击了播放图标,歌曲id：",id)
 
             }

@@ -22,7 +22,13 @@
   </div>
   <!-- 播放器绝对定位到底部 -->
   <div id="player">
-    <audio src='https://music.163.com/song/media/outer/url?id=1447721226.mp3' controls="controls"></audio>
+    <!-- 不显示 自己写样式只是用audio的属性即可 -->
+    <audio src='https://music.163.com/song/media/outer/url?id=1447721226.mp3'></audio>
+    <div id="player-con">
+      <div id="player-con-btn">
+        <a></a><a class="player-open"></a><a></a>
+      </div>
+    </div>
   </div>
   <router-view></router-view>
 </template>
@@ -75,9 +81,7 @@
 
 
     },
-    // created(){
-    //   //创建的时候默认进入
-    // }
+    
   }
 
 </script>
@@ -159,12 +163,60 @@
 
   #player {
     width: 100%;
-    height: 68px;
+    height: 53px;
     background-color: rgba(0, 0, 0, .8);
     position: fixed;
     bottom: 0px;
     /* right: 0; */
     z-index: 100;
     color: #FFFFFF;
+  }
+  #player #player-con{
+    width: 980px;
+    height: 53px;
+    margin: 0 auto;
+  }
+  #player-con-btn{
+    width: 137px;
+    height: 42px;
+    margin-top: 6px;
+    /* background-color: pink; */
+  }
+  #player-con-btn a{
+    float: left;
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+    margin-top: 7px;
+    background: url("https://s2.music.126.net/style/web2/img/frame/playbar.png?0e4c16cd5d6d33e3c074c84ab90c76a3") no-repeat 0px -129px;
+  }
+  /*  */
+  #player-con-btn a:nth-child(2){
+    width: 36px;
+    height: 36px;
+    margin-top: 3px;
+  }
+  #player-con-btn a:nth-child(1):hover{
+    background-position: -30px -129px;
+  }
+  #player-con-btn a:nth-child(3){
+    background-position: -81px -129px;
+  }
+  #player-con-btn a:nth-child(3):hover{
+    background-position: -111px -129px;
+  }
+  /* 音乐没有播放的时候 player-open类 */
+  #player-con-btn .player-pause{
+    background-position: 0px -203px;
+  }
+  #player-con-btn .player-pause:hover{
+    background-position: -40px -203px;
+  }
+  /* 音乐播放的时候 player-open类 */
+  #player-con-btn .player-open{
+    background-position: 0px -165px;
+  }
+  #player-con-btn .player-open:hover{
+    background-position: -40px -165px;
   }
 </style>

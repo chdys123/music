@@ -25,7 +25,6 @@
     <audio src='https://music.163.com/song/media/outer/url?id=1447721226.mp3' controls="controls"></audio>
   </div>
   <router-view></router-view>
-
 </template>
 
 <script>

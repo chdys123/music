@@ -24,12 +24,12 @@
   <div id="player">
     <!-- 不显示 自己写样式只是用audio的属性即可 -->
     <audio src='https://music.163.com/song/media/outer/url?id=1447721226.mp3' ref="myaudio"></audio>
-    
+
     <div id="player-con">
       <!-- 前一首 播放暂停 后一首 -->
       <div id="player-con-btn">
         <a></a>
-        <a class="player-open" @click="playerSwitch()"></a>
+        <a class="player-pause" @click="playerSwitch()" ref="switchBtn"></a>
         <a></a>
       </div>
       <div id="player-img">
@@ -103,13 +103,17 @@
           }
         }
       },
-      playerSwitch(){
-        let audio=this.$refs.myaudio
-        console.log(audio.paused)
-        if(audio.paused){
+      playerSwitch() {
+        let audio = this.$refs.myaudio
+        let switchBtn= this.$refs.switchBtn
+        console.log(switchBtn)
+        if (audio.paused) {
           audio.play()
-        }else{
+
+          switchBtn.setAttribute("class","player-open")
+        } else {
           audio.pause()
+          switchBtn.setAttribute("class","player-pause")
         }
         console.log("点击了开关按钮")
       }
@@ -277,18 +281,21 @@
     /* background-color: pink; */
     overflow: hidden;
   }
-  #player #player-con #player-message{
+
+  #player #player-con #player-message {
     float: left;
     width: 608px;
     height: 53px;
     /* background-color: pink; */
     margin-left: 14px;
   }
-  #player-message div:nth-child(1){
+
+  #player-message div:nth-child(1) {
     height: 28px;
     /* background-color: skyblue; */
   }
-  #player-message div:nth-child(1) span:nth-child(1){
+
+  #player-message div:nth-child(1) span:nth-child(1) {
     float: left;
     height: 28px;
     max-width: 300px;
@@ -299,10 +306,12 @@
     text-overflow: ellipsis;
     cursor: pointer;
   }
-  #player-message div:nth-child(1) span:nth-child(1):hover{
+
+  #player-message div:nth-child(1) span:nth-child(1):hover {
     text-decoration: underline dashed;
   }
-  #player-message div:nth-child(1) span:nth-child(2){
+
+  #player-message div:nth-child(1) span:nth-child(2) {
     float: left;
     height: 28px;
     font-size: 12px;
@@ -311,21 +320,25 @@
     color: #838383;
     cursor: pointer;
   }
-  #player-message div:nth-child(1) span:nth-child(2):hover{
+
+  #player-message div:nth-child(1) span:nth-child(2):hover {
     text-decoration: underline dashed;
   }
-  #player-message div:nth-child(2){
+
+  #player-message div:nth-child(2) {
     height: 25px;
     width: 608px;
     background-color: pink;
-  } 
-  #player-function{
+  }
+
+  #player-function {
     float: left;
     width: 190px;
     height: 53px;
     /* background-color: green; */
   }
-  #player-function span{
+
+  #player-function span {
     float: left;
     height: 25px;
     width: 25px;
@@ -334,42 +347,49 @@
     background-color: pink;
     background: url("https://s2.music.126.net/style/web2/img/frame/playbar.png?0e4c16cd5d6d33e3c074c84ab90c76a3") no-repeat;
   }
-  #player-function span:nth-child(1){
+
+  #player-function span:nth-child(1) {
     background-position: -86px -161px;
   }
-  #player-function span:nth-child(1):hover{
+
+  #player-function span:nth-child(1):hover {
     background-position: -86px -187px;
   }
-  #player-function span:nth-child(2){
+
+  #player-function span:nth-child(2) {
     background-position: -115px -161px;
   }
-  #player-function span:nth-child(2):hover{
+
+  #player-function span:nth-child(2):hover {
     background-position: -115px -187px;
   }
-  #player-function span:nth-child(3){
+
+  #player-function span:nth-child(3) {
     background-position: -4px -246px;
   }
-  #player-function span:nth-child(3):hover{
+
+  #player-function span:nth-child(3):hover {
     background-position: -33px -246px;
   }
+
   /* 这里应该设置类的 不同的播放方式 不同的类 */
-  #player-function span:nth-child(4){
+  #player-function span:nth-child(4) {
     background-position: -69px -246px;
   }
-  #player-function span:nth-child(4):hover{
+
+  #player-function span:nth-child(4):hover {
     background-position: -96px -246px;
   }
-  #player-function span:nth-child(5){
+
+  #player-function span:nth-child(5) {
     width: 59px;
     background-position: -45px -67px;
-    font-size: 12px; 
+    font-size: 12px;
     line-height: 28px;
     text-indent: 1.8em;
   }
-  #player-function span:nth-child(5):hover{
+
+  #player-function span:nth-child(5):hover {
     background-position: -45px -97px;
   }
-
-
-
 </style>

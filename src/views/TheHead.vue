@@ -23,12 +23,37 @@
   <!-- 播放器绝对定位到底部 -->
   <div id="player">
     <!-- 不显示 自己写样式只是用audio的属性即可 -->
-    <audio src='https://music.163.com/song/media/outer/url?id=1447721226.mp3'></audio>
+    <audio src='https://music.163.com/song/media/outer/url?id=1447721226.mp3' ref="myaudio"></audio>
+    
     <div id="player-con">
+      <!-- 前一首 播放暂停 后一首 -->
       <div id="player-con-btn">
-        <a></a><a class="player-open"></a><a></a>
+        <a></a>
+        <a class="player-open" @click="playerSwitch()"></a>
+        <a></a>
+      </div>
+      <div id="player-img">
+        <!-- 音乐图片 -->
+        <img src="http://p3.music.126.net/RMLIZ1gg_TnDhckiRxAK0g==/109951164983271693.jpg?param=34y34" alt="">
+      </div>
+      <div id="player-message">
+        <div>
+          <span>在听海</span>
+          <span>周大发</span>
+        </div>
+        <div>
+          进度条 以及时间
+        </div>
+      </div>
+      <div id="player-function">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span>21</span>
       </div>
     </div>
+
   </div>
   <router-view></router-view>
 </template>
@@ -77,11 +102,21 @@
             li[i].setAttribute("class", "")
           }
         }
+      },
+      playerSwitch(){
+        let audio=this.$refs.myaudio
+        console.log(audio.paused)
+        if(audio.paused){
+          audio.play()
+        }else{
+          audio.pause()
+        }
+        console.log("点击了开关按钮")
       }
 
 
     },
-    
+
   }
 
 </script>
@@ -171,18 +206,24 @@
     z-index: 100;
     color: #FFFFFF;
   }
-  #player #player-con{
-    width: 980px;
+
+  #player #player-con {
+    width: 983px;
     height: 53px;
+    /* background-color: yellow; */
     margin: 0 auto;
   }
-  #player-con-btn{
+
+  #player-con-btn {
     width: 137px;
     height: 42px;
     margin-top: 6px;
+    float: left;
+    /* display: inline-block; */
     /* background-color: pink; */
   }
-  #player-con-btn a{
+
+  #player-con-btn a {
     float: left;
     width: 28px;
     height: 28px;
@@ -190,33 +231,145 @@
     margin-top: 7px;
     background: url("https://s2.music.126.net/style/web2/img/frame/playbar.png?0e4c16cd5d6d33e3c074c84ab90c76a3") no-repeat 0px -129px;
   }
+
   /*  */
-  #player-con-btn a:nth-child(2){
+  #player-con-btn a:nth-child(2) {
     width: 36px;
     height: 36px;
     margin-top: 3px;
   }
-  #player-con-btn a:nth-child(1):hover{
+
+  #player-con-btn a:nth-child(1):hover {
     background-position: -30px -129px;
   }
-  #player-con-btn a:nth-child(3){
+
+  #player-con-btn a:nth-child(3) {
     background-position: -81px -129px;
   }
-  #player-con-btn a:nth-child(3):hover{
+
+  #player-con-btn a:nth-child(3):hover {
     background-position: -111px -129px;
   }
+
   /* 音乐没有播放的时候 player-open类 */
-  #player-con-btn .player-pause{
+  #player-con-btn .player-pause {
     background-position: 0px -203px;
   }
-  #player-con-btn .player-pause:hover{
+
+  #player-con-btn .player-pause:hover {
     background-position: -40px -203px;
   }
+
   /* 音乐播放的时候 player-open类 */
-  #player-con-btn .player-open{
+  #player-con-btn .player-open {
     background-position: 0px -165px;
   }
-  #player-con-btn .player-open:hover{
+
+  #player-con-btn .player-open:hover {
     background-position: -40px -165px;
   }
+
+  #player-con #player-img {
+    float: left;
+    width: 34px;
+    height: 34px;
+    margin-top: 10px;
+    /* background-color: pink; */
+    overflow: hidden;
+  }
+  #player #player-con #player-message{
+    float: left;
+    width: 608px;
+    height: 53px;
+    /* background-color: pink; */
+    margin-left: 14px;
+  }
+  #player-message div:nth-child(1){
+    height: 28px;
+    /* background-color: skyblue; */
+  }
+  #player-message div:nth-child(1) span:nth-child(1){
+    float: left;
+    height: 28px;
+    max-width: 300px;
+    font-size: 12px;
+    line-height: 28px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+  #player-message div:nth-child(1) span:nth-child(1):hover{
+    text-decoration: underline dashed;
+  }
+  #player-message div:nth-child(1) span:nth-child(2){
+    float: left;
+    height: 28px;
+    font-size: 12px;
+    line-height: 28px;
+    margin-left: 17px;
+    color: #838383;
+    cursor: pointer;
+  }
+  #player-message div:nth-child(1) span:nth-child(2):hover{
+    text-decoration: underline dashed;
+  }
+  #player-message div:nth-child(2){
+    height: 25px;
+    width: 608px;
+    background-color: pink;
+  } 
+  #player-function{
+    float: left;
+    width: 190px;
+    height: 53px;
+    /* background-color: green; */
+  }
+  #player-function span{
+    float: left;
+    height: 25px;
+    width: 25px;
+    margin-top: 14px;
+    margin-left: 6px;
+    background-color: pink;
+    background: url("https://s2.music.126.net/style/web2/img/frame/playbar.png?0e4c16cd5d6d33e3c074c84ab90c76a3") no-repeat;
+  }
+  #player-function span:nth-child(1){
+    background-position: -86px -161px;
+  }
+  #player-function span:nth-child(1):hover{
+    background-position: -86px -187px;
+  }
+  #player-function span:nth-child(2){
+    background-position: -115px -161px;
+  }
+  #player-function span:nth-child(2):hover{
+    background-position: -115px -187px;
+  }
+  #player-function span:nth-child(3){
+    background-position: -4px -246px;
+  }
+  #player-function span:nth-child(3):hover{
+    background-position: -33px -246px;
+  }
+  /* 这里应该设置类的 不同的播放方式 不同的类 */
+  #player-function span:nth-child(4){
+    background-position: -69px -246px;
+  }
+  #player-function span:nth-child(4):hover{
+    background-position: -96px -246px;
+  }
+  #player-function span:nth-child(5){
+    width: 59px;
+    background-position: -45px -67px;
+    font-size: 12px; 
+    line-height: 28px;
+    text-indent: 1.8em;
+  }
+  #player-function span:nth-child(5):hover{
+    background-position: -45px -97px;
+  }
+
+
+
 </style>

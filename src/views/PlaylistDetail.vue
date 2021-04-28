@@ -59,7 +59,8 @@
                                 <span id="playlist-index">
                                     {{index}}
                                 </span>
-                                <span id="playlist-play" @click="playMusic(item.id)">                                
+                                <!-- 播放按钮 -->
+                                <span id="playlist-play" @click="playMusic(item)">
                                 </span>
                             </td>
                             <td>
@@ -69,7 +70,7 @@
                             </td>
                             <td>
                                 <span id="playlist-song-dt">
-                                    {{getDt(item.dt)}}
+                                    {{this.getDt(item.dt)}}
                                 </span>
                                 <div class="playlist-song-icon">
                                 </div>
@@ -144,7 +145,6 @@
                     method: 'get',
                     url: '/playlist/detail?id=' + this.playlistId
                 }).then(res => {
-                    console.log(res.data)
                     this.data = res.data
 
 
@@ -156,7 +156,6 @@
             },
             //点击歌单展开后
             clickMore() {
-                console.log("点击了展开")
                 this.isClose = !this.isClose
             },
             //歌曲时长格式化
@@ -172,7 +171,6 @@
                 } else {
                     str1 = b
                 }
-
                 if (c == 0) {
                     str2 = '00'
                 } else if (c < 10) {
@@ -180,21 +178,68 @@
                 } else {
                     str2 = c
                 }
-
                 return str1 + ':' + str2
-
             },
             //点击播放图标
-            playMusic(id){
-                console.log("裂开了")
-                console.log("123点击了播放图标,歌曲id：",id)
+            playMusic(item) {
+                // 歌曲名
+                let songname = item.name
+                // 歌曲id
+                let songid = item.id
+                // 歌手名
+                let arname = item.ar[0].name
+                // 歌手id
+                let arid = item.ar[0].id
+                // 歌曲时长
+                let time = item.dt
+                // 歌曲图片
+                let imgsrc = item.al.picUrl + '?param=34y34'
+                // 歌曲地址
+                let src = 'https://music.163.com/song/media/outer/url?id=' + item.id + '.mp3'
+
+                // 创建歌曲信息对象
+                let song = {
+                    songname: songname,
+                    songid: songid,
+                    arname: arname,
+                    arid: arid,
+                    time: time,
+                    imgsrc: imgsrc,
+                    src: src
+                }
+                //判断本地存储是否有 track-queue
+                if (localStorage.getItem("track-queue") == null) {
+                    let num = [song]
+                    let s = JSON.stringify(num)
+                    localStorage.setItem("track-queue", s)
+                    // 存储播放位置
+                    this.setItem("index",0)
+                    // localStorage.setItem("index", 0)
+                } else {
+                    let queue = JSON.parse(localStorage.getItem("track-queue"))
+                    // 判断歌曲是否在当前播放列表中
+                    for (let i = 0; i < queue.length; i++) {
+                        if (songid == queue[i].songid) {
+                            this.setItem("index",i)
+                            // localStorage.setItem("index", i)
+                            console.log(localStorage.getItem("index"))
+                            return
+                        }
+                    }
+                    queue.push(song)
+                    let s = JSON.stringify(queue)
+                    localStorage.setItem("track-queue", s)
+                    let len = queue.length
+                    this.setItem("index",len-1)
+                    // localStorage.setItem("index", len - 1)
+                }
+                console.log(localStorage.getItem("index"))
 
             }
         },
 
         created() {
             window.scrollTo(0, 0)
-            console.log(this.$route.query.id)
             //获取歌单id
             this.playlistId = parseInt(this.$route.query.id)
             //去掉header的背景
@@ -206,11 +251,8 @@
             this.getDetailData()
 
         },
-        mounted() {
-            console.log("到了挂载阶段")
-        },
+
         updated() {
-            console.log("页面修改了")
             this.$nextTick(() => {
                 let p = document.getElementById("playlistIntroduction").childNodes[0]
                 if (this.count == 0) {
@@ -218,10 +260,7 @@
                 }
                 this.isOPenShow = this.height < p.scrollHeight
                 this.count++
-                console.log(p)
-                console.log(p.clientHeight, p.clientWidth)
-                console.log(p.offsetHeight, p.offsetWidth)
-                console.log(p.scrollHeight)
+                
             })
         },
 
@@ -544,15 +583,18 @@
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td:nth-child(1) span:nth-child(1) {
         width: 34px;
     }
+
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td:nth-child(1) span:nth-child(2) {
         width: 20px;
         height: 17px;
         background-color: pink;
         background: url("https://s2.music.126.net/style/web2/img/table.png?3a5f37405892f2dbd5cfd501bf28124a") no-repeat 2px -103px;
     }
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td:nth-child(1) span:nth-child(2):hover{
+
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td:nth-child(1) span:nth-child(2):hover {
         background-position: 2px -128px;
     }
+
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td:nth-child(2) span {
         width: 217px;
     }

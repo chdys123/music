@@ -20,41 +20,59 @@
       <a id="loginspan">登录</a>
     </div>
   </div>
+
+
+
   <!-- 播放器绝对定位到底部 -->
   <div id="player">
     <!-- 不显示 自己写样式只是用audio的属性即可 -->
-    <audio src='https://music.163.com/song/media/outer/url?id=1447721226.mp3' ref="myaudio"></audio>
+    <audio ref="myaudio" :src="songList[index].src" id="myaudio" controls preload></audio>
+    <!-- :src="getSonglist[getIndex].src" -->
 
     <div id="player-con">
       <!-- 前一首 播放暂停 后一首 -->
       <div id="player-con-btn">
-        <a></a>
-        <a class="player-pause" @click="playerSwitch()" ref="switchBtn"></a>
-        <a></a>
+        <a @click="playerForward()"></a>
+        <a class="player-pause" @click="playerSwitch()" ref="switchBtn" id="switchBtn"></a>
+        <a @click="playerBack()"></a>
       </div>
+
+      <!-- 音乐图片 -->
       <div id="player-img">
-        <!-- 音乐图片 -->
-        <img src="http://p3.music.126.net/RMLIZ1gg_TnDhckiRxAK0g==/109951164983271693.jpg?param=34y34" alt="">
+        <img :src="songList[index].imgsrc" alt="">
       </div>
+
+      <!-- 音乐名字 歌手 进度条 -->
       <div id="player-message">
+        <!-- 音乐名字 歌手 -->
         <div>
-          <span>在听海</span>
-          <span>周大发</span>
+          <span>{{songList[index].songname}}</span>
+          <span>{{songList[index].arname}}</span>
         </div>
-        <div>
-          进度条 以及时间
+        <!-- 进度条和时间盒子 -->
+        <div id="ProgressbarCon">
+          <input type="range" id="myslider" ref="myslider" @input="slider()" min="0" max="100" value="0">
+          <span id="player-time">{{getDt(time)}}/{{getDt(songList[index].time)}}</span>
         </div>
+
       </div>
+
+      <!-- 收藏 转发 调节音量等功能 -->
       <div id="player-function">
         <span></span>
         <span></span>
+        <!-- 调节音量 -->
         <span></span>
         <span></span>
         <span>21</span>
       </div>
+      <div id="volumeControl">
+        调节音量
+      </div>
     </div>
-
   </div>
+
+
   <router-view></router-view>
 </template>
 
@@ -63,9 +81,28 @@
     name: 'thehead',
     data() {
       return {
-
+        flag: 0,
+        // 播放器播放的歌曲列表信息
+        songList: [
+          {
+            songname: '',
+            src: '',
+            arid: '',
+            arname: '',
+            imgsrc: '',
+            songid: '',
+            time: ''
+          },
+        ],
+        //当前音乐在歌曲列表的位置
+        index: 0,
+        // 音频实时播放时间
+        time:8000,
       }
+
+
     },
+
     methods: {
       toDiscover(num) {
         this.changeHeaderliBgc(num)
@@ -103,29 +140,195 @@
           }
         }
       },
+      // 点击播放按钮
       playerSwitch() {
         let audio = this.$refs.myaudio
-        let switchBtn= this.$refs.switchBtn
-        console.log(switchBtn)
+        let switchBtn = this.$refs.switchBtn
+        console.log("当前音乐名", this.songList[this.index].songname)
         if (audio.paused) {
-          audio.play()
-
-          switchBtn.setAttribute("class","player-open")
+          console.log("播放")
+          setTimeout(() => {
+            audio.play()
+            switchBtn.setAttribute("class", "player-open")
+          }, 500);
         } else {
           audio.pause()
-          switchBtn.setAttribute("class","player-pause")
+          console.log("暂停")
+          switchBtn.setAttribute("class", "player-pause")
         }
-        console.log("点击了开关按钮")
-      }
+      },
+      //点击上一首
+      playerForward() {
+        let switchBtn = this.$refs.switchBtn
+        let myaudio = this.$refs.myaudio
+        let len = this.songList.length
+        console.log("点击了前一首")
+        //判断当前是否播放
+        if (myaudio.paused) {
+          //如果是暂停状态
+          // 把index改变即可
+          this.index = (this.index - 1 + len) % len
+          switchBtn.setAttribute("class", "player-open")
+          setTimeout(() => {
+            audio.play()
+          }, 500);
+        } else {
+          // 先暂停
+          myaudio.pause()
+          switchBtn.setAttribute("class", "player-pause")
+          this.index = (this.index - 1 + len) % len
+          // 加载到浏览器估计可以流畅播放 在播放
+          myaudio.oncanplaythrough = () => {
+            myaudio.play()
+            switchBtn.setAttribute("class", "player-open")
+          }
+        }
+        localStorage.setItem("index",this.index)
+      },
 
+      //点击下一首
+      playerBack() {
+        let switchBtn = this.$refs.switchBtn
+        let myaudio = this.$refs.myaudio
+        let len = this.songList.length
+        console.log("点击了后一首")
+        //判断当前是否播放
+        if (myaudio.paused) {
+          //如果是暂停状态
+          // 把index改变即可
+          this.index = (this.index + 1) % len
+
+          switchBtn.setAttribute("class", "player-open")
+          setTimeout(() => {
+            myaudio.play()
+          }, 500);
+        } else {
+          // 先暂停
+          myaudio.pause()
+          switchBtn.setAttribute("class", "player-pause")
+          this.index = (this.index + 1) % len
+          // 加载到浏览器估计可以流畅播放 在播放
+          myaudio.oncanplaythrough = () => {
+            myaudio.play()
+            switchBtn.setAttribute("class", "player-open")
+
+          }
+        }
+        localStorage.setItem("index",this.index)
+      },
+
+      //歌曲时长格式化
+      getDt(num) {
+        let a = Math.floor(num / 1000)//总秒数
+        let b = Math.floor(a / 60)//分钟数
+        let c = a % 60//秒数
+        let str1, str2
+        if (b < 10 && b > 0) {
+          str1 = '0' + b
+        } else if (b == 0) {
+          str1 = '00'
+        } else {
+          str1 = b
+        }
+        if (c == 0) {
+          str2 = '00'
+        } else if (c < 10) {
+          str2 = '0' + c
+        } else {
+          str2 = c
+        }
+        return str1 + ':' + str2
+      },
+      //拖动进度条
+      slider() {
+        let myslider = this.$refs.myslider
+        myslider.style.backgroundSize = myslider.value + "% 100%"
+        // 改变时间
+        let audio=this.$refs.myaudio
+        audio.currentTime=parseInt(audio.duration*myslider.value/100)
+      }
 
     },
 
+    created() {
+      let that = this
+      this.$nextTick(() => {
+        // 判断本地存储是否有track-queue
+        let s = localStorage.getItem("track-queue")
+        let index = localStorage.getItem("index")
+        if (s) {
+          let queue = JSON.parse(s)
+          that.songList = queue
+          that.index = index
+        }
+
+      })
+    },
+    mounted() {
+      let that = this
+      this.$nextTick(function () {
+        // 监听自定义事件
+        window.addEventListener("StorageEvent", function () {
+          console.log("监听到本地存储改变")
+          let s = localStorage.getItem("track-queue")
+          let index = parseInt(localStorage.getItem("index"))
+          // 先判断播放去状态
+          let audio = document.getElementById("myaudio")
+          // console.log(audio.paused)
+          if (audio.paused) {
+            that.songList = JSON.parse(s)
+            that.index = index
+            that.playerSwitch()
+          } else {
+            that.playerSwitch()
+            that.songList = JSON.parse(s)
+            that.index = index
+            that.playerSwitch()
+          }
+        })
+
+        // 监听audio播放位置更改
+        let audio=document.getElementById("myaudio")
+        let myslider = that.$refs.myslider
+        audio.addEventListener("timeupdate",function(){
+          that.time=audio.currentTime*1000
+          let totolTime=isNaN(audio.duration)?1:audio.duration
+          // console.log("当前时间:",audio.currentTime,"总时长:",totolTime)
+          myslider.value=audio.currentTime/totolTime*100
+          // console.log("进度条的值",myslider.value)
+          myslider.style.backgroundSize = myslider.value+ "% 100%"
+          
+        })
+        // 监听播放结束后
+        audio.addEventListener("ended",function(){
+          console.log("当前音乐结束")
+          that.playerBack()
+        })
+
+        // 监听错误状态
+        audio.addEventListener("error",function(){
+          console.log("错误状态")
+        })
+        // 监听暂停事件
+        let switchBtn = that.$refs.switchBtn
+        audio.addEventListener("pause",function(){
+          switchBtn.setAttribute("class", "player-pause")
+        })
+      })
+    },
   }
+
 
 </script>
 
 <style scoped>
+  #myaudio {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-100%);
+  }
+
   #headercon {
     background-color: #242424;
   }
@@ -257,11 +460,13 @@
 
   /* 音乐没有播放的时候 player-open类 */
   #player-con-btn .player-pause {
-    background-position: 0px -203px;
+    background-position: 0px -204px;
   }
 
   #player-con-btn .player-pause:hover {
-    background-position: -40px -203px;
+    background-position: -40px -204px;
+    /* background-position: 0px -165px; */
+
   }
 
   /* 音乐播放的时候 player-open类 */
@@ -271,6 +476,7 @@
 
   #player-con-btn .player-open:hover {
     background-position: -40px -165px;
+
   }
 
   #player-con #player-img {
@@ -325,17 +531,47 @@
     text-decoration: underline dashed;
   }
 
-  #player-message div:nth-child(2) {
+  #player-message #ProgressbarCon {
+    position: relative;
     height: 25px;
     width: 608px;
-    background-color: pink;
+    /* background-color: pink; */
   }
+
+  #myslider {
+    /* margin-top: 8px; */
+    -webkit-appearance: none;
+    width: 493px;
+    height: 6px;
+    outline: none;
+    border-radius: 3px;
+    background: #151616 -webkit-linear-gradient(#C70C0C, #C70C0C) no-repeat;
+    background-size: 0% 100%;
+  }
+
+  #myslider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background-color: #C70C0C;
+    border-radius: 50%;
+  }
+
+  #myslider::-webkit-slider-thumb:hover {
+    box-shadow: 0 .125em .125em #3b4547;
+  }
+
+  #player-time {
+    font-size: 12px;
+    margin-left: 5px;
+  }
+
+
 
   #player-function {
     float: left;
     width: 190px;
     height: 53px;
-    /* background-color: green; */
   }
 
   #player-function span {
@@ -391,5 +627,15 @@
 
   #player-function span:nth-child(5):hover {
     background-position: -45px -97px;
+  }
+  #volumeControl{
+    position:absolute;
+    top: 0;
+    right: 0;
+    transform: translateY(-100%);
+    width: 100px;
+    height: 50px;
+    background-color: green;
+
   }
 </style>

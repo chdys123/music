@@ -62,12 +62,12 @@
         <span></span>
         <span></span>
         <!-- 调节音量 -->
-        <span></span>
+        <span @click="vc()"></span>
         <span></span>
         <span>21</span>
       </div>
-      <div id="volumeControl">
-        调节音量
+      <div id="volumeControl" ref="volumeControl" v-show="vControl" @mouseleave="vcmouseleave()">
+        <input type="range" id="myvolumeslider" min="0" max="100" value="100" ref="myvolumeslider" @input="volumeslider()">
       </div>
     </div>
   </div>
@@ -97,7 +97,9 @@
         //当前音乐在歌曲列表的位置
         index: 0,
         // 音频实时播放时间
-        time:8000,
+        time:0,
+        // 是否展示控制音量slider
+        vControl:false
       }
 
 
@@ -246,6 +248,27 @@
         // 改变时间
         let audio=this.$refs.myaudio
         audio.currentTime=parseInt(audio.duration*myslider.value/100)
+      },
+      // 点击音量图标
+      vc(){
+        console.log("点击了音量图标")
+        // let vControl=this.$refs.volumeControl
+        this.vControl=!this.vControl
+      },
+      // 鼠标离开音量splider后
+      vcmouseleave(){
+        console.log("离开")
+        this.vControl=false
+      },
+      // 拖动音量大小进度条
+      volumeslider(){
+        let volumeslider = this.$refs.myvolumeslider
+        volumeslider.style.backgroundSize=volumeslider.value+"% 100%"
+        // 改变音量
+        let audio=this.$refs.myaudio
+        // console.log("当前音量:",audio.volume)
+        // console.log("当前音量:",volumeslider.value/100)
+        audio.volume=volumeslider.value/100
       }
 
     },
@@ -308,6 +331,7 @@
         // 监听错误状态
         audio.addEventListener("error",function(){
           console.log("错误状态")
+          // 就要关闭歌曲 提示错误。
         })
         // 监听暂停事件
         let switchBtn = that.$refs.switchBtn
@@ -415,6 +439,7 @@
   }
 
   #player #player-con {
+    position: relative;
     width: 983px;
     height: 53px;
     /* background-color: yellow; */
@@ -631,11 +656,33 @@
   #volumeControl{
     position:absolute;
     top: 0;
-    right: 0;
-    transform: translateY(-100%);
-    width: 100px;
-    height: 50px;
-    background-color: green;
+    right: 97px;
+    transform: translateY(-112px);
+    width: 32px;
+    height: 113px;
+    background-color: rgb(41,41,41,.8);
+
+  }
+  #volumeControl input{
+    transform: rotate(-90deg) translate(-44px,-30.5px);
+    cursor: pointer;
+    -webkit-appearance: none;
+    width: 93px;
+    height: 4px;
+    outline: none;
+    border-radius: 2px;
+    background: #151616 -webkit-linear-gradient(#C70C0C, #C70C0C) no-repeat;
+    background-size: 100% 100%;
+  }
+  #volumeControl input::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background-color: #C70C0C;
+    border-radius: 50%;
+  }
+  #volumeControl input::-webkit-slider-thumb:hover{
+    box-shadow: 0 .125em .125em #3b4547;
 
   }
 </style>

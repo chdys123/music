@@ -64,7 +64,7 @@
                                 </span>
                             </td>
                             <td>
-                                <span id="playlist-song-name">
+                                <span id="playlist-song-name" @click="toSongDetail(item.id)">
                                     {{item.name}}
                                 </span>
                             </td>
@@ -234,7 +234,12 @@
                     // localStorage.setItem("index", len - 1)
                 }
                 console.log(localStorage.getItem("index"))
-
+            },
+            // 点击歌曲名
+            toSongDetail(id){
+                // console.log("点击了歌曲名,歌曲id:",id)
+                // 进入歌曲组件
+                this.$router.push({path:'/discover/song',query:{id:id}})
             }
         },
 

@@ -186,10 +186,15 @@
                 let songname = item.name
                 // 歌曲id
                 let songid = item.id
+                // 可能有多个歌手
                 // 歌手名
-                let arname = item.ar[0].name
+                let arname = []
                 // 歌手id
-                let arid = item.ar[0].id
+                let arid = []
+                for(let i=0;i<item.ar.length;i++){
+                    arname.push(item.ar[i].name)
+                    arid.push(item.ar[i].id)
+                }
                 // 歌曲时长
                 let time = item.dt
                 // 歌曲图片
@@ -207,34 +212,13 @@
                     imgsrc: imgsrc,
                     src: src
                 }
-                //判断本地存储是否有 track-queue
-                if (localStorage.getItem("track-queue") == null) {
-                    let num = [song]
-                    let s = JSON.stringify(num)
-                    localStorage.setItem("track-queue", s)
-                    // 存储播放位置
-                    this.setItem("index",0)
-                    // localStorage.setItem("index", 0)
-                } else {
-                    let queue = JSON.parse(localStorage.getItem("track-queue"))
-                    // 判断歌曲是否在当前播放列表中
-                    for (let i = 0; i < queue.length; i++) {
-                        if (songid == queue[i].songid) {
-                            this.setItem("index",i)
-                            // localStorage.setItem("index", i)
-                            console.log(localStorage.getItem("index"))
-                            return
-                        }
-                    }
-                    queue.push(song)
-                    let s = JSON.stringify(queue)
-                    localStorage.setItem("track-queue", s)
-                    let len = queue.length
-                    this.setItem("index",len-1)
-                    // localStorage.setItem("index", len - 1)
-                }
-                console.log(localStorage.getItem("index"))
+                // 放进本地存储
+                this.addSong(song)
+
+               
             },
+
+
             // 点击歌曲名
             toSongDetail(id){
                 // console.log("点击了歌曲名,歌曲id:",id)

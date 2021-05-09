@@ -9,7 +9,7 @@
             <li @click="toDisc(6)">新碟上架</li>
         </ul>
     </div>
-    <router-view></router-view>
+    <router-view :key="$route.fullPath"></router-view>
 </template>
 
 <script>

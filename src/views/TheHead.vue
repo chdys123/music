@@ -26,7 +26,7 @@
   <!-- 播放器绝对定位到底部 -->
   <div id="player">
     <!-- 不显示 自己写样式只是用audio的属性即可 -->
-    <audio ref="myaudio" :src="songList[index].src" id="myaudio" controls preload></audio>
+    <audio ref="myaudio" :src="songList[index].src" id="myaudio" preload></audio>
     <!-- :src="getSonglist[getIndex].src" -->
 
     <div id="player-con">
@@ -46,8 +46,8 @@
       <div id="player-message">
         <!-- 音乐名字 歌手 -->
         <div>
-          <span>{{songList[index].songname}}</span>
-          <span>{{songList[index].arname}}</span>
+          <span @click="toSongDetail()">{{songList[index].songname}}</span>
+          <span v-for="item in songList[index].arname">{{item}}</span>
         </div>
         <!-- 进度条和时间盒子 -->
         <div id="ProgressbarCon">
@@ -67,13 +67,14 @@
         <span>21</span>
       </div>
       <div id="volumeControl" ref="volumeControl" v-show="vControl" @mouseleave="vcmouseleave()">
-        <input type="range" id="myvolumeslider" min="0" max="100" value="100" ref="myvolumeslider" @input="volumeslider()">
+        <input type="range" id="myvolumeslider" min="0" max="100" value="100" ref="myvolumeslider"
+          @input="volumeslider()">
       </div>
     </div>
   </div>
 
 
-  <router-view></router-view>
+  <router-view :key="$route.fullPath"></router-view>
 </template>
 
 <script>
@@ -87,8 +88,8 @@
           {
             songname: '',
             src: '',
-            arid: '',
-            arname: '',
+            arid: [],
+            arname: [],
             imgsrc: '',
             songid: '',
             time: ''
@@ -97,9 +98,9 @@
         //当前音乐在歌曲列表的位置
         index: 0,
         // 音频实时播放时间
-        time:0,
+        time: 0,
         // 是否展示控制音量slider
-        vControl:false
+        vControl: false
       }
 
 
@@ -185,7 +186,7 @@
             switchBtn.setAttribute("class", "player-open")
           }
         }
-        localStorage.setItem("index",this.index)
+        localStorage.setItem("index", this.index)
       },
 
       //点击下一首
@@ -216,7 +217,7 @@
 
           }
         }
-        localStorage.setItem("index",this.index)
+        localStorage.setItem("index", this.index)
       },
 
       //歌曲时长格式化
@@ -246,29 +247,34 @@
         let myslider = this.$refs.myslider
         myslider.style.backgroundSize = myslider.value + "% 100%"
         // 改变时间
-        let audio=this.$refs.myaudio
-        audio.currentTime=parseInt(audio.duration*myslider.value/100)
+        let audio = this.$refs.myaudio
+        audio.currentTime = parseInt(audio.duration * myslider.value / 100)
       },
       // 点击音量图标
-      vc(){
+      vc() {
         console.log("点击了音量图标")
         // let vControl=this.$refs.volumeControl
-        this.vControl=!this.vControl
+        this.vControl = !this.vControl
       },
       // 鼠标离开音量splider后
-      vcmouseleave(){
+      vcmouseleave() {
         console.log("离开")
-        this.vControl=false
+        this.vControl = false
       },
       // 拖动音量大小进度条
-      volumeslider(){
+      volumeslider() {
         let volumeslider = this.$refs.myvolumeslider
-        volumeslider.style.backgroundSize=volumeslider.value+"% 100%"
+        volumeslider.style.backgroundSize = volumeslider.value + "% 100%"
         // 改变音量
-        let audio=this.$refs.myaudio
+        let audio = this.$refs.myaudio
         // console.log("当前音量:",audio.volume)
         // console.log("当前音量:",volumeslider.value/100)
-        audio.volume=volumeslider.value/100
+        audio.volume = volumeslider.value / 100
+      },
+      // 进入歌曲详情
+      toSongDetail(){
+        console.log("点击了歌曲详情")
+        this.$router.push({path:'/discover/song',query:{id:this.songList[this.index].songid}})
       }
 
     },
@@ -290,9 +296,9 @@
     mounted() {
       let that = this
       this.$nextTick(function () {
-        // 监听自定义事件
+        // 监听自定义事件 监听播放的index改变
         window.addEventListener("StorageEvent", function () {
-          console.log("监听到本地存储改变")
+          console.log("监听到本地存储index改变")
           let s = localStorage.getItem("track-queue")
           let index = parseInt(localStorage.getItem("index"))
           // 先判断播放去状态
@@ -309,33 +315,38 @@
             that.playerSwitch()
           }
         })
-
+        // window监听自定义事件 监听queue改变 但是index不改变
+        window.addEventListener("storageEvent2",function(){
+          console.log("监听到queue改变")
+          let s = localStorage.getItem("track-queue")
+          that.songList = JSON.parse(s)
+        })
         // 监听audio播放位置更改
-        let audio=document.getElementById("myaudio")
+        let audio = document.getElementById("myaudio")
         let myslider = that.$refs.myslider
-        audio.addEventListener("timeupdate",function(){
-          that.time=audio.currentTime*1000
-          let totolTime=isNaN(audio.duration)?1:audio.duration
+        audio.addEventListener("timeupdate", function () {
+          that.time = audio.currentTime * 1000
+          let totolTime = isNaN(audio.duration) ? 1 : audio.duration
           // console.log("当前时间:",audio.currentTime,"总时长:",totolTime)
-          myslider.value=audio.currentTime/totolTime*100
+          myslider.value = audio.currentTime / totolTime * 100
           // console.log("进度条的值",myslider.value)
-          myslider.style.backgroundSize = myslider.value+ "% 100%"
-          
+          myslider.style.backgroundSize = myslider.value + "% 100%"
+
         })
         // 监听播放结束后
-        audio.addEventListener("ended",function(){
+        audio.addEventListener("ended", function () {
           console.log("当前音乐结束")
           that.playerBack()
         })
 
         // 监听错误状态
-        audio.addEventListener("error",function(){
+        audio.addEventListener("error", function () {
           console.log("错误状态")
           // 就要关闭歌曲 提示错误。
         })
         // 监听暂停事件
         let switchBtn = that.$refs.switchBtn
-        audio.addEventListener("pause",function(){
+        audio.addEventListener("pause", function () {
           switchBtn.setAttribute("class", "player-pause")
         })
       })
@@ -542,7 +553,7 @@
     text-decoration: underline dashed;
   }
 
-  #player-message div:nth-child(1) span:nth-child(2) {
+  #player-message div:nth-child(1) span:nth-child(n+2) {
     float: left;
     height: 28px;
     font-size: 12px;
@@ -552,7 +563,7 @@
     cursor: pointer;
   }
 
-  #player-message div:nth-child(1) span:nth-child(2):hover {
+  #player-message div:nth-child(1) span:nth-child(n+2):hover {
     text-decoration: underline dashed;
   }
 
@@ -653,18 +664,20 @@
   #player-function span:nth-child(5):hover {
     background-position: -45px -97px;
   }
-  #volumeControl{
-    position:absolute;
+
+  #volumeControl {
+    position: absolute;
     top: 0;
     right: 97px;
     transform: translateY(-112px);
     width: 32px;
     height: 113px;
-    background-color: rgb(41,41,41,.8);
+    background-color: rgb(41, 41, 41, .8);
 
   }
-  #volumeControl input{
-    transform: rotate(-90deg) translate(-44px,-30.5px);
+
+  #volumeControl input {
+    transform: rotate(-90deg) translate(-44px, -30.5px);
     cursor: pointer;
     -webkit-appearance: none;
     width: 93px;
@@ -674,14 +687,16 @@
     background: #151616 -webkit-linear-gradient(#C70C0C, #C70C0C) no-repeat;
     background-size: 100% 100%;
   }
-  #volumeControl input::-webkit-slider-thumb{
+
+  #volumeControl input::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 14px;
     height: 14px;
     background-color: #C70C0C;
     border-radius: 50%;
   }
-  #volumeControl input::-webkit-slider-thumb:hover{
+
+  #volumeControl input::-webkit-slider-thumb:hover {
     box-shadow: 0 .125em .125em #3b4547;
 
   }

@@ -4,6 +4,8 @@ const Recommend = () => import('../views/Recommend.vue')
 const Playlist = () => import('../views/Playlist.vue')
 const PlaylistDetail = () => import('../views/PlaylistDetail')
 const SongDetail = () => import('../views/SongDetail')
+const Artist = () => import('../views/Artist')
+const ArHotWorks=()=>import('../views/ArHotWorks')
 const routes = [
   { path: '', redirect: '/discover' },
   { path: '/', redirect: '/discover' },
@@ -23,8 +25,16 @@ const routes = [
       },
       //歌单详情
       { path: 'playlistdetail', component: PlaylistDetail },
-      // 歌曲路由
-      { path: 'song', component: SongDetail }
+      // 歌曲详情路由
+      { path: 'song', component: SongDetail },
+      // 歌手详情路由
+      { path: 'artist', component:Artist,children:[
+        // 热门作品路由
+        {path:'',redirect:'/discover/artist/arhotworks'},
+        {path:'arhotworks',component:ArHotWorks}
+
+      ]
+    },
     ]
   },
 ]

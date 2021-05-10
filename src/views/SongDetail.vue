@@ -17,7 +17,7 @@
                     <div id="sdc-l-t-r-2">
                         歌手：
                         <span v-for="(item,index) in songData.songs[0].ar">
-                            <span>{{item.name}}</span> /
+                            <span @click="toArtist(item.id)">{{item.name}}</span> /
                         </span>
                     </div>
                     <div id="sdc-l-t-r-3">
@@ -459,9 +459,12 @@
             },
             // 进入歌曲详情
             toSongDetail(id){
-                // console.log("点击了歌曲")
                 this.$router.push({path:'/discover/song',query:{id:id}})
-                // location.reload()
+            },
+            // 进入歌手详情
+            toArtist(id){
+                // console.log("点击了歌手",id)
+                this.$router.push({path:'/discover/artist',query:{id:id}})
             }
         },
         computed: {

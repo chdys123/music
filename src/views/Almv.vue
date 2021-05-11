@@ -4,7 +4,7 @@
         <div class="ar-mv-item" v-for="(item,index) in mvs">
                 <img :src="item.imgurl16v9+'?param=137y103'" alt="" @click="toMvDetail(item.id)">
                 <p class="al-mv-name ellipsis" :title="item.name" @click="toMvDetail(item.id)">{{item.name}}</p>
-                <span id="ar-mv-icon" class="mvPlayLogo"></span>
+                <span id="ar-mv-icon" class="mvPlayLogo" @click="toMvDetail(item.id)"></span>
         </div>
         <!-- 分页 -->
         <div class="f-page">
@@ -113,6 +113,7 @@
             // 进入mv详情页面
             toMvDetail(id){
                 console.log("点击了mv",id)
+                this.$router.push({path:'/discover/mv',query:{id:id}})
             }
 
 

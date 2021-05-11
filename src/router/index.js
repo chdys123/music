@@ -9,6 +9,7 @@ const ArHotWorks=()=>import('../views/ArHotWorks')
 const ArAllAlbum=()=>import('../views/ArAllAlbum')
 const Almv=()=>import('../views/Almv')
 const Aldesc=()=>import('../views/Aldesc')
+const Mvdetail=()=>import('../views/Mvdetail')
 const routes = [
   { path: '', redirect: '/discover' },
   { path: '/', redirect: '/discover' },
@@ -30,6 +31,8 @@ const routes = [
       { path: 'playlistdetail', component: PlaylistDetail },
       // 歌曲详情路由
       { path: 'song', component: SongDetail },
+      // mv详情路由
+      {path:'mv',component:Mvdetail},
       // 歌手详情路由
       { path: 'artist', component:Artist,children:[
         // 热门作品路由

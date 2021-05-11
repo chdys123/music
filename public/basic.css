@@ -143,3 +143,49 @@ textarea{
 .mvPlayLogo:hover{
     background:url('https://s2.music.126.net/style/web2/img/ie6/icn_ply5_hvr.png?356f6b6193004ba0322a4d7a087043de') no-repeat 0px 0px;
 }
+
+/* 布局盒子 */
+.con{
+    width: 980px;
+    /* height: 1200px; */
+    margin: 0 auto;
+    border: 1px solid #D3D3D3;
+    border-top: none;
+    background-color: #FFFFFF;
+}
+
+.con-l{
+    width: 640px;
+        height: 1000px;
+        float: left;
+        border-right: 1px solid #D3D3D3;
+        padding: 47px 30px 40px 39px;
+
+}
+.con-r{
+    width: 200px;
+        height: 100%;
+        float: left;
+        padding: 20px 40px 40px 30px;
+}
+
+/* 歌单详情mv图标 ,视频播放量图标*/
+.mvDetailLogo,.videoPlaycountLogo{
+    background:url('https://s2.music.126.net/style/web2/img/icon2.png?96981c0650f794f754167a874229154c') no-repeat 0px 0px;
+    
+}
+.mvPlayLogo{
+    background-position: -229px -473px;
+    display: inline-block;
+    width: 35px;
+    height: 28px;
+    vertical-align: bottom;
+
+}
+.videoPlaycountLogo{
+    background-position: -59px -307px;
+    display: inline-block;
+    width: 20px;
+    height: 18px;
+    vertical-align: middle;
+}

@@ -25,6 +25,116 @@ textarea{
     outline: none;
     resize:none;
 }
+
+/* 加入播放列表图标 */
+.addSongLogo{
+    background: url('https://s2.music.126.net/style/web2/img/icon.png?4f0dc585177245959cf853bf25d86a17') no-repeat 5px -698px;
+}
+.addSongLogo:hover{
+    background-position: -17px -698px;
+}
+
+/* 收藏图标 分享图标 下载图标 播放图标公共背景图*/
+.collectLogo,.shareLogo,.downloadLogo,.playLogo,.mvLogo{
+    background: url("https://s2.music.126.net/style/web2/img/table.png?3a5f37405892f2dbd5cfd501bf28124a") no-repeat 0px 0px;
+}
+/* 收藏图标 */
+.collectLogo{
+    background-position: 2px -172px;
+}
+.collectLogo:hover{
+    background-position: -18px -172px;
+}
+
+/* 分享图标 */
+.shareLogo{
+    background-position: 2px -193px;
+}
+.shareLogo:hover{
+    background-position: -18px -193px;
+}
+/* 下载图标 */
+.downloadLogo{
+    background-position: -81px -172px;
+}
+.downloadLogo:hover{
+    background-position: -104px -172px;
+}
+/* 播放图标 */
+.playLogo{
+    background-position: 2px -103px;
+}
+.playLogo:hover{
+    background-position: 2px -128px;
+}
+/* mvlogo */
+.mvLogo{
+    display: inline-block;
+    vertical-align: middle;
+    width: 22.5px;
+    height: 17px;
+    background-position: 0px -151px;
+}
+.mvLogo:hover{
+    background-position: -30px -151px;
+}
+
+/* 单行超出用省略号 */
+.ellipsis{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* 分页 */
+.f-page {
+    height: 26px;
+    margin-top: 40px;
+    /* background-color: pink; */
+    text-align: center;
+}
+
+.f-page-c {
+    display: inline-block;
+    overflow: hidden;
+    font-size: 12px;
+    /* background-color: yellow; */
+}
+
+.f-page-c a {
+    cursor: pointer;
+    float: left;
+    line-height: 12px;
+    margin-left: 4px;
+    padding: 6px 10px;
+    border: 1px solid #F2F2F2;
+}
+
+.f-page-c a:hover {
+    border: 1px solid black;
+}
+
+.f-page-c span {
+    margin-left: 20px;
+    line-height: 26px;
+}
+
+.f-page-c a:nth-child(1) {
+    margin-left: 0px;
+}
+
+.f-page-c input {
+    width: 50px;
+    outline: none;
+}
+
+/* 控制无前一页 无后一页 阻止点击 */
+.f-page .f-page-c .disable {
+    background-color: #EAEAEA;
+    color: #CACDD4;
+    pointer-events: none;
+}
 /* .serch{
     
 } */

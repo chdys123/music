@@ -104,13 +104,10 @@
                             :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
                         <a @click="toTailPage()"
                             :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
-
-
                         <span>当前页：{{this.currentPage}}</span>
                         <span>总页数：{{Math.ceil(this.allComments.total/20)}}</span>
                         <span>跳转到：<input type="text" @keydown="jumpPage($event)"
                                 oninput="value=value.replace(/[^\d]/g,'')" />页</span>
-
                     </div>
                 </div>
                 <br style="clear:both">
@@ -635,7 +632,6 @@
         width: 25px;
         padding-left: 35px;
         padding-right: 5px;
-        /* background-color: #2374C2; */
         background: url("https://s2.music.126.net/style/web2/img/button2.png?521a1ed38fd91718f2919dde13cb0ecf") no-repeat 0px -632px;
         color: white;
         line-height: 33px;
@@ -950,54 +946,5 @@
         font-weight: 700;
         border-bottom: 1px solid #999B99;
         margin-bottom: 10px;
-    }
-
-    /* 分页 */
-    .f-page {
-        height: 26px;
-        margin-top: 40px;
-        /* background-color: pink; */
-        text-align: center;
-    }
-
-    .f-page-c {
-        display: inline-block;
-        overflow: hidden;
-        font-size: 12px;
-        /* background-color: yellow; */
-    }
-
-    .f-page-c a {
-        cursor: pointer;
-        float: left;
-        line-height: 12px;
-        margin-left: 4px;
-        padding: 6px 10px;
-        border: 1px solid #F2F2F2;
-    }
-
-    .f-page-c a:hover {
-        border: 1px solid black;
-    }
-
-    .f-page-c span {
-        margin-left: 20px;
-        line-height: 26px;
-    }
-
-    .f-page-c a:nth-child(1) {
-        margin-left: 0px;
-    }
-
-    .f-page-c input {
-        width: 50px;
-        outline: none;
-    }
-
-    /* 控制无前一页 无后一页 阻止点击 */
-    .f-page .f-page-c .disable {
-        background-color: #EAEAEA;
-        color: #CACDD4;
-        pointer-events: none;
     }
 </style>

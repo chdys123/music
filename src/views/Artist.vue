@@ -6,7 +6,8 @@
                 <span>{{artist.transNames[0]}}</span>
             </div>
             <div id="ar-con-l-img">
-                <img :src="artist.cover+'?param=640y300'" alt="">
+                <img :src="artist.cover+'?param=640y300'" alt="" v-if="artist.cover!=null">
+                <img src="http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg?param=640y300" alt="" v-else>
             </div>
             <div id="arConLList" ref="arConLList">
                 <span @click="toHotWorks()">
@@ -106,14 +107,10 @@
             },
             // 点击list
             toHotWorks() {
-                console.log("热门作品")
-                this.changecolor(0)
                 this.$router.push({ path: '/discover/artist/arhotworks', query: { id: this.artistId } })
             },
             toAllAls() {
-                console.log("所有专辑")
-                this.changecolor(1)
-
+                this.$router.push({ path: '/discover/artist/album', query: { id: this.artistId } })
             },
             toMv() {
                 console.log("相关Mv")
@@ -145,7 +142,7 @@
 <style>
     #artist-con {
         width: 980px;
-        height: 1200px;
+        /* height: 1200px; */
         margin: 0 auto;
         border: 1px solid #D3D3D3;
         border-top: none;
@@ -155,11 +152,11 @@
 
     #artist-con-l {
         width: 640px;
-        height: 1000px;
+        /* height: 1000px; */
         float: left;
         border-right: 1px solid #D3D3D3;
         padding: 47px 30px 40px 39px;
-        background-color: pink;
+        /* background-color: pink; */
     }
 
     #artist-con-r {

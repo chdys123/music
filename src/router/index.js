@@ -6,6 +6,7 @@ const PlaylistDetail = () => import('../views/PlaylistDetail')
 const SongDetail = () => import('../views/SongDetail')
 const Artist = () => import('../views/Artist')
 const ArHotWorks=()=>import('../views/ArHotWorks')
+const ArAllAlbum=()=>import('../views/ArAllAlbum')
 const routes = [
   { path: '', redirect: '/discover' },
   { path: '/', redirect: '/discover' },
@@ -31,7 +32,9 @@ const routes = [
       { path: 'artist', component:Artist,children:[
         // 热门作品路由
         {path:'',redirect:'/discover/artist/arhotworks'},
-        {path:'arhotworks',component:ArHotWorks}
+        {path:'arhotworks',component:ArHotWorks},
+        // 所有专辑路由
+        {path:'album',component:ArAllAlbum}
 
       ]
     },

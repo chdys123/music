@@ -1,11 +1,11 @@
 <template>
-    <div id="ar-al-con">
-        <div v-for="(item,index) in albums" class="album-item">
-            <img :src="item.picUrl+'?param=120y120'" alt="">
-            <p class="ellipsis al-name" :title="item.name">{{item.name}}</p>
-            <p class="al-pt">{{getPulishTime(item.publishTime)}}</p>
+    <p v-if="total==0" style="margin-bottom: 40px;">暂无mv</p>
+    <div v-if="total!=0" style="margin-bottom: 40px;">
+        <div class="ar-mv-item" v-for="(item,index) in mvs">
+                <img :src="item.imgurl16v9+'?param=137y103'" alt="" @click="toMvDetail(item.id)">
+                <p class="al-mv-name ellipsis" :title="item.name" @click="toMvDetail(item.id)">{{item.name}}</p>
+                <span id="ar-mv-icon" class="mvPlayLogo"></span>
         </div>
-
         <!-- 分页 -->
         <div class="f-page">
             <div class="f-page-c">
@@ -22,22 +22,22 @@
                         oninput="value=value.replace(/[^\d]/g,'')" />页</span>
             </div>
         </div>
-        <br style="clear:both">
+        <br style="clear: both;">
     </div>
 </template>
 
 <script>
-    export default {
-        name: 'arallalbum',
-        data() {
+    export default{
+        name:'almv',
+        data(){
             return {
-                artistId: '',
-                // 专辑数量
-                total: 0,
-                // 专辑信息
-                albums: [],
-                // 当前页面
-                currentPage:1,
+                artistId:'',
+                // mv总数
+                total:0,
+                // mv信息
+                mvs:[],
+                // 当前页数
+                currentPage:1
             }
         },
         computed:{
@@ -48,48 +48,51 @@
         },
         methods: {
             // 获取歌手id
-            getArtistId() {
-                this.artistId = this.$route.query.id
+            getArtistId(){
+                this.artistId=this.$route.query.id
             },
-            // 获取专辑信息
-            getAlbum(num) {
+            // 获取mv信息
+            getMv(num) {
                 this.axios({
                     method: "get",
-                    url: '/artist/album?limit=12&id=' + this.artistId + '&offset=' + (num - 1) * 12
+                    url: '/artist/mv?limit=12&id=' + this.artistId + '&offset=' + (num - 1) * 12
                 }).then(res => {
-                    this.total = res.data.artist.albumSize
-                    this.albums = res.data.hotAlbums
+                    this.mvs=res.data.mvs
                     this.currentPage=num
                 }).catch(err => {
                     console.log("获取所有专辑失败")
                 })
             },
-            // 专辑出版日期格式化
-            getPulishTime(num) {
-                let time = new Date(num)
-                let str = time.getFullYear() + '.' + (time.getMonth() + 1) + '.' + time.getDate() + " "
-                return str
+            // 获取mv总数
+            gettotal(){
+                this.axios({
+                    method:'get',
+                    url:'/artist/detail?id='+this.artistId
+                }).then(res=>{
+                    this.total=res.data.data.artist.mvSize
+                }).catch(err=>{
+                    console.log("获取mv总数失败")
+                })               
             },
 
             toPrePage() {
                 console.log("点击了前一页")
                 this.currentPage -= 1
-                this.getAlbum(this.currentPage)
+                this.getMv(this.currentPage)
             },
             toNextPage() {
-
                 console.log("点击了后一页")
                 this.currentPage += 1
-                this.getAlbum(this.currentPage)
+                this.getMv(this.currentPage)
             },
             toFirstPage() {
                 console.log("点击了首页")
-                this.getAlbum(1)
+                this.getMv(1)
 
             },
             toTailPage() {
                 console.log("点击了尾页")
-                this.getAlbum(this.totalPage)
+                this.getMv(this.totalPage)
             },
             //跳转页面
             jumpPage(e) {
@@ -99,70 +102,70 @@
                     if (num == this.currentPage) {
                         return
                     } else if (num >= this.totalPage) {
-                        this.getAlbum(this.totalPage)
+                        this.getMv(this.totalPage)
                     } else if (num <= 1) {
-                        this.getAlbum(1)
+                        this.getMv(1)
                     } else {
-                        this.getAlbum(num)
+                        this.getMv(num)
                     }
                 }
             },
+            // 进入mv详情页面
+            toMvDetail(id){
+                console.log("点击了mv",id)
+            }
+
+
 
         },
         created() {
             // 获取歌手id
             this.getArtistId()
-            // 获取专辑
-            this.getAlbum(1)
+            // mv总数
+            this.gettotal()
+            // 获取mv信息
+            this.getMv(1)
             
-
         },
         mounted() {
             // 去除list背景
             let dom = document.getElementById("arConLList")
             for (let i = 0; i < dom.childNodes.length; i++) {
-                if (1 == i) {
+                if (2 == i) {
                     dom.childNodes[i].setAttribute("class", "ar-con-l-list-active")
                 } else {
                     dom.childNodes[i].setAttribute("class", '')
                 }
             }
         },
-
     }
 </script>
+
 <style>
-    #ar-al-con{
-        height: 660px;
-        /* background-color: pink; */
-    }
-    .album-item {
+    .ar-mv-item{
+        position: relative;
         float: left;
-        margin: 10px 0px 20px 53px;
+        margin: 10px 0px 40px 30px;
     }
-    .album-item:nth-child(1),
-    .album-item:nth-child(5),
-    .album-item:nth-child(9){
+    .ar-mv-item:nth-child(1),
+    .ar-mv-item:nth-child(5),
+    .ar-mv-item:nth-child(9){
         margin-left: 0px;
     }
-
-    .album-item img {
-        vertical-align: bottom;
-        margin-bottom: 10px;
-    }
-
-    .al-name{
-        width: 120px;
+    .al-mv-name{
+        width: 137px;
         font-size: 14px;
-        cursor: pointer;
-        margin-bottom: 5px;
     }
-    .al-name:hover{
+    .al-mv-name:hover{
         text-decoration: underline;
+        cursor: pointer;
+    }
+    #ar-mv-icon{
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        top: 30px;
+        left: 43px;
     }
 
-    .al-pt {
-        font-size: 12px;
-        color: #666666;
-    }
 </style>

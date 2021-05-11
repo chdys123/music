@@ -135,6 +135,11 @@ textarea{
     color: #CACDD4;
     pointer-events: none;
 }
-/* .serch{
-    
-} */
+
+/* 视频播放图标 */
+.mvPlayLogo{
+    background: url('https://s2.music.126.net/style/web2/img/ie6/icn_ply5.png?d9b4cc7b04ec89bcef0f205b28f79454') no-repeat 0px 0px;
+}
+.mvPlayLogo:hover{
+    background:url('https://s2.music.126.net/style/web2/img/ie6/icn_ply5_hvr.png?356f6b6193004ba0322a4d7a087043de') no-repeat 0px 0px;
+}

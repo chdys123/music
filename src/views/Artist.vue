@@ -113,13 +113,10 @@
                 this.$router.push({ path: '/discover/artist/album', query: { id: this.artistId } })
             },
             toMv() {
-                console.log("相关Mv")
-                this.changecolor(2)
-
+                this.$router.push({ path: '/discover/artist/mv', query: { id: this.artistId } })
             },
             toDesc() {
-                console.log("艺人介绍")
-                this.changecolor(3)
+                this.$router.push({ path: '/discover/artist/desc', query: { id: this.artistId } })
             }
         },
         created() {

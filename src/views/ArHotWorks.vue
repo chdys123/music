@@ -28,6 +28,9 @@
             <br style="clear:both">
 
         </div>
+
+
+
     </div>
 </template>
 <script>
@@ -155,69 +158,5 @@
 
 
 
-    .a-h-w-b-item:nth-child(2n) {
-        background-color: #F7F7F7;
-    }
-
-    .a-h-w-b-item>span {
-        float: left;
-        font-size: 12px;
-        padding: 6px 10px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        cursor: pointer;
-    }
-
-    .a-h-w-b-item>span:nth-child(1) {
-        width: 74px;
-        cursor: default;
-    }
-
-    .a-h-w-b-item>span:nth-child(1) span {
-        float: right;
-        width: 21.5px;
-        height: 17px;
-    }
-
-
-    .a-h-w-b-item>span:nth-child(2) {
-        width: 278px;
-    }
-
-    .a-h-w-b-item>span:nth-child(2):hover {
-        text-decoration: underline;
-    }
-
-    .a-h-w-b-item>span:nth-child(3) {
-        width: 100px;
-        text-align: center;
-    }
-
-    .a-h-w-b-item>span:nth-child(4) {
-
-        width: 108px;
-    }
-
-    .a-h-w-b-item>span:nth-child(4):hover {
-        text-decoration: underline;
-    }
-
-    .a-h-w-func {
-        display: none;
-    }
-
-    .a-h-w-b-item:hover .a-h-w-func {
-        display: inline-block;
-    }
-
-    .a-h-w-b-item:hover .a-h-w-dt {
-        display: none;
-    }
-
-    .a-h-w-func span {
-        float: left;
-        width: 22.5px;
-        height: 16px;
-    }
+   
 </style>

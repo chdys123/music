@@ -1,8 +1,8 @@
 <template>
     <div id="ar-al-con">
         <div v-for="(item,index) in albums" class="album-item">
-            <img :src="item.picUrl+'?param=120y120'" alt="">
-            <p class="ellipsis al-name" :title="item.name">{{item.name}}</p>
+            <img :src="item.picUrl+'?param=120y120'" alt="" @click="toAldetail(item.id)">
+            <p class="ellipsis al-name" :title="item.name" @click="toAldetail(item.id)">{{item.name}}</p>
             <p class="al-pt">{{getPulishTime(item.publishTime)}}</p>
         </div>
 
@@ -63,6 +63,11 @@
                 }).catch(err => {
                     console.log("获取所有专辑失败")
                 })
+            },
+            // 到专辑详情页面
+            toAldetail(id){
+                console.log("点击了专辑",id)
+                this.$router.push({path:'/discover/album',query:{id:id}})
             },
             // 专辑出版日期格式化
             getPulishTime(num) {

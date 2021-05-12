@@ -7,9 +7,10 @@ const SongDetail = () => import('../views/SongDetail')
 const Artist = () => import('../views/Artist')
 const ArHotWorks=()=>import('../views/ArHotWorks')
 const ArAllAlbum=()=>import('../views/ArAllAlbum')
-const Almv=()=>import('../views/Almv')
-const Aldesc=()=>import('../views/Aldesc')
+const Armv=()=>import('../views/Armv')
+const Ardesc=()=>import('../views/Ardesc')
 const Mvdetail=()=>import('../views/Mvdetail')
+const Aldetail=()=>import('../views/Aldetail')
 const routes = [
   { path: '', redirect: '/discover' },
   { path: '/', redirect: '/discover' },
@@ -33,6 +34,8 @@ const routes = [
       { path: 'song', component: SongDetail },
       // mv详情路由
       {path:'mv',component:Mvdetail},
+      // 专辑详情路由
+      {path:'album',component:Aldetail},
       // 歌手详情路由
       { path: 'artist', component:Artist,children:[
         // 热门作品路由
@@ -41,9 +44,9 @@ const routes = [
         // 所有专辑路由
         {path:'album',component:ArAllAlbum},
         // 所有mv
-        {path:'mv',component:Almv},
+        {path:'mv',component:Armv},
         // 艺人介绍
-        {path:'desc',component:Aldesc}
+        {path:'desc',component:Ardesc}
 
       ]
     },

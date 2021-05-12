@@ -38,17 +38,20 @@
                 <br style="clear:both">
             </div>
 
-            <div id="sdc-cty">
-                <div id="sdc-cty-t">评论
+
+
+            <div class="sdc-cty">
+
+                <div class="sdc-cty-t">评论
                     <span>共{{allComments.total}}条评论</span>
                 </div>
-                <div id="sdc-cty-m">
+                <div class="sdc-cty-m">
                     <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
                     <textarea placeholder="评论"></textarea>
                     <button>评论</button>
                 </div>
                 <!-- 精彩评论 -->
-                <div id="sdc-cty-g-body-titile" v-if="this.currentPage==1">
+                <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
                     精彩评论
                 </div>
                 <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
@@ -72,7 +75,7 @@
                     <br style="clear:both">
                 </div>
                 <!-- 最新评论 -->
-                <div id="sdc-cty-n-body-titile" v-if="this.currentPage==1">
+                <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
                     最新评论({{allComments.total}})
                 </div>
                 <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
@@ -94,6 +97,10 @@
                     </div>
                     <br style="clear:both">
                 </div>
+
+
+
+
                 <!-- 分页 -->
                 <div class="f-page">
                     <div class="f-page-c">
@@ -110,6 +117,7 @@
                                 oninput="value=value.replace(/[^\d]/g,'')" />页</span>
                     </div>
                 </div>
+                
                 <br style="clear:both">
 
             </div>
@@ -185,6 +193,8 @@
                 playlists: [{ coverImgUrl: '', name: '', creator: { nickname: '' } }],
                 // 相似歌曲
                 songs: [],
+
+
                 // 评论
                 allComments: {
                     // 热门评论
@@ -791,160 +801,6 @@
     #sdc-r-simi-s-body-item div span:nth-child(2) {
         background-position: -87px -454px;
     }
-
-    #sdc-cty-t {
-        height: 35px;
-        margin-top: 40px;
-        margin-bottom: 20px;
-        /* background-color: yellow; */
-        font-size: 20px;
-        border-bottom: 2px solid #C20C0C;
-    }
-
-    #sdc-cty-t span {
-        font-size: 12px;
-        color: #B57E66;
-        margin-left: 20px;
-    }
-
-    #sdc-cty-m {
-        height: 98px;
-        /* background-color: blue; */
-    }
-
-    #sdc-cty-m img {
-        float: left;
-        width: 50px;
-        height: 50px;
-        margin-bottom: 12px;
-
-    }
-
-    #sdc-cty-m textarea {
-        float: right;
-        height: 50px;
-        width: 570px;
-        padding: 5px 5px;
-    }
-
-    #sdc-cty-m button {
-        float: right;
-        margin-top: 4px;
-        padding: 5px 10px;
-        font-size: 12px;
-        color: white;
-        border: 1px solid #999B99;
-        background-color: #3383CF;
-    }
-
-    #sdc-cty-m button:hover {
-        background-color: #5AA4E9;
-    }
-
-    #sdc-cty-g-body-titile {
-        height: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        border-bottom: 1px solid #999B99;
-        margin-bottom: 10px;
-    }
-
-    .sdc-cty-g-body-item {
-        border-bottom: 1px solid #999B99;
-        margin-bottom: 10px;
-    }
-
-    .sdc-cty-g-body-item img {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 10px;
-        vertical-align: bottom;
-    }
-
-    .sdc-cty-g-b-i-b {
-        float: right;
-        width: 580px;
-        /* height: 60px; */
-        font-size: 12px;
-        margin-bottom: 10px;
-        white-space: pre-wrap;
-    }
-
-    .sdc-cty-g-b-i-b a {
-        cursor: pointer;
-        font-size: 12px;
-        color: #0C73C2;
-
-    }
-
-    .sdc-cty-g-b-i-b a:hover {
-        text-decoration: underline;
-    }
-
-    .sdc-cty-g-b-i-b p {
-        /* height: 40px; */
-        margin-top: 20px;
-        padding: 10px 20px;
-        color: #666666;
-        background-color: #F4F4F4;
-    }
-
-    .sdc-cty-g-b-i-b p a {
-        color: #0C73C2;
-    }
-
-    .sdc-cty-g-b-i-b div {
-        margin-top: 20px;
-
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(1) {
-        float: left;
-        color: #999999;
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(2),
-    .sdc-cty-g-b-i-b div span:nth-child(3) {
-        float: right;
-        cursor: pointer;
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(3) {
-        /* background-color: green; */
-        margin-right: 20px;
-        /* padding-left: 10px; */
-
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(3) span {
-        display: inline-block;
-        vertical-align: bottom;
-        width: 15px;
-        height: 14px;
-        background: url("https://s2.music.126.net/style/web2/img/icon2.png?96981c0650f794f754167a874229154c") no-repeat 0px 0px;
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(3) .content-like {
-        background-position: -150px 0;
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(3) .content-liked {
-        background-position: -170px 0;
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(2) {
-        color: #333333;
-    }
-
-    .sdc-cty-g-b-i-b div span:nth-child(2):hover {
-        text-decoration: underline;
-    }
-
-    #sdc-cty-n-body-titile {
-        height: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        border-bottom: 1px solid #999B99;
-        margin-bottom: 10px;
-    }
+/* 评论样式 */
+    
 </style>

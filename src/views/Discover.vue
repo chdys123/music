@@ -27,13 +27,11 @@
                 console.log("推荐页面")
             },
             toLeaderboard(num){
-                this.changeBgc(num)
+                this.$router.push('/discover/toplist')
                 console.log("排行榜页面")
             },
             toPlaylist(num){
-                this.changeBgc(num)
-                console.log("歌单页面")
-                
+                console.log("歌单页面")               
                 this.$router.push("/discover/playlist")
             },
             toStation(num){

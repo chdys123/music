@@ -76,13 +76,102 @@
                     </div>
                 </div>
                 <!-- 评论模块 -->
+                <!-- 评论 -->
+            <div class="sdc-cty-t">评论
+                <span>共{{allComments.total}}条评论</span>
+            </div>
+            <div class="sdc-cty-m">
+                <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
+                <textarea placeholder="评论"></textarea>
+                <button>评论</button>
+            </div>
+            <!-- 精彩评论 -->
+            <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
+                精彩评论
+            </div>
+            <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+                <img :src="item.user.avatarUrl" alt="">
+                <div class="sdc-cty-g-b-i-b">
+                    <a>{{item.user.nickname}}</a> ：{{item.content}}
+                    <p v-if="item.beReplied.length!=0">
+                        <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                        <br style="clear:both">
+                    </p>
+                    <div>
+                        <span>{{contentTime(item.time)}}</span>
+                        <span>回复</span>
+                        <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                            </span> ({{item.likedCount}})</span>
+                        <br style="clear:both">
+
+                    </div>
+                </div>
+
+                <br style="clear:both">
+            </div>
+            <!-- 最新评论 -->
+            <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
+                最新评论({{allComments.total}})
+            </div>
+            <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+                <img :src="item.user.avatarUrl" alt="">
+                <div class="sdc-cty-g-b-i-b">
+                    <a>{{item.user.nickname}}</a> ：{{item.content}}
+                    <p v-if="item.beReplied.length!=0">
+                        <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                        <br style="clear:both">
+                    </p>
+                    <div>
+                        <span>{{contentTime(item.time)}}</span>
+                        <span>回复</span>
+                        <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                            </span> ({{item.likedCount}})</span>
+                        <br style="clear:both">
+
+                    </div>
+                </div>
+                <br style="clear:both">
+            </div>
+            <!-- 分页 -->
+            <div class="f-page">
+                <div class="f-page-c">
+
+                    <a @click="toFirstPage()" :class="{'disable':this.currentPage==1}">首页</a>
+                    <a @click="toPrePage()" :class="{'disable':this.currentPage==1}">&lt;上一页</a>
+                    <a @click="toNextPage()"
+                        :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
+                    <a @click="toTailPage()"
+                        :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
+                    <span>当前页：{{this.currentPage}}</span>
+                    <span>总页数：{{totalPage}}</span>
+                    <span>跳转到：<input type="text" @keydown="jumpPage($event)"
+                            oninput="value=value.replace(/[^\d]/g,'')" />页</span>
+                </div>
+            </div>
+            <!-- 分页结束 -->
+
+
 
 
 
             </div>
             <div class="con-r">
+                <!-- 右侧其他专辑 -->
+                <h5 id="al-r-t">ta的其他热门专辑</h5>
+                <div class="al-r-item" v-for="item in albums">
+                    <img :src="item.picUrl+'?param=50y50'" alt="" @click="toAldetail(item.id)">
+                    <div>
+                        
+                        <p class="ellipsis al-name" :title="item.name" @click="toAldetail(item.id)">{{item.name}}</p>
+                        <p class="al-pt">{{getPulishTime(item.publishTime)}}</p>
+
+                    </div>
+                    <br style="clear:both;">
+
+                </div>
 
             </div>
+            <br style="clear:both">
         </div>
     </div>
 </template>
@@ -117,8 +206,41 @@
                 },
                 // 专辑信息
                 albums: [],
+                // 评论
+                allComments: {
+                    // 热门评论
+                    hotComments: [
+                        {
+                            user: { avatarUrl: '' },
+                            beReplied: [{ user: { nickname: '', userId: '' }, content: '' }]
+                        }
+                    ],
+                    // 最新评论
+                    comments: [
+                        {
+                            user: { userId: '', nickname: '', avatarUrl: '' },
+                            commentId: '',
+                            comment: '',
+                            time: '',
+                            likedCount: '',
+                            liked: false,
+                            beReplied: [{ user: { nickname: '', userId: '' }, content: '' }],
+                        }
+                    ],
+                    // 评论总数
+                    total: '',
+                    more: true
+                },
+                // 当前页数
+                currentPage: 1,
 
 
+            }
+        },
+        computed: {
+            // 总页数
+            totalPage() {
+                return Math.ceil(this.allComments.total / 20)
             }
         },
         methods: {
@@ -140,29 +262,98 @@
             },
 
             // 获取歌手其他热门专辑
-            getotherAl(){
+            getotherAl() {
                 this.axios({
-                    method:'get',
+                    method: 'get',
                     url: '/artist/album?limit=6&id=' + this.albumData.album.artists[0].id
-                }).then(res=>{
-                    console.log(res.data.hotAlbums)
-                    for(let i=0;i<res.data.hotAlbums.length;i++){
-                        if(res.data.hotAlbums[i].id!=this.albumData.album.artists[0].id){
+                }).then(res => {
+                    for (let i = 0; i < res.data.hotAlbums.length; i++) {
+                        if (res.data.hotAlbums[i].id != this.albumId) {
                             this.albums.push(res.data.hotAlbums[i])
                         }
                     }
-                    if(this.albums.length>5){
+                    if (this.albums.length > 5) {
                         this.albums.pop()
                     }
-                    console.log(this.albums)
-                }).catch(err=>{
+                }).catch(err => {
                     console.log("获取其他专辑失败")
                 })
             },
-            
+
 
 
             // 获取评论信息
+             getComments(num) {
+                if (num == 1) {
+                    this.axios({
+                        method: 'get',
+                        url: '/comment/album?id=' + this.albumId
+                    }).then(res => {
+                        this.allComments = res.data
+                        // console.log(res.data)
+                        this.currentPage = 1
+                    }).catch(err => {
+                        console.log("获取评论失败")
+                    })
+                } else {
+                    this.axios({
+                        method: 'get',
+                        url: '/comment/album?id=' + this.albumId + '&offset=' + (num - 1) * 20 
+                        + '&before=' + this.allComments.comments[19].time
+                    }).then(res => {
+                        this.allComments = res.data
+                        // console.log(res.data)
+                        this.currentPage = num
+                    }).catch(err => {
+                        console.log("获取评论失败")
+                    })
+                }
+            },
+
+            // 前一页
+            toPrePage() {
+                console.log("点击了前一页")
+                this.currentPage -= 1
+                this.getComments(this.currentPage)
+            },
+            toNextPage() {
+
+                console.log("点击了后一页")
+                this.currentPage += 1
+                this.getComments(this.currentPage)
+            },
+            toFirstPage() {
+                console.log("点击了首页")
+                this.getComments(1)
+
+            },
+            toTailPage() {
+                console.log("点击了尾页")
+                this.getComments(this.totalPage)
+            },
+            //跳转页面
+            jumpPage(e) {
+                if (e.keyCode == 13) {
+                    let num = parseInt(e.target.value)
+                    e.target.value = ''
+                    if (num == this.currentPage) {
+                        return
+                    } else if (num >= this.totalPage) {
+                        this.getComments(this.totalPage)
+                    } else if (num <= 1) {
+                        this.getComments(1)
+                    } else {
+                        this.getComments(num)
+                    }
+                }
+            },
+            // 日期格式化
+            contentTime(num) {
+                let time = new Date(num)
+                let str = time.getFullYear() + '年' + (time.getMonth() + 1) + '月' + time.getDate() + "日"
+                return str
+            },
+
 
 
             // 专辑出版日期格式化
@@ -210,6 +401,8 @@
             this.getAlbumId()
             // 获取专辑信息
             this.getAlbumData()
+            // 获取评论
+            this.getComments(1)
 
 
         },
@@ -338,7 +531,7 @@
     }
 
     #al-song-body {
-        height: 300px;
+        /* height: 300px; */
         border-top: 2px solid #C20C0C;
         margin-top: 6px;
     }
@@ -381,5 +574,36 @@
 
     #al-s-b-b {
         border-bottom: 1px solid #D8D8D8;
+    }
+
+    /* 右侧其他热门专辑 */
+    #al-r-t {
+        border-bottom: 1px solid #CCCCCC;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .al-r-item{
+        margin-bottom: 15px;
+    }
+    .al-r-item img,
+    .al-r-item div{
+        float: left;
+    }
+    .al-r-item div p{
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
+    .al-r-item div p:nth-child(1){
+        font-size: 14px;
+        cursor: pointer;
+        width: 140px;
+    }
+    .al-r-item div p:nth-child(1):hover{
+        text-decoration: underline;
+
+    }
+    .al-r-item div p:nth-child(2){
+        font-size: 12px;
+        color: #666666;
     }
 </style>

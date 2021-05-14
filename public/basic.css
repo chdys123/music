@@ -364,8 +364,8 @@ textarea{
     margin-bottom: 10px;
 }
 
-/* 专辑图标 */
-.albumLogo{
+/* 专辑图标 ,榜单更新时间图标*/
+.albumLogo,.updateLogo{
     background: url('https://s2.music.126.net/style/web2/img/icon.png?4f0dc585177245959cf853bf25d86a17') no-repeat 0px 0px;
 }
 .albumLogo{
@@ -374,6 +374,13 @@ textarea{
     height: 26px;
     vertical-align: bottom;
     background-position: 0px -185px;
+}
+.updateLogo{
+    display: inline-block;
+    width: 13px;
+    height: 16px;
+    vertical-align: middle;
+    background-position: -70px -140px;
 }
 
 
@@ -443,4 +450,6 @@ textarea{
     width: 22.5px;
     height: 16px;
 }
+
+/*  */
 

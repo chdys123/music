@@ -18,6 +18,7 @@
                         <p>
                             发行公司：{{albumData.album.company}}
                         </p>
+
                         <div id="al-l-t-r-btn">
                             <span>播放</span>
                             <span></span>
@@ -26,6 +27,8 @@
                             <span>下载</span>
                             <span>({{albumData.album.info.commentCount}})</span>
                         </div>
+
+
                     </div>
                     <br style="clear: both;">
                 </div>
@@ -40,6 +43,8 @@
                     <span>
                         {{albumData.album.size}}首歌
                     </span>
+
+
                     <div id="al-song-body">
                         <!-- 表头 -->
                         <div id="al-s-b-h">
@@ -49,7 +54,6 @@
                             <span>歌手</span>
                             <br style="clear: both;">
                         </div>
-
                         <!-- 歌曲列表 -->
                         <div id="al-s-b-b">
                             <div class="a-h-w-b-item" v-for="(item,index) in albumData.songs">
@@ -72,83 +76,85 @@
                                 <br style="clear:both">
                             </div>
                         </div>
-
                     </div>
+                    <!-- 歌曲列表end -->
+
                 </div>
+
                 <!-- 评论模块 -->
                 <!-- 评论 -->
-            <div class="sdc-cty-t">评论
-                <span>共{{allComments.total}}条评论</span>
-            </div>
-            <div class="sdc-cty-m">
-                <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
-                <textarea placeholder="评论"></textarea>
-                <button>评论</button>
-            </div>
-            <!-- 精彩评论 -->
-            <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
-                精彩评论
-            </div>
-            <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
-                <img :src="item.user.avatarUrl" alt="">
-                <div class="sdc-cty-g-b-i-b">
-                    <a>{{item.user.nickname}}</a> ：{{item.content}}
-                    <p v-if="item.beReplied.length!=0">
-                        <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
-                        <br style="clear:both">
-                    </p>
-                    <div>
-                        <span>{{contentTime(item.time)}}</span>
-                        <span>回复</span>
-                        <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
-                            </span> ({{item.likedCount}})</span>
-                        <br style="clear:both">
+                <div class="sdc-cty-t">评论
+                    <span>共{{allComments.total}}条评论</span>
+                </div>
+                <div class="sdc-cty-m">
+                    <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
+                    <textarea placeholder="评论"></textarea>
+                    <button>评论</button>
+                </div>
+                <!-- 精彩评论 -->
+                <div class="sdc-cty-g-body-titile" v-if="allComments.hotComments!='' ">
+                    精彩评论
+                </div>
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+                    <img :src="item.user.avatarUrl" alt="">
+                    <div class="sdc-cty-g-b-i-b">
+                        <a>{{item.user.nickname}}</a> ：{{item.content}}
+                        <p v-if="item.beReplied.length!=0">
+                            <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                            <br style="clear:both">
+                        </p>
+                        <div>
+                            <span>{{contentTime(item.time)}}</span>
+                            <span>回复</span>
+                            <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                                </span> ({{item.likedCount}})</span>
+                            <br style="clear:both">
 
+                        </div>
+                    </div>
+
+                    <br style="clear:both">
+                </div>
+                <!-- 最新评论 -->
+                <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
+                    最新评论({{allComments.total}})
+                </div>
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+                    <img :src="item.user.avatarUrl" alt="">
+                    <div class="sdc-cty-g-b-i-b">
+                        <a>{{item.user.nickname}}</a> ：{{item.content}}
+                        <p v-if="item.beReplied.length!=0">
+                            <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                            <br style="clear:both">
+                        </p>
+                        <div>
+                            <span>{{contentTime(item.time)}}</span>
+                            <span>回复</span>
+                            <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                                </span> ({{item.likedCount}})</span>
+                            <br style="clear:both">
+
+                        </div>
+                    </div>
+                    <br style="clear:both">
+                </div>
+                <!-- 分页 -->
+                <div class="f-page">
+                    <div class="f-page-c">
+
+                        <a @click="toFirstPage()" :class="{'disable':this.currentPage==1}">首页</a>
+                        <a @click="toPrePage()" :class="{'disable':this.currentPage==1}">&lt;上一页</a>
+                        <a @click="toNextPage()"
+                            :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
+                        <a @click="toTailPage()"
+                            :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
+                        <span>当前页：{{this.currentPage}}</span>
+                        <span>总页数：{{totalPage}}</span>
+                        <span>跳转到：<input type="text" @keydown="jumpPage($event)"
+                                oninput="value=value.replace(/[^\d]/g,'')" />页</span>
                     </div>
                 </div>
-
-                <br style="clear:both">
-            </div>
-            <!-- 最新评论 -->
-            <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
-                最新评论({{allComments.total}})
-            </div>
-            <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
-                <img :src="item.user.avatarUrl" alt="">
-                <div class="sdc-cty-g-b-i-b">
-                    <a>{{item.user.nickname}}</a> ：{{item.content}}
-                    <p v-if="item.beReplied.length!=0">
-                        <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
-                        <br style="clear:both">
-                    </p>
-                    <div>
-                        <span>{{contentTime(item.time)}}</span>
-                        <span>回复</span>
-                        <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
-                            </span> ({{item.likedCount}})</span>
-                        <br style="clear:both">
-
-                    </div>
-                </div>
-                <br style="clear:both">
-            </div>
-            <!-- 分页 -->
-            <div class="f-page">
-                <div class="f-page-c">
-
-                    <a @click="toFirstPage()" :class="{'disable':this.currentPage==1}">首页</a>
-                    <a @click="toPrePage()" :class="{'disable':this.currentPage==1}">&lt;上一页</a>
-                    <a @click="toNextPage()"
-                        :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
-                    <a @click="toTailPage()"
-                        :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
-                    <span>当前页：{{this.currentPage}}</span>
-                    <span>总页数：{{totalPage}}</span>
-                    <span>跳转到：<input type="text" @keydown="jumpPage($event)"
-                            oninput="value=value.replace(/[^\d]/g,'')" />页</span>
-                </div>
-            </div>
-            <!-- 分页结束 -->
+                <!-- 分页结束 -->
 
 
 
@@ -161,7 +167,6 @@
                 <div class="al-r-item" v-for="item in albums">
                     <img :src="item.picUrl+'?param=50y50'" alt="" @click="toAldetail(item.id)">
                     <div>
-                        
                         <p class="ellipsis al-name" :title="item.name" @click="toAldetail(item.id)">{{item.name}}</p>
                         <p class="al-pt">{{getPulishTime(item.publishTime)}}</p>
 
@@ -283,7 +288,7 @@
 
 
             // 获取评论信息
-             getComments(num) {
+            getComments(num) {
                 if (num == 1) {
                     this.axios({
                         method: 'get',
@@ -298,8 +303,8 @@
                 } else {
                     this.axios({
                         method: 'get',
-                        url: '/comment/album?id=' + this.albumId + '&offset=' + (num - 1) * 20 
-                        + '&before=' + this.allComments.comments[19].time
+                        url: '/comment/album?id=' + this.albumId + '&offset=' + (num - 1) * 20
+                            + '&before=' + this.allComments.comments[19].time
                     }).then(res => {
                         this.allComments = res.data
                         // console.log(res.data)
@@ -440,7 +445,6 @@
     }
 
     /* 一排按钮 收藏 分享... */
-    /* 一排按钮 收藏分享... */
     #al-l-t-r-btn {
         height: 31px;
         margin-top: 12px;
@@ -501,6 +505,8 @@
         background-position: -2px -1507px;
     }
 
+
+
     /* 专辑介绍 */
     #al-desc {
         margin-top: 30px;
@@ -536,14 +542,13 @@
         margin-top: 6px;
     }
 
+    /* 歌曲列表 表头样式 */
     #al-s-b-h span {
         padding: 8px 10px;
         height: 18px;
         float: left;
         background-color: #F5F5F5;
         border-bottom: 2px solid #D8D8D8;
-
-
     }
 
     #al-s-b-h span:nth-child(1) {
@@ -572,6 +577,9 @@
 
     }
 
+    /* 表头end */
+
+
     #al-s-b-b {
         border-bottom: 1px solid #D8D8D8;
     }
@@ -582,27 +590,33 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
-    .al-r-item{
+
+    .al-r-item {
         margin-bottom: 15px;
     }
+
     .al-r-item img,
-    .al-r-item div{
+    .al-r-item div {
         float: left;
     }
-    .al-r-item div p{
+
+    .al-r-item div p {
         padding-left: 10px;
         margin-bottom: 10px;
     }
-    .al-r-item div p:nth-child(1){
+
+    .al-r-item div p:nth-child(1) {
         font-size: 14px;
         cursor: pointer;
         width: 140px;
     }
-    .al-r-item div p:nth-child(1):hover{
+
+    .al-r-item div p:nth-child(1):hover {
         text-decoration: underline;
 
     }
-    .al-r-item div p:nth-child(2){
+
+    .al-r-item div p:nth-child(2) {
         font-size: 12px;
         color: #666666;
     }

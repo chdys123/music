@@ -50,7 +50,6 @@
                     method:"get",
                     url:'/top/playlist?limit=35&order=hot&cat='+type
                 }).then(res=>{
-                    console.log(res.data)
                     this.playlistData=res.data
 
                 }).catch(err=>{

@@ -12,6 +12,7 @@ const Ardesc=()=>import('../views/Ardesc')
 const Mvdetail=()=>import('../views/Mvdetail')
 const Aldetail=()=>import('../views/Aldetail')
 const TopList=()=>import('../views/TopList')
+const Artists=()=>import('../views/Artists')
 const routes = [
   { path: '', redirect: '/discover' },
   { path: '/', redirect: '/discover' },
@@ -22,6 +23,8 @@ const routes = [
       { path: 'recommend', component: Recommend },
       // 排行榜
       {path:'toplist',component:TopList},
+      // 歌手路由
+      {path:'artists',component:Artists},
       //歌单
       {path: 'playlist', component: Playlist},
       //歌单详情

@@ -41,6 +41,7 @@
             toSinger(num){
                 this.changeBgc(num)
                 console.log("歌手页面")
+                this.$router.push("/discover/artists")
             },
             toDisc(num){
                 this.changeBgc(num)

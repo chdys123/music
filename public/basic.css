@@ -152,7 +152,7 @@ textarea{
 /* 布局盒子 */
 .con{
     width: 980px;
-    height: 1200px;
+    /* height: 1200px; */
     margin: 0 auto;
     border: 1px solid #D3D3D3;
     border-top: none;
@@ -450,6 +450,22 @@ textarea{
     width: 22.5px;
     height: 16px;
 }
+
+/* 歌手页面中歌手类型前面的小红点,被点击与为被点击两种状态 */
+.ars-redLogo,.ars-rededLogo{
+    background: url('https://s2.music.126.net/style/web2/img/singer.png?053b203265a94de34fe19894fa5e55ba') no-repeat 1px 1px;
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    vertical-align: middle;
+}
+.ars-redLogo{
+    background-position: -12px -43px;
+}
+.ars-rededLogo{
+    background-position: -12px -13px;
+}
+
 
 /*  */
 

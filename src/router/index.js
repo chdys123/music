@@ -13,6 +13,7 @@ const Mvdetail=()=>import('../views/Mvdetail')
 const Aldetail=()=>import('../views/Aldetail')
 const TopList=()=>import('../views/TopList')
 const Artists=()=>import('../views/Artists')
+const Albums=()=>import('../views/Albums')
 const routes = [
   { path: '', redirect: '/discover' },
   { path: '/', redirect: '/discover' },
@@ -23,10 +24,12 @@ const routes = [
       { path: 'recommend', component: Recommend },
       // 排行榜
       {path:'toplist',component:TopList},
-      // 歌手路由
+      // 歌手
       {path:'artists',component:Artists},
       //歌单
       {path: 'playlist', component: Playlist},
+      // 新碟上架
+      {path:'albums',component:Albums},
       //歌单详情
       { path: 'playlistdetail', component: PlaylistDetail },
       // 歌曲详情路由

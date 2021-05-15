@@ -22,7 +22,6 @@
         },
         methods: {
             toRecommended(num){
-                this.changeBgc(num)
                 this.$router.push('/discover/recommend')
                 console.log("推荐页面")
             },
@@ -39,13 +38,12 @@
                 console.log("主播电台页面")
             },
             toSinger(num){
-                this.changeBgc(num)
                 console.log("歌手页面")
                 this.$router.push("/discover/artists")
             },
             toDisc(num){
-                this.changeBgc(num)
                 console.log("新碟上架页面")
+                this.$router.push("/discover/albums")
             },
             //点击后背景颜色改变
             changeBgc(num){

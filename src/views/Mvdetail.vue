@@ -299,6 +299,7 @@
                 let str = time.getFullYear() + '年' + (time.getMonth() + 1) + '月' + time.getDate() + "日"
                 return str
             },
+            
             // 前一页
             toPrePage() {
                 console.log("点击了前一页")

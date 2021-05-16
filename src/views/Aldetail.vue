@@ -9,7 +9,7 @@
                         <p>
                             歌手：
                             <span v-for="item in albumData.album.artists">
-                                {{item.name}}
+                                {{item.name}}&nbsp;
                             </span>
                         </p>
                         <p>
@@ -428,6 +428,8 @@
         font-size: 12px;
         margin-bottom: 10px;
         color: #6B7283;
+        width: 410px;
+        /* background-color: pink; */
     }
 
     #al-l-t-r p:nth-child(1) {

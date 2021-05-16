@@ -4,8 +4,9 @@
             <div id="mv-t">
                 <h2><span class="mvDetailLogo"></span>{{mvDetail.name}}</h2>
                 <span v-for="(item,index) in mvDetail.artists" :title="item.name">{{item.name}}</span>
-                <br style="clear: both;">
             </div>
+
+
             <div>
                 <video :src="url" width="640" height="360" controls>
                 </video>
@@ -97,7 +98,7 @@
             <div class="mv-d-r-t">MV简介</div>
             <p>发布时间：{{mvDetail.publishTime}}</p>
             <p>播放次数：{{mvDetail.playCount}}次</p>
-            <p>{{mvDetail.desc}}</p>
+            <p >{{mvDetail.desc}}</p>
 
             <div class="mv-d-r-b">相关推荐</div>
 
@@ -299,7 +300,7 @@
                 let str = time.getFullYear() + '年' + (time.getMonth() + 1) + '月' + time.getDate() + "日"
                 return str
             },
-            
+
             // 前一页
             toPrePage() {
                 console.log("点击了前一页")
@@ -358,34 +359,33 @@
 </script>
 
 <style>
-    #mv-t h2,
-    #mv-t span {
-        float: left;
-    }
-
     #mv-t h2 {
         font-weight: 500;
+        margin-bottom: 5px;
     }
 
-    #mv-t span {
+    #mv-t>span {
+        height: 20px;
         font-size: 12px;
         color: #0C73C2;
         margin-left: 10px;
         cursor: pointer;
-        line-height: 42px;
+        line-height: 20px;
     }
 
-    #mv-t span:hover {
+    #mv-t>span:hover {
         text-decoration: underline;
     }
 
+    video{
+        margin-top: 10px;
+    }
     .mv-d-r-t {
         font-size: 14px;
         font-weight: 700;
         height: 25px;
         border-bottom: 1px solid #CCCCCC;
     }
-
     .mv-d-r-t+p,
     .mv-d-r-t+p+p {
         font-size: 12px;
@@ -427,6 +427,8 @@
     .mv-d-r-simimv div {
         margin-left: 10px;
         font-size: 12px;
+        /* background-color: pink; */
+        width: 93px;
     }
 
     .mv-d-r-simimv div p:nth-child(1) {

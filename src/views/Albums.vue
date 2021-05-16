@@ -3,12 +3,12 @@
         <h2>热门新碟</h2>
         <div v-for="(item,index) in hotAl.slice(0,10)" :class="{'als-item':true,'als-border':index%5==0}">
             <div>
-                <img :src="item.picUrl+'?param=130y130'" alt="">
-            </div>
-            <p :title="item.name" class="ellipsis">{{item.name}}</p>
+                <img :src="item.picUrl+'?param=130y130'" alt="" @click="toAldetail(item.id)">
+            </div> 
+            <p :title="item.name" class="ellipsis" @click="toAldetail(item.id)">{{item.name}}</p>
             <p class="ellipsis">
-                <span v-for="item2 in item.artists" :title="item2.name">
-                    {{item2.name}}
+                <span v-for="item2 in item.artists" :title="item2.name" @click="toArdetail(item2.id)">
+                    {{item2.name}}&nbsp;
                 </span>
             </p>
         </div>
@@ -17,14 +17,15 @@
         <h2>全部新碟</h2>
         <div v-for="(item,index) in allAl" :class="{'als-item':true,'als-border':index%5==0}">
             <div>
-                <img :src="item.picUrl+'?param=130y130'" alt="">
+                <img :src="item.picUrl+'?param=130y130'" alt="" @click="toAldetail(item.id)">
             </div>
-            <p :title="item.name" class="ellipsis">{{item.name}}</p>
+            <p :title="item.name" class="ellipsis" @click="toAldetail(item.id)">{{item.name}}</p>
             <p class="ellipsis">
-                <span v-for="item2 in item.artists">
+                <span v-for="item2 in item.artists" :title="item2.name" @click="toArdetail(item2.id)">
                     {{item2.name}}&nbsp;
                 </span>
             </p>
+
         </div>
 
         <!-- 分页 -->
@@ -61,7 +62,7 @@
         computed: {
             // 总页数
             totalPage() {
-                return Math.ceil(this.total / 25)
+                return Math.ceil(this.total / 35)
             }
 
         },
@@ -82,13 +83,22 @@
                 this.currentPage = num
                 this.axios({
                     method: 'get',
-                    url: '/album/new?area=' + this.area + '&limit=25&offset=' + (num - 1) * 25
+                    url: '/album/new?area=' + this.area + '&limit=25&offset=' + (num - 1) * 35
                 }).then(res => {
                     this.allAl = res.data.albums
                     this.total = res.data.total
                 }).catch(err => {
                     console.log("获取全部新碟失败")
                 })
+            },
+            // 进入歌手详情
+            toArdetail(id){
+                console.log(id)
+                this.$router.push({'path':'/discover/artist',query:{id:id}})
+            },
+            // 进入 专辑详情
+            toAldetail(id){
+                this.$router.push({'path':'/discover/album',query:{id:id}})
             },
             // 前一页
             toPrePage() {
@@ -163,10 +173,8 @@
     .als-item {
         float: left;
         margin-left: 62px;
-        /* margin-left: 40px; */
         margin-bottom: 15px;
         margin-top: 10px;
-        /* background-color: pink; */
     }
 
     .als-border {
@@ -192,25 +200,25 @@
 
     .als-item p {
         width: 130px;
+        height: 20px;
         cursor: pointer;
+        line-height: 20px;
+        margin: 5px 0px;
     }
 
-    .als-item>div+p {
+    .als-item div+p {
         font-size: 14px;
-        margin-bottom: 5px;
-        margin-top: 5px;
-
     }
 
-    .als-item>div+p:hover {
+    .als-item div+p:hover {
         text-decoration: underline;
     }
 
-    .als-item>div+p+p>span:hover {
+    .als-item span:hover {
         text-decoration: underline;
     }
 
-    .als-item>div+p+p {
+    .als-item span {
         font-size: 12px;
         color: #666666;
     }

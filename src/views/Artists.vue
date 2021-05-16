@@ -307,14 +307,19 @@
 
     .ars-item2 {
         width: 130px;
+        height: 20px;
         margin-left: 17px;
+        margin-bottom: 10px;
         float: left;
         cursor: pointer;
         font-size: 12px;
     }
 
     .ars-item2 p {
-        padding: 5px 0px;
+        /* padding: 5px 0px; */
+        height: 20px;
+        width: 130px;
+        line-height: 20px;
     }
 
     .ars-item2 p:hover {

@@ -13,11 +13,44 @@
         <li @click="toClient(6)">下载客户端</li>
       </ul>
       <!-- 搜索框 -->
-      <input type="text" class="serch input" placeholder="音乐/视频/电台/用户">
+      <input type="text" class="serch input" placeholder="音乐/视频/电台/用户" @input="serchSuggest($event)">
       <!-- 创作者中心 -->
       <button id="cratebtn">创作者中心</button>
       <!-- 头像或者登录 -->
       <a id="loginspan">登录</a>
+      <div id="ser-sugg">
+        <p><span>搜索'{{keyword}}'相关用户</span>&nbsp;&gt;</p>
+        <div>
+          <span>单曲</span>
+          <div>
+            <p v-for="item in serchData.songs" class="ellipsis">
+              <span>{{item.name}}</span><span v-for="item1 in item.artists">{{item1.name}}</span>
+              <!-- <span>123456712345672345712345678912345678</span> -->
+              <!-- 2345672345wer6567888888888888888 -->
+            </p>
+
+          </div>
+          <br style="clear: both;">
+
+        </div>
+        <div>
+          <span>歌手</span>
+          <br style="clear: both;">
+
+        </div>
+        <div>
+          <span>专辑</span>
+          <br style="clear: both;">
+
+        </div>
+        <div>
+          <span>歌单</span>
+          <br style="clear: both;">
+
+
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -100,13 +133,35 @@
         // 音频实时播放时间
         time: 0,
         // 是否展示控制音量slider
-        vControl: false
+        vControl: false,
+        // 搜索建议
+        serchData: {
+          albums: [],
+          artists: [],
+          songs: [],
+          playlists: []
+        },
+        // 搜索关键词
+        keyword: ''
       }
 
 
     },
 
     methods: {
+      // 搜索框输入的时候
+      serchSuggest(e) {
+        console.log(e.target.value)
+        this.keyword = e.target.value
+        this.axios({
+          method: 'get',
+          url: '/search/suggest?keywords=' + e.target.value
+        }).then(res => {
+          this.serchData = res.data.result
+        }).catch(err => {
+          console.log("获取搜索建议失败")
+        })
+      },
       toDiscover(num) {
         this.changeHeaderliBgc(num)
         console.log("进入发现音乐")
@@ -272,9 +327,9 @@
         audio.volume = volumeslider.value / 100
       },
       // 进入歌曲详情
-      toSongDetail(){
+      toSongDetail() {
         console.log("点击了歌曲详情")
-        this.$router.push({path:'/discover/song',query:{id:this.songList[this.index].songid}})
+        this.$router.push({ path: '/discover/song', query: { id: this.songList[this.index].songid } })
       }
 
     },
@@ -316,7 +371,7 @@
           }
         })
         // window监听自定义事件 监听queue改变 但是index不改变
-        window.addEventListener("storageEvent2",function(){
+        window.addEventListener("storageEvent2", function () {
           console.log("监听到queue改变")
           let s = localStorage.getItem("track-queue")
           that.songList = JSON.parse(s)
@@ -369,6 +424,7 @@
   }
 
   #header {
+    position: relative;
     width: 1100px;
     height: 70px;
     background-color: #242424;
@@ -434,9 +490,73 @@
 
   }
 
+  /* 搜索建议 */
+  #ser-sugg {
+    position: absolute;
+    width: 244px;
+    height: 304px;
+    top: 63px;
+    right: 116px;
+    background-color: #FFFFFF;
+    z-index: 100;
+    box-shadow: -1px -1px 8px 1px #242424;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+  }
+
+  #ser-sugg>p:nth-child(1) {
+    height: 23px;
+    /* line-height: 35px; */
+    border-bottom: 1px solid #ccc;
+    padding-left: 8px;
+    padding-top: 8px;
+    color: #6F6F6F;
+    cursor: pointer;
+  }
+
+  #ser-sugg>p:nth-child(1) span:hover {
+    background-color: #E3E5E7;
+  }
+
+  
+
+  #ser-sugg div>span{
+    float: left;
+  }
+  #ser-sugg div div{
+    float: right;
+  }
+  #ser-sugg div span{
+    margin-top: 4px;
+    margin-left: 8px;
+  }
+  #ser-sugg div div{
+    width: 175px;
+    margin-left: 10px;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
+  #ser-sugg div div p{
+    width: 167px;
+    padding: 4px 0px 4px 8px;
+    cursor: pointer;
+    background-color: pink;
+  }
+  #ser-sugg div div p span{
+    background-color: yellow;
+  }
+  
+
+
+
+  /* 搜索建议end */
+
+
   .headerlibgc {
     background-color: #000000;
   }
+
 
   #player {
     width: 100%;

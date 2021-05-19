@@ -20,21 +20,24 @@
       <a id="loginspan">登录</a>
       <div id="ser-sugg">
         <p><span>搜索'{{keyword}}'相关用户</span>&nbsp;&gt;</p>
+
         <div>
           <span>单曲</span>
           <div>
             <p v-for="item in serchData.songs" class="ellipsis">
-              <span>{{item.name}}</span><span v-for="item1 in item.artists">{{item1.name}}</span>
-              <!-- <span>123456712345672345712345678912345678</span> -->
-              <!-- 2345672345wer6567888888888888888 -->
+              <span>{{item.name}}</span>-<span v-for="item1 in item.artists">{{item1.name}}&nbsp;</span>
             </p>
-
           </div>
           <br style="clear: both;">
-
         </div>
+
         <div>
           <span>歌手</span>
+          <div>
+            <p v-for="item in serchData.artists" class="ellipsis">
+              <span>{{item.name}}</span>
+            </p>
+          </div>
           <br style="clear: both;">
 
         </div>
@@ -504,48 +507,36 @@
     border: 1px solid #ccc;
     font-size: 12px;
   }
-
-  #ser-sugg>p:nth-child(1) {
+  #ser-sugg>p {
     height: 23px;
-    /* line-height: 35px; */
     border-bottom: 1px solid #ccc;
-    padding-left: 8px;
-    padding-top: 8px;
+    padding:8px 0px 0px 8px;
     color: #6F6F6F;
     cursor: pointer;
   }
 
-  #ser-sugg>p:nth-child(1) span:hover {
+  #ser-sugg>p span:hover {
     background-color: #E3E5E7;
   }
 
-  
-
   #ser-sugg div>span{
     float: left;
-  }
-  #ser-sugg div div{
-    float: right;
-  }
-  #ser-sugg div span{
     margin-top: 4px;
     margin-left: 8px;
   }
   #ser-sugg div div{
+    float: right;
     width: 175px;
     margin-left: 10px;
     border-left: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
-  }
+  } 
   #ser-sugg div div p{
     width: 167px;
     padding: 4px 0px 4px 8px;
     cursor: pointer;
-    background-color: pink;
   }
-  #ser-sugg div div p span{
-    background-color: yellow;
-  }
+  
   
 
 

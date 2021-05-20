@@ -14,9 +14,12 @@ const Aldetail=()=>import('../views/Aldetail')
 const TopList=()=>import('../views/TopList')
 const Artists=()=>import('../views/Artists')
 const Albums=()=>import('../views/Albums')
+const SerchDetail=()=>import('../views/SerchDetail')
 const routes = [
   { path: '', redirect: '/discover' },
   { path: '/', redirect: '/discover' },
+  // 搜索页面路由
+  {path:'/serch',component:SerchDetail},
   {//发现音乐路由
     path: '/discover', component: Discover, children: [
       // 推荐

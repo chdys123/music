@@ -26,13 +26,27 @@ textarea{
     resize:none;
 }
 
-/* 加入播放列表图标 */
-.addSongLogo{
+/* 加入播放列表图标 搜索建议单曲 歌手 歌单 专辑 */
+.addSongLogo,.serSong,.serAr,.serPlaylist,.serAl{
     background: url('https://s2.music.126.net/style/web2/img/icon.png?4f0dc585177245959cf853bf25d86a17') no-repeat 5px -698px;
 }
 .addSongLogo:hover{
     background-position: -17px -698px;
 }
+.serAr{
+    background-position: -49px -299px;
+}
+.serPlaylist{
+    background-position: -49px -317px;
+}
+.serAl{
+    background-position: -34px -318px;
+}
+.serSong{
+    background-position: -34px -297px;
+}
+
+
 
 /* 收藏图标 已经收藏图标 分享图标 下载图标 播放图标公共背景图*/
 .collectLogo,.collectedLogo,.shareLogo,.downloadLogo,.playLogo,.mvLogo{

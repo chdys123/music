@@ -165,9 +165,9 @@
                 <!-- 右侧其他专辑 -->
                 <h5 id="al-r-t">ta的其他热门专辑</h5>
                 <div class="al-r-item" v-for="item in albums">
-                    <img :src="item.picUrl+'?param=50y50'" alt="" @click="toAldetail(item.id)">
+                    <img :src="item.picUrl+'?param=50y50'" alt="" @click="toAlDetail(item.id)">
                     <div>
-                        <p class="ellipsis al-name" :title="item.name" @click="toAldetail(item.id)">{{item.name}}</p>
+                        <p class="ellipsis al-name" :title="item.name" @click="toAlDetail(item.id)">{{item.name}}</p>
                         <p class="al-pt">{{getPulishTime(item.publishTime)}}</p>
 
                     </div>
@@ -389,7 +389,10 @@
                 }
                 return str1 + ':' + str2
             },
-
+            toAlDetail(id){
+                // console.log("点击了")
+                this.$router.push({ path: '/discover/album', query: { id: id} })
+            }
 
 
         },

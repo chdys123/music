@@ -13,41 +13,52 @@
         <li @click="toClient(6)">下载客户端</li>
       </ul>
       <!-- 搜索框 -->
-      <input type="text" class="serch input" placeholder="音乐/视频/电台/用户" @input="serchSuggest($event)">
+      <input type="text" class="serch input" placeholder="音乐/视频/电台/用户" @input="serchSuggest($event)"
+        @focus="serchfocus($event)" id="serch1" @keydown="serch($event)">
       <!-- 创作者中心 -->
       <button id="cratebtn">创作者中心</button>
       <!-- 头像或者登录 -->
       <a id="loginspan">登录</a>
-      <div id="ser-sugg">
-        <p><span>搜索'{{keyword}}'相关用户</span>&nbsp;&gt;</p>
-
-        <div>
-          <span>单曲</span>
+      <div class="ser-sugg" v-if="isShow">
+        <p v-if="isShow"><span v-if="isShow">搜索'{{keyword}}'相关用户</span>&nbsp;&gt;</p>
+        <div v-if="serchData.songs!=null">
+          <p><span class="serSong"></span><span>单曲</span></p>
           <div>
-            <p v-for="item in serchData.songs" class="ellipsis">
+            <p v-for="item in serchData.songs" class="ellipsis" @click="toSongDetail(item.id)">
               <span>{{item.name}}</span>-<span v-for="item1 in item.artists">{{item1.name}}&nbsp;</span>
             </p>
           </div>
           <br style="clear: both;">
         </div>
 
-        <div>
-          <span>歌手</span>
-          <div>
-            <p v-for="item in serchData.artists" class="ellipsis">
+        <div v-if="serchData.artists!=null">
+          <p><span class="serAr"></span><span>歌手</span></p>
+          <div class="ser-sugg-bgc1">
+            <p v-for="item in serchData.artists" class="ellipsis" @click="toArDetail(item.id)">
               <span>{{item.name}}</span>
             </p>
           </div>
           <br style="clear: both;">
 
         </div>
-        <div>
-          <span>专辑</span>
+        <div v-if="serchData.albums!=null">
+          <p><span class="serAl"></span><span>专辑</span></p>
+          <div>
+            <p v-for="item in serchData.albums" class="ellipsis" @click="toAlDetail(item.id)">
+              <span>{{item.name}}-{{item.artist.name}}</span>
+            </p>
+          </div>
           <br style="clear: both;">
 
         </div>
-        <div>
-          <span>歌单</span>
+        <div v-if="serchData.playlists!=null">
+          <p><span class="serPlaylist"></span><span>歌单</span></p>
+
+          <div class="ser-sugg-bgc1">
+            <p v-for="item in serchData.playlists" class="ellipsis" @click="toplaylistDetail(item.id)">
+              <span>{{item.name}}</span>
+            </p>
+          </div>
           <br style="clear: both;">
 
 
@@ -82,7 +93,7 @@
       <div id="player-message">
         <!-- 音乐名字 歌手 -->
         <div>
-          <span @click="toSongDetail()">{{songList[index].songname}}</span>
+          <span @click="toSongDetail(songList[index].songid)">{{songList[index].songname}}</span>
           <span v-for="item in songList[index].arname">{{item}}</span>
         </div>
         <!-- 进度条和时间盒子 -->
@@ -145,7 +156,9 @@
           playlists: []
         },
         // 搜索关键词
-        keyword: ''
+        keyword: '',
+        // 是否显示搜索建议
+        isShow: false
       }
 
 
@@ -154,16 +167,31 @@
     methods: {
       // 搜索框输入的时候
       serchSuggest(e) {
-        console.log(e.target.value)
-        this.keyword = e.target.value
+        this.keyword = e.target.value.trim()
+        // console.log(this.keyword)
+        if (this.keyword == '') {
+          this.isShow = false
+          return
+        }
         this.axios({
           method: 'get',
           url: '/search/suggest?keywords=' + e.target.value
         }).then(res => {
           this.serchData = res.data.result
+          if (Object.keys(res.data.result).length == 0) {
+            this.isShow = false
+          } else {
+            this.isShow = true
+          }
         }).catch(err => {
-          console.log("获取搜索建议失败")
+          console.log("获取搜索建议失败", err)
         })
+      },
+      // 搜索框键盘按下
+      serch(e) {
+        if (this.keyword != ''&&e.keyCode==13) {
+          this.$router.push({ path: '/serch', query: { keyword: this.keyword } })
+        }
       },
       toDiscover(num) {
         this.changeHeaderliBgc(num)
@@ -330,11 +358,36 @@
         audio.volume = volumeslider.value / 100
       },
       // 进入歌曲详情
-      toSongDetail() {
+      toSongDetail(id) {
         console.log("点击了歌曲详情")
-        this.$router.push({ path: '/discover/song', query: { id: this.songList[this.index].songid } })
-      }
+        this.isShow = false
+        this.$router.push({ path: '/discover/song', query: { id: id } })
+      },
+      // 进入歌手详情
+      toArDetail(id) {
+        console.log("点击了歌手详情")
+        this.isShow = false
+        this.$router.push({ path: '/discover/artist', query: { id: id } })
+      },
+      // 进入专辑详情
+      toAlDetail(id) {
+        console.log("点击了专辑详情")
+        this.isShow = false
+        this.$router.push({ path: '/discover/album', query: { id: id } })
+      },
+      // 进入歌单详情
+      toplaylistDetail(id) {
+        console.log("点击率歌单详情")
+        this.isShow = false
+        this.$router.push({ path: '/discover/playlistdetail', query: { id: id } })
+      },
 
+      // 输入框获得焦点
+      serchfocus(e) {
+        if (e.target.value != '') {
+          this.isShow = true
+        }
+      },
     },
 
     created() {
@@ -406,6 +459,13 @@
         let switchBtn = that.$refs.switchBtn
         audio.addEventListener("pause", function () {
           switchBtn.setAttribute("class", "player-pause")
+        })
+
+        // 监听点击其他区域 搜索建议框消失
+        window.addEventListener("click", function (e) {
+          if (e.target.getAttribute('id') != 'serch1' && e.target.getAttribute('class') != 'ser-sugg') {
+            that.isShow = false
+          }
         })
       })
     },
@@ -494,10 +554,10 @@
   }
 
   /* 搜索建议 */
-  #ser-sugg {
+  .ser-sugg {
     position: absolute;
     width: 244px;
-    height: 304px;
+    /* height: 304px; */
     top: 63px;
     right: 116px;
     background-color: #FFFFFF;
@@ -507,37 +567,62 @@
     border: 1px solid #ccc;
     font-size: 12px;
   }
-  #ser-sugg>p {
+
+  .ser-sugg>p {
     height: 23px;
     border-bottom: 1px solid #ccc;
-    padding:8px 0px 0px 8px;
+    padding: 8px 0px 0px 8px;
     color: #6F6F6F;
     cursor: pointer;
   }
 
-  #ser-sugg>p span:hover {
+  .ser-sugg>p span:hover {
     background-color: #E3E5E7;
   }
 
-  #ser-sugg div>span{
+  .ser-sugg>div>p {
     float: left;
-    margin-top: 4px;
-    margin-left: 8px;
+
   }
-  #ser-sugg div div{
+
+  .ser-sugg>div>p>span:nth-child(2) {
+    margin-top: 4px;
+    margin-left: 4px;
+  }
+
+  .ser-sugg>div>p>span:nth-child(1) {
+    display: inline-block;
+    width: 16px;
+    height: 18px;
+    margin-left: 8px;
+    vertical-align: middle;
+    /* background-color: pink; */
+  }
+
+  .ser-sugg div div {
     float: right;
     width: 175px;
     margin-left: 10px;
     border-left: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
-  } 
-  #ser-sugg div div p{
+  }
+
+  .ser-sugg div div p {
     width: 167px;
     padding: 4px 0px 4px 8px;
     cursor: pointer;
   }
-  
-  
+
+  .ser-sugg div div p:hover {
+    background-color: #E3E5E7;
+  }
+
+  .ser-sugg .ser-sugg-bgc1 {
+    background-color: #F9F8F8;
+  }
+
+
+
 
 
 

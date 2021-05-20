@@ -170,7 +170,7 @@ textarea{
 /* 布局盒子 */
 .con{
     width: 980px;
-    /* height: 1200px; */
+    height: 1200px;
     margin: 0 auto;
     border: 1px solid #D3D3D3;
     border-top: none;
@@ -493,5 +493,9 @@ textarea{
 }
 
 
-/*  */
+/*那一条红线*/
+.bar{
+    height: 10px;
+    background-color: #C20C0C;
+}
 

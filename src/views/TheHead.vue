@@ -190,6 +190,7 @@
       // 搜索框键盘按下
       serch(e) {
         if (this.keyword != ''&&e.keyCode==13) {
+          this.isShow=false
           this.$router.push({ path: '/serch', query: { keyword: this.keyword } })
         }
       },

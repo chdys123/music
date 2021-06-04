@@ -170,7 +170,7 @@ textarea{
 /* 布局盒子 */
 .con{
     width: 980px;
-    height: 1200px;
+    /* height: 1200px; */
     margin: 0 auto;
     border: 1px solid #D3D3D3;
     border-top: none;
@@ -178,7 +178,7 @@ textarea{
 }
 
 .con-l{
-    width: 640px;
+        width: 640px;
         /* height: 1000px; */
         float: left;
         border-right: 1px solid #D3D3D3;
@@ -186,7 +186,7 @@ textarea{
 
 }
 .con-r{
-    width: 200px;
+        width: 200px;
         height: 100%;
         float: left;
         padding: 20px 40px 40px 30px;
@@ -497,5 +497,26 @@ textarea{
 .bar{
     height: 10px;
     background-color: #C20C0C;
+}
+
+/* 歌单收听人数图标 ,歌单播放图标 */
+.playlistPerNumLogo,.playlistPlayLogo{
+    background:url('https://s2.music.126.net/style/web2/img/iconall.png?3f1d5d84259dc9096d6c9970b24807c5') no-repeat 0px 0px;
+}
+/*  歌单收听人数图标*/
+.playlistPerNumLogo{
+    vertical-align: middle;
+    display: inline-block;
+    width: 16px;
+    height: 14px;
+    background-position: 0px -23px;
+}
+/* 歌单播放图标 */
+.playlistPlayLogo{
+    vertical-align: middle;
+    display: inline-block;
+    width: 18px;
+    height: 19px;
+    background-position: 0px 1px;
 }
 

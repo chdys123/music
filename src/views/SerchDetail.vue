@@ -31,7 +31,7 @@
         methods: {
             getkeyWord(){
                 this.keyword=this.$route.query.keyword
-                console.log(this.keyword)
+                // console.log(this.keyword)
             },
             // 搜索出的详细信息显示
             toSerch(str){

@@ -65,6 +65,7 @@
             }
         },
         created(){
+            window.scrollTo(0, 0)
             //取出哪些路由传过来的歌单类型数据 赋值给this.playlistType
             this.changeBgc(3)
             this.getPlayList(this.playlistType)

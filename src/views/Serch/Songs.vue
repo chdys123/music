@@ -1,7 +1,14 @@
 <template>
     <div>
         搜索的歌曲
+        搜索的关键词:{{keyword}}
+
+        <!-- <div v-html="keyword">
+
+        </div> -->
+        
     </div>
+
 </template>
 
 <script>
@@ -17,6 +24,17 @@
                 this.keyword=this.$route.query.keyword
                 console.log(this.keyword)
             },
+            // 获取歌曲信息
+            getSongData(){
+                this.axios({
+                    method:'get',
+                    url:'/search?keywords='+this.keyword+'&limit=30&type=1'
+                }).then(res=>{
+
+                }).catch(err=>{
+
+                })
+            }
             
         },
         created() {
@@ -25,6 +43,8 @@
             for(let i=0;i<dom.length;i++){
                 dom[i].setAttribute('class','')
             }
+            this.getkeyWord()
+
            
             
         },

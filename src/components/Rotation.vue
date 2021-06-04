@@ -1,4 +1,5 @@
 <template>
+    <!-- 轮播图 -->
     <div id="rotationCon">
         <div id="rotationImg">
             <div id="before" @click="tobefore()">
@@ -86,9 +87,6 @@
         background-size: 6000px;
         background-position: center;
     }
-
-
-
     #rotationImg {
         position: absolute;
         top: 0;

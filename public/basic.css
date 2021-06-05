@@ -500,7 +500,7 @@ textarea{
 }
 
 /* 歌单收听人数图标 ,歌单播放图标 */
-.playlistPerNumLogo,.playlistPlayLogo{
+.playlistPerNumLogo,.playlistPlayLogo,.fnalLLogo,.fnalRLogo{
     background:url('https://s2.music.126.net/style/web2/img/iconall.png?3f1d5d84259dc9096d6c9970b24807c5') no-repeat 0px 0px;
 }
 /*  歌单收听人数图标*/
@@ -519,4 +519,49 @@ textarea{
     height: 19px;
     background-position: 0px 1px;
 }
+/* 新碟上架的左右箭头 推荐页面榜单名下面的播放图标，收藏图标*/
+.fnalLLogo,.fnalRLogo,.ftpbfLogo,.ftpscLogo{
+    background: url('https://s2.music.126.net/style/web2/img/index/index.png?90d1972e65fbe341a346fa7c462c41e5') no-repeat 0px 0px;
+}
+/* 新碟上架左箭头 */
+.fnalLLogo{
+    width: 17px;
+    height: 17px;
+    background-position: -260px -75px;
+}
+.fnalLLogo:hover{
+    background-position: -280px -75px;
+}
+/* 新碟上架右箭头 */
+.fnalRLogo{
+    width: 17px;
+    height: 17px;
+    background-position: -300px -75px;
+}
+.fnalRLogo:hover{
+    background-position: -320px -75px;
+}
+/* 推荐页面榜单名下面的播放图标 */
+.ftpbfLogo{
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background-position: -267px -205px;
+}
+.ftpbfLogo:hover{
+    background-position: -267px -235px;
+}
+/* 推荐页面榜单名下面的收藏图标 */
+.ftpscLogo{
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background-position: -300px -205px;
+}
+.ftpscLogo:hover{
+    background-position: -300px -235px;
+}
+
+/* 歌曲列表中 播放图标，收藏图标，加入播放列表图标 */
+
 

@@ -21,27 +21,27 @@
             }
         },
         methods: {
-            toRecommended(num){
+            toRecommended(){
                 this.$router.push('/discover/recommend')
                 console.log("推荐页面")
             },
-            toLeaderboard(num){
-                this.$router.push('/discover/toplist')
+            toLeaderboard(){
+                this.$router.push({path:'/discover/toplist',query:{id:19723756}})
                 console.log("排行榜页面")
             },
-            toPlaylist(num){
+            toPlaylist(){
                 console.log("歌单页面")               
                 this.$router.push("/discover/playlist")
             },
-            toStation(num){
+            toStation(){
                 this.changeBgc(num)
                 console.log("主播电台页面")
             },
-            toSinger(num){
+            toSinger(){
                 console.log("歌手页面")
                 this.$router.push("/discover/artists")
             },
-            toDisc(num){
+            toDisc(){
                 console.log("新碟上架页面")
                 this.$router.push("/discover/albums")
             },

@@ -140,6 +140,7 @@
 
         },
         created() {
+            window.scrollTo(0, 0)
             let li = document.getElementById("discoverlittleList").childNodes
             for (let i = 0; i < li.length; i++) {
                 if (i == 5) {

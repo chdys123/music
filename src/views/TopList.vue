@@ -259,13 +259,14 @@
         },
         methods: {
             // 获取榜单数据
-            getTopList() {
+            getTopList(id) {
+                
                 this.axios({
                     method: 'get',
                     url: '/toplist'
                 }).then(res => {
                     this.toplist = res.data.list
-                    this.getTopListDetail(this.toplist[0].id)
+                    this.getTopListDetail(id)
                     this.getComments(1)
                 }).catch(err => {
                     console.log("获取榜单数据失败")
@@ -387,6 +388,7 @@
         },
 
         created() {
+            window.scrollTo(0,0)
             let li = document.getElementById("discoverlittleList").childNodes
             for (let i = 0; i < li.length; i++) {
                 if (i == 1) {
@@ -396,7 +398,11 @@
                     li[i].setAttribute("class", "")
                 }
             }
-            this.getTopList()
+            // 获取传过来的榜单id
+            let id=this.$route.query.id
+            console.log("id",id)
+            // 获取榜单列表
+            this.getTopList(id)
 
         },
     }

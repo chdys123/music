@@ -31,7 +31,7 @@
             },
             toPlaylist(){
                 console.log("歌单页面")               
-                this.$router.push("/discover/playlist")
+                this.$router.push({path:"/discover/playlist",query:{type:"全部"}})
             },
             toStation(){
                 this.changeBgc(num)

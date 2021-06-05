@@ -562,6 +562,23 @@ textarea{
     background-position: -300px -235px;
 }
 
-/* 歌曲列表中 播放图标，收藏图标，加入播放列表图标 */
-
+/* 歌单风格 图标 */
+.fg1,.fg2,.fg3,.fg4,.fg5{
+    background: url('https://s2.music.126.net/style/web2/img/icon.png?0b04f72ede1a30e70dd102c34f972741') no-repeat 0px 0px;
+}
+.fg1{
+    background-position:-20px -735px;
+}
+.fg2{
+    background-position: 0 -60px;
+}
+.fg3{
+    background-position: 0 -88px;
+}
+.fg4{
+    background-position: 0 -117px;
+}
+.fg5{
+    background-position: 0 -141px;
+}
 

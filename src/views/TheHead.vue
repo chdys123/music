@@ -462,16 +462,16 @@
           switchBtn.setAttribute("class", "player-pause")
         })
 
-        // 监听点击其他区域 搜索建议框消失
+        // 监听点击其他区域 搜索建议框消失 歌单种类选择框消失
         window.addEventListener("click", function (e) {
           if (e.target.getAttribute('id') != 'serch1' && e.target.getAttribute('class') != 'ser-sugg') {
             that.isShow = false
           }
+          
         })
       })
     },
   }
-
 
 </script>
 

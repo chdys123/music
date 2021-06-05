@@ -8,17 +8,17 @@
                 <!-- 首页热门推荐 -->
                 <div>
                     <div class="topPicksHeader">
-                        <div class="rmtj" @click="toAllPlayList()">
+                        <div class="rmtj" @click="toAllPlayList('全部')">
                             热门推荐
                         </div>
 
                         <div class="topPicksCategory">
-                            <a class="Classification">华语</a>|
-                            <a class="Classification">流行</a>|
-                            <a class="Classification">摇滚</a>|
-                            <a class="Classification">民谣</a>|
-                            <a class="Classification">电子</a>
-                            <a class="Classification" @click="toAllPlayList()">更多</a>
+                            <a class="Classification" @click="toAllPlayList('华语')">华语</a>|
+                            <a class="Classification" @click="toAllPlayList('流行')">流行</a>|
+                            <a class="Classification" @click="toAllPlayList('摇滚')">摇滚</a>|
+                            <a class="Classification" @click="toAllPlayList('民谣')">民谣</a>|
+                            <a class="Classification" @click="toAllPlayList('电子')">电子</a>
+                            <a class="Classification" @click="toAllPlayList('全部')">更多</a>
                         </div>
                         <br style="clear: both;">
                     </div>
@@ -231,9 +231,9 @@
         },
         methods: {
             // 点击更多进入歌单路由
-            toAllPlayList() {
+            toAllPlayList(type) {
                 console.log("进入到歌单组件")
-                this.$router.push("/discover/playlist")
+                this.$router.push({path:"/discover/playlist",query:{type:type}})
             },
             // 点击更多进入专辑路由
             toAllAl() {

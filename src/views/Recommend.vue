@@ -161,7 +161,29 @@
 
             </div>
             <div class="reco-r">
-                右
+                <!-- 用户登录 -->
+                <div>
+
+                </div>
+
+                <!-- 热门歌手 -->
+                <div class="fhotar">
+                    <p>热门歌手<a @click="toallAr()">查看全部&gt;</a></p>
+
+                    <div v-for="(item,index) in hotAr" class="fhotar-item">
+                        <img :src="item.picUrl+'?param=62y62'" alt="" @click="toArDetail(item.id)">
+                        <p :title="item.name" class="ellipsis" @click="toArDetail(item.id)">{{item.name}}</p>
+                    </div>
+                    <br style="clear: both;">
+
+
+                </div>
+
+                <!-- 热门主播 -->
+                <div>
+                    <!-- <p>热门主播</p> -->
+
+                </div>
             </div>
 
         </div>
@@ -202,7 +224,9 @@
                             id: ''
                         }
                     ]
-                ]
+                ],
+                // 热门歌手
+                hotAr:[]
             }
         },
         methods: {
@@ -320,7 +344,23 @@
             // 进入歌曲详情
             tosongDetail(id){
                 this.$router.push({path:'/discover/song',query:{id:id}})
+            },
+            // 获取热门歌手
+            gethotAr(){
+                this.axios({
+                    method:'get',
+                    url:'/top/artists?limit=6'
+                }).then(res=>{
+                    this.hotAr=res.data.artists
+                }).catch(err=>{
+                    console.log("获取热门歌手数据失败")
+                })
+            },
+            // 进入歌手路由
+            toallAr(){
+                this.$router.push('/discover/artists')
             }
+            
 
         },
         components: {
@@ -333,6 +373,8 @@
             this.getHotAl()
             // 获取榜单数据
             this.gettpData()
+            // 获取热门歌手
+            this.gethotAr()
         },
 
     }
@@ -628,4 +670,44 @@
         text-decoration: underline;
     }
     /* 首页榜单end */
+
+    /* 侧边栏热门歌手 */
+    .reco-r .fhotar>p{
+        font-size: 12px;
+        font-weight: 700;
+        border-bottom: 1px solid #CCCCCC;
+        padding-bottom:10px ;
+    }
+    .reco-r .fhotar p a{
+        color:#666666;
+        font-weight: 500;
+        margin-left: 75px;
+        cursor: pointer;
+    }
+    .reco-r .fhotar p a:hover{
+        text-decoration: underline;
+    }
+    .fhotar-item{
+        float: left;
+        margin-left: 54px;
+        margin-top: 20px;
+    }
+    .reco-r .fhotar-item:nth-child(even){
+        margin-left: 0px;
+    }
+    .fhotar-item p{
+        font-size: 14px;
+        cursor: pointer;
+        text-align: center;
+        width: 62px;
+    }
+    .fhotar-item p:hover{
+        text-decoration: underline;
+    }
+
+    
+
+
+
+    /* 侧边栏热门歌手end */
 </style>

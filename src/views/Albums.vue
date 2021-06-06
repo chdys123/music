@@ -100,6 +100,7 @@
             toAldetail(id){
                 this.$router.push({'path':'/discover/album',query:{id:id}})
             },
+            
             // 前一页
             toPrePage() {
                 console.log("点击了前一页")

@@ -5,14 +5,14 @@
             <span id="ChooseType" @click="isShow()">选择分类</span>
             <span id="hotplaylist">热门</span>
             <div class="category" id="category" v-show="show">
-                <p class="cat-h"><span @click="getPlayList('全部')">全部风格</span></p>
+                <p class="cat-h"><span @click="getdata('全部')">全部风格</span></p>
                 <div>
                     <div class="cat-hh">
                         <span class="fg1"></span> <span class="cat-hhh">语种</span>
                     </div>
                     <div class="cat-item">
                         <span v-for="item in catlist[0]">
-                            <span @click="getPlayList(item)">{{item}}</span>|
+                            <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
                     <br style="clear: both;">
@@ -23,7 +23,7 @@
                     </div>
                     <div class="cat-item">
                         <span v-for="item in catlist[1]">
-                            <span @click="getPlayList(item)">{{item}}</span>|
+                            <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
                     <br style="clear: both;">
@@ -34,7 +34,7 @@
                     </div>
                     <div class="cat-item">
                         <span v-for="item in catlist[2]">
-                            <span @click="getPlayList(item)">{{item}}</span>|
+                            <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
                     <br style="clear: both;">
@@ -45,7 +45,7 @@
                     </div>
                     <div class="cat-item">
                         <span v-for="item in catlist[3]">
-                            <span @click="getPlayList(item)">{{item}}</span>|
+                            <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
                     <br style="clear: both;">
@@ -56,7 +56,7 @@
                     </div>
                     <div class="cat-item">
                         <span v-for="item in catlist[4]">
-                            <span @click="getPlayList(item)">{{item}}</span>|
+                            <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
                     <br style="clear: both;">
@@ -76,8 +76,25 @@
                     <p id="playlistName" @click="toplaylist(item.id)">{{item.name}}</p>
                     <span id="by">by</span><span id="creatorNickname">{{item.creator.nickname}}</span>
                 </li>
+                <br style="clear: both;">
             </ul>
         </div>
+
+        <!-- 分页 -->
+        <div class="f-page">
+            <div class="f-page-c">
+                <a @click="toFirstPage()" :class="{'disable':this.currentPage==1}">首页</a>
+                <a @click="toPrePage()" :class="{'disable':this.currentPage==1}">&lt;上一页</a>
+                <a @click="toNextPage()"
+                    :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
+                <a @click="toTailPage()" :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
+                <span>当前页：{{this.currentPage}}</span>
+                <span>总页数：{{totalPage}}</span>
+                <span>跳转到：<input type="text" @keydown="jumpPage($event)"
+                        oninput="value=value.replace(/[^\d]/g,'')" />页</span>
+            </div>
+        </div>
+        <!-- 分页结束 -->
     </div>
 </template>
 
@@ -93,8 +110,18 @@
                     [], [], [], [], []
                 ],
                 // 是否显示歌单分类
-                show:false
+                show:false,
+                total: 0,
+                currentPage: 1
+
             }
+        },
+        computed: {
+            // 总页数
+            totalPage() {
+                return Math.ceil(this.total / 35)
+            }
+
         },
         methods: {
             // 显示歌单分类
@@ -114,17 +141,25 @@
                     }
                 }
             },
-            //获取歌单信息
-            getPlayList(type) {
+        
+            // 点击歌单类型 获取数据
+            getdata(type){
                 this.playlistType = type
+                this.getAll(1)
+            },
+
+            // 获取全部新碟
+            getAll(num) {
+                this.currentPage = num
                 this.axios({
-                    method: "get",
-                    url: '/top/playlist?limit=35&order=hot&cat=' + type
+                    method: 'get',
+                    url: '/top/playlist?limit=35&order=hot&cat=' + this.playlistType+'&offset='+(num-1)*35
                 }).then(res => {
                     this.playlistData = res.data
-
+                    this.total = res.data.total
                 }).catch(err => {
                     console.log("请求歌单信息失败")
+                    
                 })
             },
             //进入歌单详情
@@ -147,14 +182,54 @@
                 }).catch(err => {
                     console.log("获取歌单分类失败")
                 })
-            }
+            },
+
+            // 分页
+            // 前一页
+            toPrePage() {
+                console.log("点击了前一页")
+                this.currentPage -= 1
+                this.getAll(this.currentPage)
+            },
+            toNextPage() {
+
+                console.log("点击了后一页")
+                this.currentPage += 1
+                this.getAll(this.currentPage)
+            },
+            toFirstPage() {
+                console.log("点击了首页")
+                this.getAll(1)
+
+            },
+            toTailPage() {
+                console.log("点击了尾页")
+                this.getAll(this.totalPage)
+            },
+            //跳转页面
+            jumpPage(e) {
+                if (e.keyCode == 13) {
+                    let num = parseInt(e.target.value)
+                    e.target.value = ''
+                    if (num == this.currentPage) {
+                        return
+                    } else if (num >= this.totalPage) {
+                        this.getAll(this.totalPage)
+                    } else if (num <= 1) {
+                        this.getAll(1)
+                    } else {
+                        this.getAll(num)
+                    }
+                }
+            },
         },
         created() {
             window.scrollTo(0, 0)
             //取出哪些路由传过来的歌单类型数据 赋值给this.playlistType
             this.playlistType = this.$route.query.type
             this.changeBgc(3)
-            this.getPlayList(this.playlistType)
+            // 获取歌单信息
+            this.getAll(1)
             // 获取歌单分类
             this.getcatlist()
         },
@@ -177,14 +252,14 @@
 <style>
     #playlistCon {
         width: 900px;
-        height: 1744px;
+        /* height: 1744px; */
         background-color: #FFFFFF;
         margin: 0 auto;
         padding: 40px;
+        /* padding-bottom: 0; */
         border: 1px solid #D3D3D3;
         border-top: none;
     }
-
     #playlistHeader {
         position: relative;
         width: 900px;
@@ -318,7 +393,7 @@
     /* 歌单分类end */
     #playlistBody {
         width: 900px;
-        height: 1700px;
+        /* height: 1700px; */
         padding-top: 30px;
         /* background-color: yellow; */
     }

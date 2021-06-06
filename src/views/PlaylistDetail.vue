@@ -2,9 +2,11 @@
     <div id="playlistdetailCon">
         <div id="playlistdetailLeft">
             <div id="playlistdetailLeft-header">
+                <!-- 图片 -->
                 <div id="playlistdetailLeft-header-left">
                     <img :src="data.playlist.coverImgUrl" alt="">
                 </div>
+                <!-- 专辑信息 -->
                 <div id="playlistdetailLeft-header-right">
                     <div>
                         <span></span>
@@ -38,8 +40,8 @@
                 </div>
                 <br style="clear: both;">
             </div>
+            <!-- 歌曲列表 -->
             <div id="playlistdetailLeft-body">
-
                 <div id="playlistdetailLeft-b-h">
                     <span>歌曲列表</span>
                     <span>{{data.playlist.trackCount}}首歌</span>
@@ -95,8 +97,98 @@
                     </table>
                 </div>
             </div>
+
+            <!-- 评论 -->
+            <div class="sdc-cty">
+                <div class="sdc-cty-t">评论
+                    <span>共{{allComments.total}}条评论</span>
+                </div>
+                <div class="sdc-cty-m">
+                    <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
+                    <textarea placeholder="评论"></textarea>
+                    <button>评论</button>
+                </div>
+                <!-- 精彩评论 -->
+                <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
+                    精彩评论
+                </div>
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+                    <img :src="item.user.avatarUrl" alt="">
+                    <div class="sdc-cty-g-b-i-b">
+                        <a>{{item.user.nickname}}</a> ：{{item.content}}
+                        <p v-if="item.beReplied.length!=0">
+                            <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                            <br style="clear:both">
+                        </p>
+                        <div>
+                            <span>{{contentTime(item.time)}}</span>
+                            <span>回复</span>
+                            <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                                </span> ({{item.likedCount}})</span>
+                            <br style="clear:both">
+
+                        </div>
+                    </div>
+
+                    <br style="clear:both">
+                </div>
+                <!-- 最新评论 -->
+                <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
+                    最新评论({{allComments.total}})
+                </div>
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+                    <img :src="item.user.avatarUrl" alt="">
+                    <div class="sdc-cty-g-b-i-b">
+                        <a>{{item.user.nickname}}</a> ：{{item.content}}
+                        <p v-if="item.beReplied.length!=0">
+                            <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                            <br style="clear:both">
+                        </p>
+                        <div>
+                            <span>{{contentTime(item.time)}}</span>
+                            <span>回复</span>
+                            <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                                </span> ({{item.likedCount}})</span>
+                            <br style="clear:both">
+
+                        </div>
+                    </div>
+                    <br style="clear:both">
+                </div>
+
+
+
+
+                <!-- 分页 -->
+                <div class="f-page">
+                    <div class="f-page-c">
+
+                        <a @click="toFirstPage()" :class="{'disable':this.currentPage==1}">首页</a>
+                        <a @click="toPrePage()" :class="{'disable':this.currentPage==1}">&lt;上一页</a>
+                        <a @click="toNextPage()"
+                            :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
+                        <a @click="toTailPage()"
+                            :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
+                        <span>当前页：{{this.currentPage}}</span>
+                        <span>总页数：{{Math.ceil(this.allComments.total/20)}}</span>
+                        <span>跳转到：<input type="text" @keydown="jumpPage($event)"
+                                oninput="value=value.replace(/[^\d]/g,'')" />页</span>
+                    </div>
+                </div>
+
+                <br style="clear:both">
+
+            </div>
+
+
+            <!-- 评论end -->
         </div>
-        <div id="playlistdetailRight"></div>
+
+        <!-- 侧边栏 -->
+        <div id="playlistdetailRight">
+            12345678
+        </div>
+        <br style="clear: both;">
     </div>
 </template>
 
@@ -113,13 +205,40 @@
                 //是否展开
                 isClose: true,
                 count: 0,
-                height: 0
+                height: 0,
+                // 评论
+                allComments: {
+                    // 热门评论
+                    hotComments: [
+                        {
+                            user: { avatarUrl: '' },
+                            beReplied: [{ user: { nickname: '', userId: '' }, content: '' }]
+                        }
+                    ],
+                    // 最新评论
+                    comments: [
+                        {
+                            user: { userId: '', nickname: '', avatarUrl: '' },
+                            commentId: '',
+                            comment: '',
+                            time: '',
+                            likedCount: '',
+                            liked: false,
+                            beReplied: [{ user: { nickname: '', userId: '' }, content: '' }],
+                        }
+                    ],
+                    // 评论总数
+                    total: '',
+                    more: true
+                },
+                // 当前页数
+                currentPage: 1,
 
 
             }
         },
         computed: {
-            //日期格式化
+            //歌单创建日期格式化
             createTime() {
                 let time = new Date(this.data.playlist.createTime)
                 let str = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate() + " "
@@ -134,6 +253,10 @@
                     return "收起"
                 }
             },
+            // 总页数
+            totalPage() {
+                return Math.ceil(this.allComments.total / 20)
+            }
 
         },
         methods: {
@@ -146,13 +269,9 @@
                     url: '/playlist/detail?id=' + this.playlistId
                 }).then(res => {
                     this.data = res.data
-
-
-
                 }).catch(err => {
                     console.log("请求歌曲详情数据失败")
                 })
-
             },
             //点击歌单展开后
             clickMore() {
@@ -217,14 +336,79 @@
 
                
             },
-
-
             // 点击歌曲名
             toSongDetail(id){
                 // console.log("点击了歌曲名,歌曲id:",id)
                 // 进入歌曲组件
                 this.$router.push({path:'/discover/song',query:{id:id}})
-            }
+            },
+            // 评论日期格式化
+            contentTime(num) {
+                let time = new Date(num)
+                let str = time.getFullYear() + '年' + (time.getMonth() + 1) + '月' + time.getDate() + "日"
+                return str
+            },
+            // 获取评论
+            getComments(num) {
+                if (num == 1) {
+                    this.axios({
+                        method: 'get',
+                        url: '/comment/playlist?id=' + this.playlistId
+                    }).then(res => {
+                        this.allComments = res.data
+                        this.currentPage = 1
+                    }).catch(err => {
+                        console.log("获取评论失败")
+                    })
+                } else {
+                    this.axios({
+                        method: 'get',
+                        url: '/comment/playlist?id=' + this.playlistId + '&offset=' + (num - 1) * 20 + '&before=' + this.allComments.comments[19].time
+                    }).then(res => {
+                        this.allComments = res.data
+                        this.currentPage = num
+                    }).catch(err => {
+                        console.log("获取评论失败")
+                    })
+                }
+            },
+            // 前一页
+            toPrePage() {
+                console.log("点击了前一页")
+                this.currentPage -= 1
+                this.getComments(this.currentPage)
+            },
+            toNextPage() {
+
+                console.log("点击了后一页")
+                this.currentPage += 1
+                this.getComments(this.currentPage)
+            },
+            toFirstPage() {
+                console.log("点击了首页")
+                this.getComments(1)
+
+            },
+            toTailPage() {
+                console.log("点击了尾页")
+                this.getComments(this.totalPage)
+            },
+             //跳转页面
+             jumpPage(e) {
+                if (e.keyCode == 13) {
+                    let num = parseInt(e.target.value)
+                    e.target.value = ''
+                    if (num == this.currentPage) {
+                        return
+                    } else if (num >= this.totalPage) {
+                        this.getComments(this.totalPage)
+                    } else if (num <= 1) {
+                        this.getComments(1)
+                    } else {
+                        this.getComments(num)
+                    }
+                }
+            },
         },
 
         created() {
@@ -238,6 +422,8 @@
             }
             //获取歌单数据
             this.getDetailData()
+            // 获取评论
+            this.getComments(1)
 
         },
 
@@ -261,34 +447,31 @@
     #playlistdetailCon {
         overflow: hidden;
         width: 980px;
-        height: 3366px;
         background-color: #FFFFFF;
         margin: 0 auto;
         border-left: 1px solid #D3D3D3;
         border-right: 1px solid #D3D3D3;
+        margin-bottom: 100px;
     }
 
     #playlistdetailLeft {
         float: left;
         width: 640px;
-        height: 1000px;
         border-right: 1px solid #D3D3D3;
         padding: 47px 30px 40px 39px;
-        background-color: pink;
+        /* background-color: pink; */
     }
 
     #playlistdetailRight {
         width: 270px;
-        height: 500px;
+        height: 100%;
         background-color: yellow;
         float: left;
     }
 
     #playlistdetailLeft-header {
         width: 100%;
-        /* overflow: hidden; */
-        /* height: 247px; */
-        /* background-color: yellow; */
+        
     }
 
     #playlistdetailLeft-header-left {

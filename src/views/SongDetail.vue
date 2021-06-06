@@ -41,7 +41,6 @@
 
 
             <div class="sdc-cty">
-
                 <div class="sdc-cty-t">评论
                     <span>共{{allComments.total}}条评论</span>
                 </div>
@@ -318,6 +317,7 @@
                 let str = time.getFullYear() + '年' + (time.getMonth() + 1) + '月' + time.getDate() + "日"
                 return str
             },
+
             //跳转页面
             jumpPage(e) {
                 if (e.keyCode == 13) {

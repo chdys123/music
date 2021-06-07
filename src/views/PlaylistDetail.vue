@@ -186,7 +186,22 @@
 
         <!-- 侧边栏 -->
         <div id="playlistdetailRight">
-            12345678
+            <!-- 最近收藏用户 userId-->
+            <p class="plut">喜欢这个歌单的人</p>
+            <div v-for="(item,index) in users" :class="{'pluser1':true,'pluser2':index%4==0}">
+                <img :src="item.avatarUrl+'?param=40y40'" alt="">
+            </div>
+            <br style="clear: both;">
+            <!-- 最近收藏用户end -->
+
+            <!-- 热门歌单 -->
+            <p class="plut1">热门歌单</p>
+            <div>
+
+            </div>
+
+
+            <!-- 热门歌单end -->
         </div>
         <br style="clear: both;">
     </div>
@@ -234,6 +249,9 @@
                 // 当前页数
                 currentPage: 1,
 
+                // 最近收藏用户
+                users:[]
+
 
             }
         },
@@ -260,8 +278,6 @@
 
         },
         methods: {
-
-
             //获取歌单详情数据
             getDetailData() {
                 this.axios({
@@ -409,6 +425,17 @@
                     }
                 }
             },
+            // 获取最近收藏了这个歌单的八个用户
+            getlastUsers(){
+                this.axios({
+                    url:'/playlist/subscribers?id='+this.playlistId+'&limit=8'
+                }).then(res=>{
+                    console.log(res.data.subscribers)
+                    this.users=res.data.subscribers
+                }).catch(err=>{
+                    console.log("获取最近收藏用户失败")
+                })
+            }
         },
 
         created() {
@@ -424,7 +451,8 @@
             this.getDetailData()
             // 获取评论
             this.getComments(1)
-
+            // 获取最近收藏了这个歌单的八个用户
+            this.getlastUsers()
         },
 
         updated() {
@@ -463,10 +491,11 @@
     }
 
     #playlistdetailRight {
-        width: 270px;
+        width: 200px;
         height: 100%;
         background-color: yellow;
         float: left;
+        padding: 20px 40px 40px 30px;
     }
 
     #playlistdetailLeft-header {
@@ -859,4 +888,31 @@
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(1):hover {
         background-position: -16px -697px;
     }
+
+    /* 侧边栏 */
+    .plut{
+        font-size: 12px;
+        font-weight: 700;
+        border-bottom: 1px solid #CCCCCC;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    #playlistdetailRight .pluser1{
+        float: left;
+        margin-left: 10px;
+    }
+    #playlistdetailRight .pluser2{
+        margin-left: 0px;
+    }
+    .plut1{
+        font-size: 12px;
+        font-weight: 700;
+        border-bottom: 1px solid #CCCCCC;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        /* margin-bottom: 30px; */
+    }
+
+
+    /* 侧边栏end */
 </style>

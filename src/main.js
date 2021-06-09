@@ -142,6 +142,44 @@ app.config.globalProperties.getsong = async function (id) {
 app.config.globalProperties.playMusic=async function(id){
     this.addSong(await this.getsong(id))
 }
+// 封装添加播放队列函数
+app.config.globalProperties.addMusic=async function(id){
+    this.addtoQueue(await this.getsong(id))
+}
+
+
+// 歌单或者专辑播放 里面很多首歌曲 点击播放都要加入播放列表 并播放第一首歌
+
+
+
+// 歌单或者专辑加入播放列表 里面很多首歌 点击加入播放列表 
+
+
+// 进入入歌单详情
+app.config.globalProperties.toPlatListDetail=function(id){
+    this.$router.push({path:'/discover/playlistdetail',query:{id:id}})
+}
+// 进入歌曲详情
+app.config.globalProperties.toSongDetail=function(id){
+    this.$router.push({path:'/discover/song',query:{id:id}})
+}
+// 进入歌手详情
+app.config.globalProperties.toAr=function(id){
+    this.$router.push({ path: '/discover/artist', query: { id: id } })
+}
+// 进入专辑详情
+app.config.globalProperties.toAl=function(id){
+    this.$router.push({ path: '/discover/album', query: { id: id } })
+}
+// 进入mv详情
+app.config.globalProperties.toMv=function(id){
+    this.$router.push({ path: '/discover/mv', query: { id: id } })
+}
+
+
+
+
+
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true

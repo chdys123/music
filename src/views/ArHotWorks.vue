@@ -1,22 +1,22 @@
 <template>
     <div>
         <div id="a-h-w-t">
-            <span @click="musicPlay()">播放</span>
-            <span @click="addQueue()" title="添加到播放列表"></span>
+            <span>播放</span>
+            <span title="添加到播放列表"></span>
             <span>收藏</span>
         </div>
 
         <div class="a-h-w-b-item" v-for="(item,index) in hotSongs">
-            <span>{{index+1}} <span class="playLogo"></span></span>
-            <span :title="item.name">
-                {{item.name}} 
-                <span class="mvLogo" v-if="item.mv!=0" title="播放mv"></span>
+            <span>{{index+1}} <span class="playLogo" @click="playMusic(item.id)" title="播放"></span></span>
+            <span  >
+               <span @click="toSongDetail(item.id)" :title="item.name">{{item.name}}</span>
+                <span class="mvLogo" v-if="item.mv!=0" title="播放mv" @click="toMv(item.mv)"></span>
             </span> 
 
             <span>
                 <span class="a-h-w-dt">{{this.getDt(item.dt)}}</span>
                 <span class="a-h-w-func">
-                    <span title="添加到播放列表" class="addSongLogo"></span>
+                    <span title="添加到播放列表" class="addSongLogo" @click="addMusic(item.id)"></span>
                     <span title="收藏" class="collectLogo"></span>
                     <span title="分享" class="shareLogo"></span>
                     <span title="下载" class="downloadLogo"></span>
@@ -24,7 +24,7 @@
                 </span>
             </span>
 
-            <span :title="item.al.name">{{item.al.name}}</span>
+            <span :title="item.al.name" @click="toAl(item.al.id)">{{item.al.name}}</span>
             <br style="clear:both">
 
         </div>

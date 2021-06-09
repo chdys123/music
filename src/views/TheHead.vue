@@ -91,7 +91,7 @@
         <!-- 音乐名字 歌手 -->
         <div>
           <span @click="toSongDetail(songList[index].songid)">{{songList[index].songname}}</span>
-          <span v-for="item in songList[index].arname">{{item}}</span>
+          <span v-for="(item,index1) in songList[index].arname" @click="toAr(songList[index].arid[index1])">{{item}}</span>
         </div>
         <!-- 进度条和时间盒子 -->
         <div id="ProgressbarCon">
@@ -108,7 +108,7 @@
         <!-- 调节音量 -->
         <span @click="vc()"></span>
         <span></span>
-        <span>21</span>
+        <span>{{songList.length}}</span>
       </div>
       <div id="volumeControl" ref="volumeControl" v-show="vControl" @mouseleave="vcmouseleave()">
         <input type="range" id="myvolumeslider" min="0" max="100" value="100" ref="myvolumeslider"

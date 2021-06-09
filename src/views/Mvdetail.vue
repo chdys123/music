@@ -103,9 +103,9 @@
             <div class="mv-d-r-b">相关推荐</div>
 
             <div v-for="item in simimvs" class="mv-d-r-simimv">
-                <img :src="item.cover+'?param=96y54'" alt="" :title="item.name">
+                <img :src="item.cover+'?param=96y54'" alt="" :title="item.name" @click="toMv(item.id)">
                 <div>
-                    <p class="ellipsis" :title="item.name">{{item.name}}</p>
+                    <p class="ellipsis" :title="item.name" @click="toMv(item.id)">{{item.name}}</p>
                     <p>{{getDt(item.duration)}}</p>
                     <p class="ellipsis">by <span :title="item.artists[0].name">{{item.artists[0].name}}</span></p>
                 </div>

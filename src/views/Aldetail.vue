@@ -8,14 +8,14 @@
                         <p><span class="albumLogo"></span>{{albumData.album.name}}</p>
                         <p>
                             歌手：
-                            <span v-for="item in albumData.album.artists">
+                            <span v-for="item in albumData.album.artists" @click="toAr(item.id)">
                                 {{item.name}}&nbsp;
                             </span>
                         </p>
                         <p>
                             发行时间：{{getPulishTime(albumData.album.publishTime)}}
                         </p>
-                        <p>
+                        <p v-if="albumData.album.company==''">
                             发行公司：{{albumData.album.company}}
                         </p>
 
@@ -54,25 +54,32 @@
                             <span>歌手</span>
                             <br style="clear: both;">
                         </div>
+
                         <!-- 歌曲列表 -->
                         <div id="al-s-b-b">
                             <div class="a-h-w-b-item" v-for="(item,index) in albumData.songs">
-                                <span>{{index+1}} <span class="playLogo"></span></span>
-                                <span :title="item.name">
-                                    {{item.name}}
-                                    <span class="mvLogo" v-if="item.mv!=0" title="播放mv"></span>
-                                </span>
+                                <!-- 播放按钮 -->
+                                <span>{{index+1}} <span class="playLogo" title="播放" @click="playMusic(item.id)"></span></span>
+                                <!-- 歌曲标题 和mv图标 -->
                                 <span>
+                                    <span :title="item.name" @click="toSongDetail(item.id)">{{item.name}}</span>
+                                    <span class="mvLogo" v-if="item.mv!=0" title="播放mv" @click="toMv(item.mv)"></span>
+                                </span>
+
+                                <span>
+                                    <!-- 歌曲时间 -->
                                     <span class="a-h-w-dt">{{this.getDt(item.dt)}}</span>
+                                    <!-- 各种功能 -->
                                     <span class="a-h-w-func">
-                                        <span title="添加到播放列表" class="addSongLogo"></span>
+                                        <span title="添加到播放列表" class="addSongLogo" @click="addMusic(item.id)"></span>
                                         <span title="收藏" class="collectLogo"></span>
                                         <span title="分享" class="shareLogo"></span>
                                         <span title="下载" class="downloadLogo"></span>
                                         <br style="clear: both;">
                                     </span>
                                 </span>
-                                <span :title="item.ar[0].name">{{item.ar[0].name}}</span>
+                                <!-- 歌手 -->
+                                <span :title="item.ar[0].name" @click="toAr(item.ar[0].id)">{{item.ar[0].name}}</span>
                                 <br style="clear:both">
                             </div>
                         </div>
@@ -156,20 +163,15 @@
                 </div>
                 <!-- 分页结束 -->
 
-
-
-
-
             </div>
             <div class="con-r">
                 <!-- 右侧其他专辑 -->
                 <h5 id="al-r-t">ta的其他热门专辑</h5>
                 <div class="al-r-item" v-for="item in albums">
-                    <img :src="item.picUrl+'?param=50y50'" alt="" @click="toAlDetail(item.id)">
+                    <img :src="item.picUrl+'?param=50y50'" alt="" @click="toAl(item.id)" :title="item.name">
                     <div>
-                        <p class="ellipsis al-name" :title="item.name" @click="toAlDetail(item.id)">{{item.name}}</p>
+                        <p class="ellipsis al-name" :title="item.name" @click="toAl(item.id)">{{item.name}}</p>
                         <p class="al-pt">{{getPulishTime(item.publishTime)}}</p>
-
                     </div>
                     <br style="clear:both;">
 
@@ -389,10 +391,7 @@
                 }
                 return str1 + ':' + str2
             },
-            toAlDetail(id){
-                // console.log("点击了")
-                this.$router.push({ path: '/discover/album', query: { id: id} })
-            }
+            
 
 
         },
@@ -524,6 +523,11 @@
         padding-left: 30px;
         line-height: 20px;
         color: #666;
+
+
+        word-wrap: break-word;
+        word-break: break-all;
+
     }
 
     /* 包含歌曲列表 */

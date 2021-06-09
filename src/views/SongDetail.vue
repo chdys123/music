@@ -18,15 +18,15 @@
                         歌手：
                         <span v-for="(item,index) in songData.songs[0].ar">
                             <span v-if="index>0" class="xiegang">/</span>
-                            <span @click="toArtist(item.id)" class="sdetailar">{{item.name}}</span>
+                            <span @click="toAr(item.id)" class="sdetailar">{{item.name}}</span>
                         </span>
                     </div>
                     <div id="sdc-l-t-r-3">
-                        所属专辑：<span>{{songData.songs[0].al.name}}</span>
+                        所属专辑：<span @click="toAl(songData.songs[0].al.id)">{{songData.songs[0].al.name}}</span>
                     </div>
                     <div id="sdc-l-t-r-4">
                         <span @click="playMusic(this.songId)">播放</span>
-                        <span @click="addQueue()"></span>
+                        <span @click="addMusic(this.songId)"></span>
                         <span>收藏</span>
                         <span>分享</span>
                         <span>下载</span>
@@ -135,10 +135,10 @@
             </div>
             <div id="sdc-r-simi-pl-body" v-if="playlists.length!=0">
                 <div id="sdc-r-simi-pl-body-item" v-for="item in playlists">
-                    <img :src="item.coverImgUrl" alt="">
+                    <img :src="item.coverImgUrl" alt="" :title="item.name" @click="toPlatListDetail(item.id)">
                     <div>
-                        <p>{{item.name}}</p>
-                        <p>by <span>{{item.creator.nickname}}</span></p>
+                        <p :title="item.name" @click="toPlatListDetail(item.id)">{{item.name}}</p>
+                        <p>by <span :title="item.creator.nickname">{{item.creator.nickname}}</span></p>
                     </div>
                 </div>
             </div>
@@ -147,11 +147,11 @@
             </div>
             <div id="sdc-r-simi-s-body">
                 <div id="sdc-r-simi-s-body-item" v-for="item in songs">
-                    <p @click="toSongDetail(item.id)">{{item.name}}</p>
-                    <p>{{item.artists[0].name}}</p>
+                    <p @click="toSongDetail(item.id)" :title="item.name">{{item.name}}</p>
+                    <p :title="item.artists[0].name">{{item.artists[0].name}}</p>
                     <div>
-                        <span @click="playMusic(item.id)"></span>
-                        <span @click="addQueue2(item)"></span>
+                        <span @click="playMusic(item.id)" title="播放"></span>
+                        <span @click="addMusic(item.id)" title="加入播放列表"></span>
                     </div>
                 </div>
 
@@ -168,8 +168,6 @@
         data() {
             return {
                 songId: 0,
-                // 歌曲url
-                url: '',
                 // 歌曲详情
                 songData: {
                     songs: [
@@ -234,16 +232,9 @@
                 lyric: '',
                 // 判断显示展开还是收起
                 isClose: false
-
-
-
             }
-
         },
-
         methods: {
-
-
             // 获取歌曲详情数据
             getSongData() {
                 this.axios({
@@ -349,151 +340,9 @@
                     }
                 }
             },
-            // 点击播放按钮
-            musicPlay() {
-                // 获取song对象
-                console.log("点击了播放1")
-                let songname = this.songData.songs[0].name
-                let songId = this.songId
-                let arname = []
-                let arid = []
-                for (let i = 0; i < this.songData.songs[0].ar.length; i++) {
-                    arname.push(this.songData.songs[0].ar[i].name)
-                    arid.push(this.songData.songs[0].ar[i].id)
-                }
-                let time = this.songData.songs[0].dt
-                let imgsrc = this.songData.songs[0].al.picUrl + '?param=34y34'
-                // let src = 'https://music.163.com/song/media/outer/url?id=' + this.songId + '.mp3'
-                let src = this.url
-
-                // 创建歌曲信息对象
-                let song = {
-                    songname: songname,
-                    songid: songId,
-                    arname: arname,
-                    arid: arid,
-                    time: time,
-                    imgsrc: imgsrc,
-                    src: src
-                }
-                // 获取song对象end
-
-                // 放进本地存储
-                this.addSong(song)
-            },
-
             
-            // 点击播放按钮
-            musicPlay2(item) {
-                // console.log("点击了")
-                // 歌曲名
-                let songname = item.name
-                // 歌曲id
-                let songid = item.id
-                // 可能有多个歌手
-                // 歌手名
-                let arname = []
-                // 歌手id
-                let arid = []
-                for (let i = 0; i < item.artists.length; i++) {
-                    arname.push(item.artists[i].name)
-                    arid.push(item.artists[i].id)
-                }
-                // 歌曲时长
-                let time = item.bMusic.playTime
-                // 歌曲图片
-                let imgsrc = item.album.picUrl + '?param=34y34'
-                // 歌曲地址
-                let src = 'https://music.163.com/song/media/outer/url?id=' + item.id + '.mp3'
-
-                // 创建歌曲信息对象
-                let song = {
-                    songname: songname,
-                    songid: songid,
-                    arname: arname,
-                    arid: arid,
-                    time: time,
-                    imgsrc: imgsrc,
-                    src: src
-                }
-                // 放进本地存储
-                this.addSong(song)
-            },
-            // 点击加入播放列表按钮
-            addQueue() {
-                console.log("点击了加入播放列表按钮")
-                let songname = this.songData.songs[0].name
-                let songId = this.songId
-                let arname = []
-                let arid = []
-                for (let i = 0; i < this.songData.songs[0].ar.length; i++) {
-                    arname.push(this.songData.songs[0].ar[i].name)
-                    arid.push(this.songData.songs[0].ar[i].id)
-                }
-                let time = this.songData.songs[0].dt
-                let imgsrc = this.songData.songs[0].al.picUrl + '?param=34y34'
-                let src = 'https://music.163.com/song/media/outer/url?id=' + this.songId + '.mp3'
-
-                // 创建歌曲信息对象
-                let song = {
-                    songname: songname,
-                    songid: songId,
-                    arname: arname,
-                    arid: arid,
-                    time: time,
-                    imgsrc: imgsrc,
-                    src: src
-                }
-                // 放进本地存储
-                this.addtoQueue(song)
-
-            },
-            // 加入播放按钮2
-            addQueue2(item) {
-                console.log("点击了添加按钮")
-                // 歌曲名
-                let songname = item.name
-                // 歌曲id
-                let songid = item.id
-                // 可能有多个歌手
-                // 歌手名
-                let arname = []
-                // 歌手id
-                let arid = []
-                for (let i = 0; i < item.artists.length; i++) {
-                    arname.push(item.artists[i].name)
-                    arid.push(item.artists[i].id)
-                }
-                // 歌曲时长
-                let time = item.bMusic.playTime
-                // 歌曲图片
-                let imgsrc = item.album.picUrl + '?param=34y34'
-                // 歌曲地址
-                let src = 'https://music.163.com/song/media/outer/url?id=' + item.id + '.mp3'
-
-                // 创建歌曲信息对象
-                let song = {
-                    songname: songname,
-                    songid: songid,
-                    arname: arname,
-                    arid: arid,
-                    time: time,
-                    imgsrc: imgsrc,
-                    src: src
-                }
-                // 放进本地存储
-                this.addtoQueue(song)
-
-            },
-            // 进入歌曲详情
-            toSongDetail(id) {
-                this.$router.push({ path: '/discover/song', query: { id: id } })
-            },
-            // 进入歌手详情
-            toArtist(id) {
-                // console.log("点击了歌手",id)
-                this.$router.push({ path: '/discover/artist', query: { id: id } })
-            },
+            
+           
             // 获取歌词
             getlyric() {
                 this.axios({
@@ -527,18 +376,7 @@
                     return '收起'
                 }
             },
-            // 获取音乐url
-            getSongUrl() {
-                this.axios({
-                    method: 'get',
-                    url: '/song/url?id=' + this.songId
-                }).then(res => {
-                    this.url = res.data.data[0].url
-                    console.log(this.url)
-                }).catch(err => {
-                    console.log("获取音乐url失败")
-                })
-            },
+            
             
         },
         computed: {
@@ -574,9 +412,7 @@
             this.getComments(1)
             // 获取歌词
             this.getlyric()
-            // 获取歌曲播放地址
-            this.getSongUrl()
-
+            
         }
     }
 </script>

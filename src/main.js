@@ -17,7 +17,7 @@ app.config.globalProperties.setItem = function (key, value) {
         // 触发事件
         console.log("本地存储index改变")
         window.dispatchEvent(newStorageEvent)
-    }else if(key=='track-queue'){
+    } else if (key == 'track-queue') {
         // 创建一个自定义事件
         let newStorageEvent = new Event("StorageEvent2")
         //把key value 存进本地存储
@@ -30,8 +30,6 @@ app.config.globalProperties.setItem = function (key, value) {
 
 
 }
-
-
 // 挂载向本地存储添加歌曲的方法 并改变当前播放index
 app.config.globalProperties.addSong = function (song) {
     //判断本地存储是否有 track-queue
@@ -42,6 +40,7 @@ app.config.globalProperties.addSong = function (song) {
         // 存储播放位置
         this.setItem("index", 0)
     } else {
+        // 如果本地有
         let queue = JSON.parse(localStorage.getItem("track-queue"))
         // 判断歌曲是否在当前播放列表中
         for (let i = 0; i < queue.length; i++) {
@@ -59,8 +58,7 @@ app.config.globalProperties.addSong = function (song) {
     }
     console.log(localStorage.getItem("index"))
 }
-
-// 向播放列表中添加歌曲 但是不改变index
+// 向播放列表中添加歌曲 但是不改变index(加入播放列表)
 app.config.globalProperties.addtoQueue = function (song) {
     console.log("addtoQueue")
     //判断本地存储是否有 track-queue
@@ -70,6 +68,7 @@ app.config.globalProperties.addtoQueue = function (song) {
         localStorage.setItem("track-queue", s)
         // 存储播放位置
         this.setItem("index", 0)
+        console.log("加入播放列表成功")
     } else {
         let queue = JSON.parse(localStorage.getItem("track-queue"))
         // 判断歌曲是否在当前播放列表中
@@ -83,7 +82,67 @@ app.config.globalProperties.addtoQueue = function (song) {
         queue.push(song)
         let s = JSON.stringify(queue)
         this.setItem("track-queue", s)
+        console.log("加入播放列表成功")
     }
 }
+// 传入歌曲id,获取歌曲信息
+app.config.globalProperties.getsong1 = function (id) {
+    let p1 = this.axios({
+        url: '/song/detail?ids=' + id,
+        method: 'get'
+    })
+
+    let p2 = this.axios({
+        method: 'get',
+        url: '/song/url?id=' + id
+    })
+    return Promise.all([p1, p2])
+}
+app.config.globalProperties.getsong2 = function (result) {
+    let song = {}
+    let res1 = result[0]
+    let res2 = result[1]
+    // 歌曲名
+    song.songname = res1.data.songs[0].name
+    // 歌曲id
+    song.songid = res1.data.songs[0].id
+    // 歌手名
+    song.arname = []
+    // 歌手id
+    song.arid = []
+    for (let i = 0; i < res1.data.songs[0].ar.length; i++) {
+        song.arname.push(res1.data.songs[0].ar[i].name)
+        song.arid.push(res1.data.songs[0].ar[i].id)
+    }
+    // 歌曲图片
+    song.imgsrc = res1.data.songs[0].al.picUrl + '?param=34y34'
+    // 歌曲播放时间
+    song.time = res1.data.songs[0].dt
+    // if vip 歌曲
+    if (res1.data.privileges[0].chargeInfoList[0].chargeType == 0) {
+        song.vip = 'no'
+    } else {
+        song.vip = 'yes'
+    }
+
+    // 获取音乐播放地址
+    song.src = res2.data.data[0].url
+    // 改变音乐播放时长
+    if (res2.data.data[0].freeTrialInfo) {
+        song.time = (parseInt(res2.data.data[0].freeTrialInfo.end) - parseInt(res2.data.data[0].freeTrialInfo.start))*1000
+    }
+    return song
+}
+// 返回歌曲对象
+app.config.globalProperties.getsong = async function (id) {
+    let result = await this.getsong1(id)
+    return this.getsong2(result)
+}
+// 封装播放函数
+app.config.globalProperties.playMusic=async function(id){
+    this.addSong(await this.getsong(id))
+}
+
 axios.defaults.baseURL = "http://localhost:3000"
+axios.defaults.withCredentials = true
 app.use(store).use(router).use(VueAxios, axios).mount('#app')

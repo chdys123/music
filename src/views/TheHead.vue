@@ -2,7 +2,6 @@
   <div id="headercon">
     <div id="header">
       <div class="logo">
-
       </div>
       <ul id="headermenu">
         <li @click="toDiscover(1)" class="headerlibgc">发现音乐</li>
@@ -12,13 +11,15 @@
         <li @click="toMusicMan(5)">音乐人</li>
         <li @click="toClient(6)">下载客户端</li>
       </ul>
+
       <!-- 搜索框 -->
       <input type="text" class="serch input" placeholder="音乐/视频/电台/用户" @input="serchSuggest($event)"
         @focus="serchfocus($event)" id="serch1" @keydown="serch($event)">
       <!-- 创作者中心 -->
       <button id="cratebtn">创作者中心</button>
       <!-- 头像或者登录 -->
-      <a id="loginspan">登录</a>
+      <a id="loginspan" @click="clickLogin1()">登录</a>
+      <!-- 搜索建议 -->
       <div class="ser-sugg" v-if="isShow">
         <p v-if="isShow"><span v-if="isShow">搜索'{{keyword}}'相关用户</span>&nbsp;&gt;</p>
         <div v-if="serchData.songs!=null">
@@ -60,12 +61,11 @@
             </p>
           </div>
           <br style="clear: both;">
-
-
         </div>
-
       </div>
+      <!-- 搜索建议end -->
     </div>
+
   </div>
 
 
@@ -74,7 +74,6 @@
   <div id="player">
     <!-- 不显示 自己写样式只是用audio的属性即可 -->
     <audio ref="myaudio" :src="songList[index].src" id="myaudio" preload></audio>
-    <!-- :src="getSonglist[getIndex].src" -->
 
     <div id="player-con">
       <!-- 前一首 播放暂停 后一首 -->
@@ -83,12 +82,10 @@
         <a class="player-pause" @click="playerSwitch()" ref="switchBtn" id="switchBtn"></a>
         <a @click="playerBack()"></a>
       </div>
-
       <!-- 音乐图片 -->
       <div id="player-img">
         <img :src="songList[index].imgsrc" alt="">
       </div>
-
       <!-- 音乐名字 歌手 进度条 -->
       <div id="player-message">
         <!-- 音乐名字 歌手 -->
@@ -118,7 +115,29 @@
           @input="volumeslider()">
       </div>
     </div>
+
   </div>
+
+
+  <!-- 登录弹出框 -->
+  <div id="loginDialog" v-if="isShowLogin">
+    <p id="l-dg-h">
+      手机号登录
+      <span class="closeLogin">
+        <i class="closeLoginLogo" @click="closeLogin()"></i>
+      </span>
+    </p>
+    <div class="LoginInput">
+      <p><input type="text" placeholder="请输入手机号" v-model="phone"></p>
+      <p><input type="password" placeholder="请输入密码" v-model="password"></p>
+      <p><button @click="Login()">登&nbsp;&nbsp;&nbsp;录</button></p>
+    </div>
+    <div class="login-bottom">
+
+    </div>
+  </div>
+  <!-- 登录弹出框end -->
+
 
 
   <router-view :key="$route.fullPath"></router-view>
@@ -130,7 +149,7 @@
     data() {
       return {
         flag: 0,
-        // 播放器播放的歌曲列表信息
+        // 播放器播放的歌曲列表信息从浏览器本地获取的
         songList: [
           {
             songname: '',
@@ -142,6 +161,7 @@
             time: ''
           },
         ],
+        
         //当前音乐在歌曲列表的位置
         index: 0,
         // 音频实时播放时间
@@ -158,13 +178,51 @@
         // 搜索关键词
         keyword: '',
         // 是否显示搜索建议
-        isShow: false
+        isShow: false,
+        // 是否弹出登录框
+        isShowLogin: false,
+        // 手机号码,
+        phone:'',
+        // 登录密码
+        password:''
       }
 
 
     },
 
     methods: {
+
+      // 点击登录的时候
+      clickLogin1() {
+        console.log("点击了登录")
+
+        // 判断登录
+
+        // 如果没有登录 弹出登录框
+        this.isShowLogin = true
+
+      },
+      // 点击登录弹出框的关闭图标
+      closeLogin() {
+        this.isShowLogin = false
+      },
+      // 点击登录弹出框中的登录按钮
+      Login(){
+        console.log("点击了登录按钮")
+        this.axios({
+          method:'get',
+          url:'/login/cellphone?phone='+this.phone+'&password='+this.password
+        }).then(res=>{
+          console.log(res.data)
+          // 登录成功之后把本地里面的vip歌曲全部重新获取
+
+
+
+          // 退出登录后 把vip歌曲。。。。
+        }).catch(err=>{
+          console.log("登录失败")
+        })
+      },
       // 搜索框输入的时候
       serchSuggest(e) {
         this.keyword = e.target.value.trim()
@@ -189,8 +247,8 @@
       },
       // 搜索框键盘按下
       serch(e) {
-        if (this.keyword != ''&&e.keyCode==13) {
-          this.isShow=false
+        if (this.keyword != '' && e.keyCode == 13) {
+          this.isShow = false
           this.$router.push({ path: '/serch', query: { keyword: this.keyword } })
         }
       },
@@ -234,7 +292,6 @@
       playerSwitch() {
         let audio = this.$refs.myaudio
         let switchBtn = this.$refs.switchBtn
-        console.log("当前音乐名", this.songList[this.index].songname)
         if (audio.paused) {
           console.log("播放")
           setTimeout(() => {
@@ -389,6 +446,8 @@
           this.isShow = true
         }
       },
+
+
     },
 
     created() {
@@ -413,9 +472,8 @@
           console.log("监听到本地存储index改变")
           let s = localStorage.getItem("track-queue")
           let index = parseInt(localStorage.getItem("index"))
-          // 先判断播放去状态
+          // 先判断播放器状态
           let audio = document.getElementById("myaudio")
-          // console.log(audio.paused)
           if (audio.paused) {
             that.songList = JSON.parse(s)
             that.index = index
@@ -467,10 +525,13 @@
           if (e.target.getAttribute('id') != 'serch1' && e.target.getAttribute('class') != 'ser-sugg') {
             that.isShow = false
           }
-          
         })
+
+
       })
     },
+
+
   }
 
 </script>
@@ -622,14 +683,98 @@
     background-color: #F9F8F8;
   }
 
-
-
-
-
-
   /* 搜索建议end */
 
 
+
+
+  /* 登录弹出框 */
+
+  #loginDialog {
+    position: fixed;
+    width: 530px;
+    height: 314px;
+    background-color: #FFFFFF;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: -1px -1px 8px 1px #242424;
+  }
+
+  #l-dg-h {
+    height: 40px;
+    background-color: #2D2D2D;
+    font-size: 14px;
+    color: #FFFFFF;
+    font-weight: 700;
+    padding: 0px 45px 0px 18px;
+    line-height: 40px;
+  }
+
+  .closeLogin {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 40px;
+    width: 45px;
+  }
+
+  .closeLoginLogo {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: url('https://s2.music.126.net/style/web2/img/layer/layer.png?029a4018cc2eeb15afff986d6d6ef935') no-repeat 0 -95px;
+    cursor: pointer;
+  }
+
+  .LoginInput{
+    padding-top: 30px;
+    border-bottom: 1px solid #C6C6C6;
+  }
+  .LoginInput input {
+    width: 208px;
+    height: 20px;
+    outline: none;
+    border: 1px solid #CDCDCD;
+    font-size: 12px;
+    padding:5px 6px 6px ;
+    border-radius: 5px;
+  }
+  .LoginInput p{
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .LoginInput button{
+    width: 220px;
+    height: 30px;
+    background-color: #3181CD;
+    outline: none;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  .LoginInput button:hover{
+    background-color: #5DA2E2;
+  }
+  .login-bottom{
+    background-color: #F7F7F7;
+  }
+
+
+
+
+
+
+
+
+
+  /* 登录弹出框end*/
   .headerlibgc {
     background-color: #000000;
   }

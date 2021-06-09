@@ -17,23 +17,29 @@
                     <div id="sdc-l-t-r-2">
                         歌手：
                         <span v-for="(item,index) in songData.songs[0].ar">
-                            <span @click="toArtist(item.id)">{{item.name}}</span> /
+                            <span v-if="index>0" class="xiegang">/</span>
+                            <span @click="toArtist(item.id)" class="sdetailar">{{item.name}}</span>
                         </span>
                     </div>
                     <div id="sdc-l-t-r-3">
                         所属专辑：<span>{{songData.songs[0].al.name}}</span>
                     </div>
                     <div id="sdc-l-t-r-4">
-                        <span @click="musicPlay()">播放</span>
+                        <span @click="playMusic(this.songId)">播放</span>
                         <span @click="addQueue()"></span>
                         <span>收藏</span>
                         <span>分享</span>
                         <span>下载</span>
                         <span>12345</span>
                     </div>
-                    <div id="sdc-l-t-r-5">
-                        歌词部分
+                    <div id="sdc-l-t-r-5" :class="{'isClose':!isClose}">
+                        {{lyric}}
                     </div>
+                    <div id="sdc-l-t-r-6" v-if="this.lyric.length==0">纯音乐 无歌词</div>
+                    <p class='sdisclose' @click="isClosefunc()" id="sdisclose" v-if="this.lyric.length!=0">{{isOpen()}}
+                    </p>
+
+
                 </div>
                 <br style="clear:both">
             </div>
@@ -124,10 +130,10 @@
             <br style="clear:both">
         </div>
         <div id="songdetailCon-r">
-            <div id="sdc-r-simi-pl-title">
+            <div id="sdc-r-simi-pl-title" v-if="playlists.length!=0">
                 包含这首歌曲的歌单
             </div>
-            <div id="sdc-r-simi-pl-body">
+            <div id="sdc-r-simi-pl-body" v-if="playlists.length!=0">
                 <div id="sdc-r-simi-pl-body-item" v-for="item in playlists">
                     <img :src="item.coverImgUrl" alt="">
                     <div>
@@ -144,7 +150,7 @@
                     <p @click="toSongDetail(item.id)">{{item.name}}</p>
                     <p>{{item.artists[0].name}}</p>
                     <div>
-                        <span @click="musicPlay2(item)"></span>
+                        <span @click="playMusic(item.id)"></span>
                         <span @click="addQueue2(item)"></span>
                     </div>
                 </div>
@@ -162,6 +168,8 @@
         data() {
             return {
                 songId: 0,
+                // 歌曲url
+                url: '',
                 // 歌曲详情
                 songData: {
                     songs: [
@@ -222,12 +230,19 @@
                 // 当前页数
                 currentPage: 1,
 
+                // 歌词
+                lyric: '',
+                // 判断显示展开还是收起
+                isClose: false
+
+
 
             }
 
         },
 
         methods: {
+
 
             // 获取歌曲详情数据
             getSongData() {
@@ -336,7 +351,8 @@
             },
             // 点击播放按钮
             musicPlay() {
-                console.log("点击了播放")
+                // 获取song对象
+                console.log("点击了播放1")
                 let songname = this.songData.songs[0].name
                 let songId = this.songId
                 let arname = []
@@ -347,7 +363,8 @@
                 }
                 let time = this.songData.songs[0].dt
                 let imgsrc = this.songData.songs[0].al.picUrl + '?param=34y34'
-                let src = 'https://music.163.com/song/media/outer/url?id=' + this.songId + '.mp3'
+                // let src = 'https://music.163.com/song/media/outer/url?id=' + this.songId + '.mp3'
+                let src = this.url
 
                 // 创建歌曲信息对象
                 let song = {
@@ -359,9 +376,13 @@
                     imgsrc: imgsrc,
                     src: src
                 }
+                // 获取song对象end
+
                 // 放进本地存储
                 this.addSong(song)
             },
+
+            
             // 点击播放按钮
             musicPlay2(item) {
                 // console.log("点击了")
@@ -399,7 +420,7 @@
                 this.addSong(song)
             },
             // 点击加入播放列表按钮
-            addQueue(){
+            addQueue() {
                 console.log("点击了加入播放列表按钮")
                 let songname = this.songData.songs[0].name
                 let songId = this.songId
@@ -428,7 +449,7 @@
 
             },
             // 加入播放按钮2
-            addQueue2(item){
+            addQueue2(item) {
                 console.log("点击了添加按钮")
                 // 歌曲名
                 let songname = item.name
@@ -465,14 +486,60 @@
 
             },
             // 进入歌曲详情
-            toSongDetail(id){
-                this.$router.push({path:'/discover/song',query:{id:id}})
+            toSongDetail(id) {
+                this.$router.push({ path: '/discover/song', query: { id: id } })
             },
             // 进入歌手详情
-            toArtist(id){
+            toArtist(id) {
                 // console.log("点击了歌手",id)
-                this.$router.push({path:'/discover/artist',query:{id:id}})
-            }
+                this.$router.push({ path: '/discover/artist', query: { id: id } })
+            },
+            // 获取歌词
+            getlyric() {
+                this.axios({
+                    method: 'get',
+                    url: '/lyric?id=' + this.songId
+                }).then(res => {
+
+                    if (res.data.nolyric) {
+                        this.lyric = ''
+                    } else {
+                        this.lyric = res.data.lrc.lyric
+                        this.chulilyric()
+                    }
+                }).catch(err => {
+                    console.log("获取歌词失败")
+                })
+            },
+            // 对歌词进行处理
+            chulilyric() {
+                this.lyric = this.lyric.replace(/\[.*?\][ ]*/g, "")
+            },
+            // 点击收起或者展开时执行的函数
+            isClosefunc() {
+                this.isClose = !this.isClose
+            },
+            // 显示收起或者展开
+            isOpen() {
+                if (!this.isClose) {
+                    return '展开'
+                } else {
+                    return '收起'
+                }
+            },
+            // 获取音乐url
+            getSongUrl() {
+                this.axios({
+                    method: 'get',
+                    url: '/song/url?id=' + this.songId
+                }).then(res => {
+                    this.url = res.data.data[0].url
+                    console.log(this.url)
+                }).catch(err => {
+                    console.log("获取音乐url失败")
+                })
+            },
+            
         },
         computed: {
             isVipsong() {
@@ -505,10 +572,12 @@
             this.getSimiSongs()
             // 获取评论
             this.getComments(1)
-            // console.log("hello")
+            // 获取歌词
+            this.getlyric()
+            // 获取歌曲播放地址
+            this.getSongUrl()
 
         }
-
     }
 </script>
 
@@ -528,7 +597,6 @@
         float: left;
         border-right: 1px solid #D3D3D3;
         padding: 47px 30px 40px 39px;
-        /* background-color: pink; */
 
     }
 
@@ -537,11 +605,9 @@
         height: 100%;
         float: left;
         padding: 20px 40px 40px 30px;
-        /* background-color: yellow; */
     }
 
     #sdc-l-t {
-        /* height: 594px; */
         background-color: #FFFFFF;
     }
 
@@ -549,7 +615,6 @@
         float: left;
         height: 205px;
         width: 205px;
-        /* background-color: red; */
     }
 
     #sdc-l-t-l img {
@@ -560,14 +625,10 @@
     #sdc-l-t-r {
         float: right;
         width: 414px;
-        /* height: 486px; */
-        /* background-color: green; */
     }
 
     #sdc-l-t-r-1 {
-        /* height: 31px; */
         position: relative;
-        /* background-color: #fff; */
     }
 
     #sdc-l-t-r-1-l {
@@ -575,7 +636,6 @@
         width: 70px;
         height: 27px;
         line-height: 27px;
-        /* background-color: pink; */
         color: white;
         font-size: 13px;
         text-align: left;
@@ -589,7 +649,6 @@
         line-height: 26px;
         font-size: 20px;
         font-weight: 500;
-        /* background-color: blue; */
     }
 
     #sdc-l-t-r-1-r span span {
@@ -607,17 +666,20 @@
         font-size: 12px;
         color: #999999;
         margin-top: 12px;
-        /* background-color: #fff; */
 
     }
 
-    #sdc-l-t-r-2 span span,
+    #sdc-l-t-r-2 span .sdetailar,
     #sdc-l-t-r-3 span {
         color: #0E75BF;
         cursor: pointer;
     }
 
-    #sdc-l-t-r-2 span span:hover,
+    #sdc-l-t-r-2 span .xiegang {
+        color: #999999;
+    }
+
+    #sdc-l-t-r-2 span .sdetailar:hover,
     #sdc-l-t-r-3 span:hover {
         text-decoration: underline;
     }
@@ -627,7 +689,6 @@
         height: 31px;
         margin-top: 12px;
         margin-bottom: 25px;
-        /* background-color: #fff; */
     }
 
     #sdc-l-t-r-4 span {
@@ -684,26 +745,58 @@
     }
 
 
-    
+
 
     #sdc-l-t-r-5 {
-        height: 200px;
-        background-color: gray;
+        /* background-color: gray; */
+        white-space: pre-wrap;
+        /* height: 312px; */
+        font-size: 12px;
+        line-height: 24px;
+        overflow: hidden;
+        /* text-overflow: ellipsis; */
+
+
     }
+
+    #sdc-l-t-r-6 {
+        font-size: 12px;
+        line-height: 24px;
+        color: #666666;
+    }
+
+    .isClose {
+        display: -webkit-box;
+        -webkit-line-clamp: 13;
+        -webkit-box-orient: vertical;
+    }
+
+    .sdisclose {
+        font-size: 12px;
+        cursor: pointer;
+        color: #0C73CE;
+    }
+
+    .sdisclose:hover {
+        text-decoration: underline;
+    }
+
 
     #sdc-r-simi-pl-title,
     #sdc-r-simi-s-title {
         height: 24px;
-        /* background-color: #fff; */
         font-size: 12px;
         font-weight: 700;
         border-bottom: 1px solid #CCCCCC;
         margin-bottom: 20px;
     }
 
+    #sdc-r-simi-pl-body {
+        margin-bottom: 50px;
+    }
+
     #sdc-r-simi-pl-body-item {
         height: 50px;
-        /* background-color: skyblue; */
         margin: 15px 0;
     }
 
@@ -717,7 +810,6 @@
         width: 150px;
         height: 50px;
         float: left;
-        /* background-color: gray; */
     }
 
     #sdc-r-simi-pl-body-item div p {
@@ -746,14 +838,11 @@
         text-decoration: underline;
     }
 
-    #sdc-r-simi-s-title {
-        margin-top: 50px;
-    }
+
 
     #sdc-r-simi-s-body-item {
         position: relative;
         height: 32px;
-        /* background-color: pink; */
         margin-top: 10px;
         font-size: 12px;
 
@@ -761,7 +850,6 @@
 
     #sdc-r-simi-s-body-item p {
         float: left;
-        /* background-color: red; */
         width: 160px;
         overflow: hidden;
         white-space: nowrap;
@@ -783,7 +871,6 @@
         right: 0px;
         width: 40px;
         height: 32px;
-        /* background-color: green; */
     }
 
     #sdc-r-simi-s-body-item div span {
@@ -791,7 +878,6 @@
         display: inline-block;
         width: 10px;
         height: 11px;
-        /* background-color: pink; */
         margin-top: 11px;
         margin-left: 7px;
         background: url("https://s2.music.126.net/style/web2/img/icon2.png?f38e594a8c38f6bcee017b1f45290e10") no-repeat 0px 0px;
@@ -804,6 +890,6 @@
     #sdc-r-simi-s-body-item div span:nth-child(2) {
         background-position: -87px -454px;
     }
-/* 评论样式 */
-    
+
+    /* 评论样式 */
 </style>

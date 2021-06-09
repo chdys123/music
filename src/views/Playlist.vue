@@ -239,7 +239,7 @@
                 // 监听点击其他地方 歌单分类消失
                 window.addEventListener("click", function (e) {
                     if (e.target.getAttribute('class') != 'category' && e.target.getAttribute('id') != 'ChooseType') {
-                        console.log("消失")
+                        // console.log("消失")
                         that.show=false
                     }
                 })

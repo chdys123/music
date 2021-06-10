@@ -18,8 +18,8 @@
                         <span>{{createTime}}创建</span>
                     </div>
                     <div>
-                        <span>播放</span>
-                        <span></span>
+                        <span @click="playMusics(this.ids)">播放</span>
+                        <span @click="addMusics(this.ids)"></span>
                         <span>({{getnumber(data.playlist.subscribedCount)}})</span>
                         <span>({{getnumber(data.playlist.shareCount)}})</span>
                         <span>下载</span>
@@ -27,7 +27,8 @@
                     </div>
                     <div id="playlist-tag" v-if="data.playlist.tags.length!=0">
                         <span>标签:</span>
-                        <span class="playlistTags" v-for="(item,index) in data.playlist.tags" @click="totypeplaylist(item)">
+                        <span class="playlistTags" v-for="(item,index) in data.playlist.tags"
+                            @click="totypeplaylist(item)">
                             {{item}}
                         </span>
                     </div>
@@ -62,11 +63,11 @@
                                     {{index}}
                                 </span>
                                 <!-- 播放按钮 -->
-                                <span id="playlist-play" @click="playMusic(item)">
+                                <span id="playlist-play" @click="playMusic(item.id)" title="播放">
                                 </span>
                             </td>
                             <td>
-                                <span id="playlist-song-name" @click="toSongDetail(item.id)">
+                                <span id="playlist-song-name" @click="toSongDetail(item.id)" :title="item.name">
                                     {{item.name}}
                                 </span>
                             </td>
@@ -74,22 +75,22 @@
                                 <span id="playlist-song-dt">
                                     {{this.getDt(item.dt)}}
                                 </span>
-                                <div class="playlist-song-icon">
+                                <div class="playlist-song-icon" title="加入播放列表" @click="addMusic(item.id)">
                                 </div>
-                                <div class="playlist-song-icon">
+                                <div class="playlist-song-icon" title="分享">
                                 </div>
-                                <div class="playlist-song-icon">
+                                <div class="playlist-song-icon" title="下载">
                                 </div>
-                                <div class="playlist-song-icon">
+                                <div class="playlist-song-icon" title="收藏">
                                 </div>
                             </td>
                             <td>
-                                <span id="playlist-song-ar-name">
+                                <span id="playlist-song-ar-name" :title="item.ar[0].name" @click="toAr(item.ar[0].id)">
                                     {{item.ar[0].name}}
                                 </span>
                             </td>
                             <td>
-                                <span id="playlist-song-al">
+                                <span id="playlist-song-al" :title="item.al.name" @click="toAl(item.al.id)">
                                     {{item.al.name}}
                                 </span>
                             </td>
@@ -200,7 +201,8 @@
                 <img :src="item.coverImgUrl+'?param=50y50'" alt="" :title="item.name" @click="toplaylist(item.id)">
                 <div>
                     <p class="ellipsis" :title="item.name" @click="toplaylist(item.id)">{{item.name}}</p>
-                    <p class="ellipsis"><span>by</span><span :title="item.creator.nickname">{{item.creator.nickname}}</span></p>
+                    <p class="ellipsis"><span>by</span><span
+                            :title="item.creator.nickname">{{item.creator.nickname}}</span></p>
                 </div>
                 <br style="clear: both;">
             </div>
@@ -218,6 +220,8 @@
                 playlistId: 0,
                 //请求过来的数据
                 data: { playlist: { name: '', coverImgUrl: '', creator: { avatarUrl: '', nickname: '' }, createTime: 11111111, subscribedCount: 0, shareCount: 0, commentCount: 0, tags: [], description: '', trackCount: 0, playCount: 0, tracks: [] } },
+                // 歌曲id数组
+                ids: [],
                 //是否显示展开
                 isOPenShow: true,
                 //是否展开
@@ -253,9 +257,9 @@
                 currentPage: 1,
 
                 // 最近收藏用户
-                users:[],
+                users: [],
                 // 相关歌单
-                repl:[]
+                repl: []
 
 
             }
@@ -283,13 +287,13 @@
 
         },
         methods: {
-             // 数量格式化
-             getnumber(num){
-                num =parseInt(num)
-                if(num>100000){
-                    num=parseInt(num/100000)
-                    return num+'万'
-                }else{
+            // 数量格式化
+            getnumber(num) {
+                num = parseInt(num)
+                if (num > 100000) {
+                    num = parseInt(num / 100000)
+                    return num + '万'
+                } else {
                     return num
                 }
             },
@@ -300,6 +304,12 @@
                     url: '/playlist/detail?id=' + this.playlistId
                 }).then(res => {
                     this.data = res.data
+
+                    // 把歌曲id加入到ids
+                    let len = res.data.playlist.tracks.length
+                    for (let i = 0; i < len; i++) {
+                        this.ids.push(res.data.playlist.tracks[i].id)
+                    }
                 }).catch(err => {
                     console.log("请求歌曲详情数据失败")
                 })
@@ -330,48 +340,7 @@
                 }
                 return str1 + ':' + str2
             },
-            //点击播放图标
-            playMusic(item) {
-                // 歌曲名
-                let songname = item.name
-                // 歌曲id
-                let songid = item.id
-                // 可能有多个歌手
-                // 歌手名
-                let arname = []
-                // 歌手id
-                let arid = []
-                for(let i=0;i<item.ar.length;i++){
-                    arname.push(item.ar[i].name)
-                    arid.push(item.ar[i].id)
-                }
-                // 歌曲时长
-                let time = item.dt
-                // 歌曲图片
-                let imgsrc = item.al.picUrl + '?param=34y34'
-                // 歌曲地址
-                let src = 'https://music.163.com/song/media/outer/url?id=' + item.id + '.mp3'
-                // 创建歌曲信息对象
-                let song = {
-                    songname: songname,
-                    songid: songid,
-                    arname: arname,
-                    arid: arid,
-                    time: time,
-                    imgsrc: imgsrc,
-                    src: src
-                }
-                // 放进本地存储
-                this.addSong(song)
 
-               
-            },
-            // 点击歌曲名
-            toSongDetail(id){
-                // console.log("点击了歌曲名,歌曲id:",id)
-                // 进入歌曲组件
-                this.$router.push({path:'/discover/song',query:{id:id}})
-            },
             // 评论日期格式化
             contentTime(num) {
                 let time = new Date(num)
@@ -423,8 +392,8 @@
                 console.log("点击了尾页")
                 this.getComments(this.totalPage)
             },
-             //跳转页面
-             jumpPage(e) {
+            //跳转页面
+            jumpPage(e) {
                 if (e.keyCode == 13) {
                     let num = parseInt(e.target.value)
                     e.target.value = ''
@@ -440,33 +409,33 @@
                 }
             },
             // 获取最近收藏了这个歌单的八个用户
-            getlastUsers(){
+            getlastUsers() {
                 this.axios({
-                    url:'/playlist/subscribers?id='+this.playlistId+'&limit=8'
-                }).then(res=>{
-                    this.users=res.data.subscribers
-                }).catch(err=>{
+                    url: '/playlist/subscribers?id=' + this.playlistId + '&limit=8'
+                }).then(res => {
+                    this.users = res.data.subscribers
+                }).catch(err => {
                     console.log("获取最近收藏用户失败")
                 })
             },
             // 获取相似歌单
-            getrepl(){
+            getrepl() {
                 this.axios({
-                    method:'get',
-                    url:'/related/playlist?id='+this.playlistId
-                }).then(res=>{
-                    this.repl=res.data.playlists
-                }).catch(err=>{
+                    method: 'get',
+                    url: '/related/playlist?id=' + this.playlistId
+                }).then(res => {
+                    this.repl = res.data.playlists
+                }).catch(err => {
                     console.log("获取相似歌单失败")
                 })
             },
             // 进入歌单
-            toplaylist(id){
-                this.$router.push({path:'/discover/playlistdetail',query:{id:id}})
+            toplaylist(id) {
+                this.$router.push({ path: '/discover/playlistdetail', query: { id: id } })
             },
             // 进入歌单列表
-            totypeplaylist(type){
-                this.$router.push({path:'/discover/playlist',query:{type:type}})
+            totypeplaylist(type) {
+                this.$router.push({ path: '/discover/playlist', query: { type: type } })
 
             }
         },
@@ -498,7 +467,7 @@
                 }
                 this.isOPenShow = this.height < p.scrollHeight
                 this.count++
-                
+
             })
         },
 
@@ -535,7 +504,7 @@
 
     #playlistdetailLeft-header {
         width: 100%;
-        
+
     }
 
     #playlistdetailLeft-header-left {
@@ -877,14 +846,17 @@
         text-overflow: ellipsis;
     }
 
+
+
+
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon {
-        /* display: inline-block; */
         display: none;
         width: 22.5px;
         height: 16px;
         margin-left: -3px;
-        background: url("https://s2.music.126.net/style/web2/img/table.png?3a5f37405892f2dbd5cfd501bf28124a") no-repeat 2px -172px;
+        background: url("https://s2.music.126.net/style/web2/img/table.png?3a5f37405892f2dbd5cfd501bf28124a") no-repeat 0px 0px;
 
+        /* 2px -172px */
     }
 
     #playlistdetailLeft-b-b table tr:nth-child(n+1):hover .playlist-song-icon {
@@ -896,50 +868,64 @@
         display: none;
     }
 
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(2):hover {
+
+    /* start */
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(3){
+        background-position: 2px -172px;
+
+    }
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(3):hover {
         background-position: -18px -172px;
     }
 
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(3) {
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(4) {
         background-position: 2px -193px;
     }
 
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(3):hover {
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(4):hover {
         background-position: -18px -193px;
     }
 
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(4) {
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(5) {
         background-position: -80px -172px;
     }
 
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(4):hover {
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(5):hover {
         background-position: -103px -172px;
     }
 
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(1) {
-        background: url("https://s2.music.126.net/style/web2/img/icon.png?a3fac54832f2c8d83755e92cfc65f3e4") no-repeat 6px -697px;
+
+
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(2) {
+        background: url("https://s2.music.126.net/style/web2/img/icon.png?a3fac54832f2c8d83755e92cfc65f3e4") no-repeat 6px -697px ;
     }
 
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(1):hover {
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(2):hover {
         background-position: -16px -697px;
     }
+    /* end */
+
+
 
     /* 侧边栏 */
-    .plut{
+    .plut {
         font-size: 12px;
         font-weight: 700;
         border-bottom: 1px solid #CCCCCC;
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
-    #playlistdetailRight .pluser1{
+
+    #playlistdetailRight .pluser1 {
         float: left;
         margin-left: 13px;
     }
-    #playlistdetailRight .pluser2{
+
+    #playlistdetailRight .pluser2 {
         margin-left: 0px;
     }
-    .plut1{
+
+    .plut1 {
         margin-top: 30px;
         font-size: 12px;
         font-weight: 700;
@@ -947,43 +933,52 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
-    .repl{
+
+    .repl {
         margin-bottom: 15px;
     }
-    .repl img{
+
+    .repl img {
         float: left;
     }
-    .repl div{
+
+    .repl div {
         float: left;
         width: 145px;
         /* background-color: pink; */
         margin-left: 5px;
 
     }
-    .repl div p:nth-child(1){
+
+    .repl div p:nth-child(1) {
         font-size: 14px;
         cursor: pointer;
         padding: 3px 0px;
     }
-    .repl div p:nth-child(1):hover{
+
+    .repl div p:nth-child(1):hover {
         text-decoration: underline;
-        
+
 
     }
-    .repl div p:nth-child(2){
+
+    .repl div p:nth-child(2) {
         font-size: 12px;
         padding: 3px 0px;
     }
-    .repl div p:nth-child(2) span:nth-child(1){
+
+    .repl div p:nth-child(2) span:nth-child(1) {
         color: #99A6C4;
     }
-    .repl div p:nth-child(2) span:nth-child(2){
+
+    .repl div p:nth-child(2) span:nth-child(2) {
         color: #666666;
         cursor: pointer;
         margin-left: 5px;
 
     }
-    .repl div p:nth-child(2) span:nth-child(2):hover{
+
+    .repl div p:nth-child(2) span:nth-child(2):hover {
         text-decoration: underline;
     }
 

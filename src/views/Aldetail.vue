@@ -20,8 +20,8 @@
                         </p>
 
                         <div id="al-l-t-r-btn">
-                            <span>播放</span>
-                            <span></span>
+                            <span @click="playMusics(this.ids)">播放</span>
+                            <span @click="addMusics(this.ids)"></span>
                             <span>收藏</span>
                             <span>({{albumData.album.info.shareCount}})</span>
                             <span>下载</span>
@@ -189,6 +189,8 @@
         data() {
             return {
                 albumId: '',
+                // id数组
+                ids:[],
                 albumData: {
                     songs: [],
                     album: {
@@ -240,8 +242,6 @@
                 },
                 // 当前页数
                 currentPage: 1,
-
-
             }
         },
         computed: {
@@ -262,6 +262,11 @@
                     url: '/album?id=' + this.albumId
                 }).then(res => {
                     this.albumData = res.data
+                    // 把歌曲id加入到ids
+                    let len = res.data.songs.length
+                    for (let i = 0; i < len; i++) {
+                        this.ids.push(res.data.songs[i].id)
+                    }
                     this.getotherAl()
                 }).catch(err => {
                     console.log("获取专辑信息失败")

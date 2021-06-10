@@ -148,11 +148,22 @@ app.config.globalProperties.addMusic=async function(id){
 }
 
 
-// 歌单或者专辑播放 里面很多首歌曲 点击播放都要加入播放列表 并播放第一首歌
-
-
+// 歌单或者专辑播放 里面很多首歌曲 点击播放都要加入播放列表 并播放第一首歌 传入id数组
+app.config.globalProperties.playMusics=async function(arr){
+    // 第一首歌是播放 剩下的都是加入列表
+    this.playMusic(arr[0])
+    for(let i=1;i<arr.length;i++){
+        this.addMusic(arr[i])
+    }
+    console.log("点击了",arr)
+}
 
 // 歌单或者专辑加入播放列表 里面很多首歌 点击加入播放列表 
+app.config.globalProperties.addMusics=async function(arr){
+    for(let i=0;i<arr.length;i++){
+        this.addMusic(arr[i])
+    }
+}
 
 
 // 进入入歌单详情
@@ -175,8 +186,6 @@ app.config.globalProperties.toAl=function(id){
 app.config.globalProperties.toMv=function(id){
     this.$router.push({ path: '/discover/mv', query: { id: id } })
 }
-
-
 
 
 

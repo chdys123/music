@@ -486,10 +486,11 @@
           }
         })
         // window监听自定义事件 监听queue改变 但是index不改变
-        window.addEventListener("storageEvent2", function () {
+        window.addEventListener("StorageEvent2", function () {
           console.log("监听到queue改变")
           let s = localStorage.getItem("track-queue")
           that.songList = JSON.parse(s)
+
         })
         // 监听audio播放位置更改
         let audio = document.getElementById("myaudio")

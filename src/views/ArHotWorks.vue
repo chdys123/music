@@ -1,8 +1,8 @@
 <template>
     <div>
         <div id="a-h-w-t">
-            <span>播放</span>
-            <span title="添加到播放列表"></span>
+            <span @click="playMusics(this.ids)">播放</span>
+            <span title="添加到播放列表" @click="addMusics(ids)"></span>
             <span>收藏</span>
         </div>
 
@@ -39,7 +39,8 @@
         data() {
             return {
                 artistId: '',
-                hotSongs: []
+                hotSongs: [],
+                ids:[]
             }
         },
         methods: {
@@ -56,6 +57,13 @@
                 }).then(res => {
                     // console.log(res.data.hotSongs)
                     this.hotSongs = res.data.hotSongs
+                    // 获取ids
+                    let len =this.hotSongs.length
+                    for(let i=0;i<len;i++){
+                        this.ids.push(this.hotSongs[i].id)
+                    }
+
+
                 }).catch(err => {
                     console.log("获取歌手歌曲失败")
                 })

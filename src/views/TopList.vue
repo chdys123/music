@@ -37,8 +37,8 @@
                     </p>
                     <!-- 一排收藏 分享按钮 -->
                     <div id="toplist-fun-btn">
-                        <span title="播放">播放</span>
-                        <span title="添加到播放列表"></span>
+                        <span title="播放" @click="playMusics(this.ids)">播放</span>
+                        <span title="添加到播放列表" @click="addMusic(this.ids)"></span>
                         <span title="收藏">({{toplistDetail.playlist.subscribedCount}})</span>
                         <span title="分享">({{toplistDetail.playlist.shareCount}})</span>
                         <span title="下载">下载</span>
@@ -71,23 +71,23 @@
                 <div id="tp-r-s-b">
                     <div :class="{'a-h-w-b-item':true,'tl-s-img':index==0||index==1||index==2}"
                         v-for="(item,index) in toplistDetail.playlist.tracks">
-                        <span>{{index+1}} <span class="playLogo"></span></span>
-                        <span :title="item.name">
-                            <img :src="item.al.picUrl+'?param=50y50'" alt="" v-if="index==2||index==0||index==1">
-                            {{item.name}}
-                            <span class="mvLogo" v-if="item.mv!=0" title="播放mv"></span>
+                        <span>{{index+1}} <span class="playLogo" @click="playMusic(item.id)" title="播放"></span></span>
+                        <span >
+                            <img :src="item.al.picUrl+'?param=50y50'" alt="" v-if="index==2||index==0||index==1" @click="toSongDetail(item.id)" :title="item.name">
+                            <span :title="item.name" @click="toSongDetail(item.id)">{{item.name}}</span>
+                            <span class="mvLogo" v-if="item.mv!=0" title="播放mv" @click="toMv(item.mv)"></span>
                         </span>
                         <span>
                             <span class="a-h-w-dt">{{this.getDt(item.dt)}}</span>
                             <span class="a-h-w-func">
-                                <span title="添加到播放列表" class="addSongLogo"></span>
+                                <span title="添加到播放列表" class="addSongLogo" @click="addMusic(item.id)"></span>
                                 <span title="收藏" class="collectLogo"></span>
                                 <span title="分享" class="shareLogo"></span>
                                 <span title="下载" class="downloadLogo"></span>
                                 <br style="clear: both;">
                             </span>
                         </span>
-                        <span :title="item.ar[0].name" class="tp-s-b-sn">{{item.ar[0].name}}</span>
+                        <span :title="item.ar[0].name" class="tp-s-b-sn" @click="toAr(item.ar[0].id)">{{item.ar[0].name}}</span>
                         <br style="clear:both">
                     </div>
                 </div>
@@ -184,6 +184,7 @@
             return {
                 // 榜单数据
                 toplist: [],
+
                 // 榜单详情
                 toplistDetail: {
                     playlist: {
@@ -219,6 +220,8 @@
                 },
                 // 当前榜单详情id
                 id: 0,
+                // 当前榜单歌曲id数组
+                ids:[],
                 // 评论
                 allComments: {
                     // 热门评论
@@ -281,6 +284,14 @@
                     url: '/playlist/detail?id=' + id
                 }).then(res => {
                     this.toplistDetail = res.data
+                    // 把歌曲id加入到ids
+                    let len = res.data.playlist.tracks.length
+                    for (let i = 0; i < len; i++) {
+                        this.ids.push(res.data.playlist.tracks[i].id)
+                    }
+
+
+
 
                 }).catch(err => {
                     console.log("获取榜单详情失败")

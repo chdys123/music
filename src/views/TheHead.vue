@@ -18,7 +18,10 @@
       <!-- 创作者中心 -->
       <button id="cratebtn">创作者中心</button>
       <!-- 头像或者登录 -->
+      <!-- 登录之后显示头像 登录字样消失 -->
       <a id="loginspan" @click="clickLogin1()">登录</a>
+
+
       <!-- 搜索建议 -->
       <div class="ser-sugg" v-if="isShow">
         <p v-if="isShow"><span v-if="isShow">搜索'{{keyword}}'相关用户</span>&nbsp;&gt;</p>
@@ -91,7 +94,8 @@
         <!-- 音乐名字 歌手 -->
         <div>
           <span @click="toSongDetail(songList[index].songid)">{{songList[index].songname}}</span>
-          <span v-for="(item,index1) in songList[index].arname" @click="toAr(songList[index].arid[index1])">{{item}}</span>
+          <span v-for="(item,index1) in songList[index].arname"
+            @click="toAr(songList[index].arid[index1])">{{item}}</span>
         </div>
         <!-- 进度条和时间盒子 -->
         <div id="ProgressbarCon">
@@ -138,12 +142,12 @@
   </div>
   <!-- 登录弹出框end -->
 
-
-
   <router-view :key="$route.fullPath"></router-view>
 </template>
 
 <script>
+  import mes from "../components/messageTips.vue"
+
   export default {
     name: 'thehead',
     data() {
@@ -161,7 +165,7 @@
             time: ''
           },
         ],
-        
+
         //当前音乐在歌曲列表的位置
         index: 0,
         // 音频实时播放时间
@@ -182,12 +186,15 @@
         // 是否弹出登录框
         isShowLogin: false,
         // 手机号码,
-        phone:'',
+        phone: '',
         // 登录密码
-        password:''
+        password: ''
       }
 
 
+    },
+    components: {
+      mes
     },
 
     methods: {
@@ -207,19 +214,24 @@
         this.isShowLogin = false
       },
       // 点击登录弹出框中的登录按钮
-      Login(){
+      Login() {
         console.log("点击了登录按钮")
         this.axios({
-          method:'get',
-          url:'/login/cellphone?phone='+this.phone+'&password='+this.password
-        }).then(res=>{
+          method: 'get',
+          url: '/login/cellphone?phone=' + this.phone + '&password=' + this.password
+        }).then(res => {
           console.log(res.data)
           // 登录成功之后把本地里面的vip歌曲全部重新获取
+          this.$messageTips("成功了")
+
+
+          // 登录成功之后页面显示登录成功提示  封装一个组件
+
 
 
 
           // 退出登录后 把vip歌曲。。。。
-        }).catch(err=>{
+        }).catch(err => {
           console.log("登录失败")
         })
       },
@@ -461,7 +473,6 @@
           that.songList = queue
           that.index = index
         }
-
       })
     },
     mounted() {
@@ -613,7 +624,6 @@
   #loginspan:hover {
     color: #ffffff;
     text-decoration: underline;
-
   }
 
   /* 搜索建议 */
@@ -732,24 +742,27 @@
     cursor: pointer;
   }
 
-  .LoginInput{
+  .LoginInput {
     padding-top: 30px;
     border-bottom: 1px solid #C6C6C6;
   }
+
   .LoginInput input {
     width: 208px;
     height: 20px;
     outline: none;
     border: 1px solid #CDCDCD;
     font-size: 12px;
-    padding:5px 6px 6px ;
+    padding: 5px 6px 6px;
     border-radius: 5px;
   }
-  .LoginInput p{
+
+  .LoginInput p {
     text-align: center;
     margin-bottom: 10px;
   }
-  .LoginInput button{
+
+  .LoginInput button {
     width: 220px;
     height: 30px;
     background-color: #3181CD;
@@ -760,10 +773,12 @@
     margin-top: 20px;
     margin-bottom: 40px;
   }
-  .LoginInput button:hover{
+
+  .LoginInput button:hover {
     background-color: #5DA2E2;
   }
-  .login-bottom{
+
+  .login-bottom {
     background-color: #F7F7F7;
   }
 

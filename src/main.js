@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -27,8 +27,6 @@ app.config.globalProperties.setItem = function (key, value) {
         window.dispatchEvent(newStorageEvent)
 
     }
-
-
 }
 // 挂载向本地存储添加歌曲的方法 并改变当前播放index
 app.config.globalProperties.addSong = function (song) {
@@ -129,7 +127,7 @@ app.config.globalProperties.getsong2 = function (result) {
     song.src = res2.data.data[0].url
     // 改变音乐播放时长
     if (res2.data.data[0].freeTrialInfo) {
-        song.time = (parseInt(res2.data.data[0].freeTrialInfo.end) - parseInt(res2.data.data[0].freeTrialInfo.start))*1000
+        song.time = (parseInt(res2.data.data[0].freeTrialInfo.end) - parseInt(res2.data.data[0].freeTrialInfo.start)) * 1000
     }
     return song
 }
@@ -139,57 +137,50 @@ app.config.globalProperties.getsong = async function (id) {
     return this.getsong2(result)
 }
 // 封装播放函数
-app.config.globalProperties.playMusic=async function(id){
+app.config.globalProperties.playMusic = async function (id) {
     this.addSong(await this.getsong(id))
 }
 // 封装添加播放队列函数
-app.config.globalProperties.addMusic=async function(id){
+app.config.globalProperties.addMusic = async function (id) {
     this.addtoQueue(await this.getsong(id))
 }
-
-
 // 歌单或者专辑播放 里面很多首歌曲 点击播放都要加入播放列表 并播放第一首歌 传入id数组
-app.config.globalProperties.playMusics=async function(arr){
+app.config.globalProperties.playMusics = async function (arr) {
     // 第一首歌是播放 剩下的都是加入列表
     this.playMusic(arr[0])
-    for(let i=1;i<arr.length;i++){
+    for (let i = 1; i < arr.length; i++) {
         this.addMusic(arr[i])
     }
-    console.log("点击了",arr)
+    console.log("点击了", arr)
 }
-
 // 歌单或者专辑加入播放列表 里面很多首歌 点击加入播放列表 
-app.config.globalProperties.addMusics=async function(arr){
-    for(let i=0;i<arr.length;i++){
+app.config.globalProperties.addMusics = async function (arr) {
+    for (let i = 0; i < arr.length; i++) {
         this.addMusic(arr[i])
     }
 }
-
-
 // 进入入歌单详情
-app.config.globalProperties.toPlatListDetail=function(id){
-    this.$router.push({path:'/discover/playlistdetail',query:{id:id}})
+app.config.globalProperties.toPlatListDetail = function (id) {
+    this.$router.push({ path: '/discover/playlistdetail', query: { id: id } })
 }
 // 进入歌曲详情
-app.config.globalProperties.toSongDetail=function(id){
-    this.$router.push({path:'/discover/song',query:{id:id}})
+app.config.globalProperties.toSongDetail = function (id) {
+    this.$router.push({ path: '/discover/song', query: { id: id } })
 }
 // 进入歌手详情
-app.config.globalProperties.toAr=function(id){
+app.config.globalProperties.toAr = function (id) {
     this.$router.push({ path: '/discover/artist', query: { id: id } })
 }
 // 进入专辑详情
-app.config.globalProperties.toAl=function(id){
+app.config.globalProperties.toAl = function (id) {
     this.$router.push({ path: '/discover/album', query: { id: id } })
 }
 // 进入mv详情
-app.config.globalProperties.toMv=function(id){
+app.config.globalProperties.toMv = function (id) {
     this.$router.push({ path: '/discover/mv', query: { id: id } })
 }
-
-
-
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
 app.use(store).use(router).use(VueAxios, axios).mount('#app')
+

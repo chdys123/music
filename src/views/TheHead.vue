@@ -137,6 +137,8 @@
       <p><button @click="Login()">登&nbsp;&nbsp;&nbsp;录</button></p>
     </div>
     <div class="login-bottom">
+    <el-button>默认按钮</el-button>
+    <el-button type="primary" @click="$message('只是一条消息提示')">主要按钮</el-button>
 
     </div>
   </div>
@@ -146,8 +148,6 @@
 </template>
 
 <script>
-  import mes from "../components/messageTips.vue"
-
   export default {
     name: 'thehead',
     data() {
@@ -165,7 +165,6 @@
             time: ''
           },
         ],
-
         //当前音乐在歌曲列表的位置
         index: 0,
         // 音频实时播放时间
@@ -193,9 +192,7 @@
 
 
     },
-    components: {
-      mes
-    },
+    
 
     methods: {
 
@@ -222,13 +219,9 @@
         }).then(res => {
           console.log(res.data)
           // 登录成功之后把本地里面的vip歌曲全部重新获取
-          this.$messageTips("成功了")
 
 
           // 登录成功之后页面显示登录成功提示  封装一个组件
-
-
-
 
           // 退出登录后 把vip歌曲。。。。
         }).catch(err => {

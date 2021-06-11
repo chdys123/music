@@ -1,4 +1,4 @@
-import { createApp} from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -6,7 +6,30 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import '../public/basic.css'
 
+// elementui 按需引入
+import { ElButton, ElMessage } from 'element-plus'
+
 const app = createApp(App)
+
+// 标签调用
+const components = [
+    ElButton,
+
+]
+// 方法调用
+const plugins = [
+    ElMessage,
+]
+
+components.forEach(component => {
+    app.component(component.name, component)
+})
+
+plugins.forEach(plugin => {
+    app.use(plugin)
+})
+
+
 // 在原型上面挂着方法
 app.config.globalProperties.setItem = function (key, value) {
     if (key == 'index') {

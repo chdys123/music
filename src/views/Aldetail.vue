@@ -71,7 +71,7 @@
                                     <span class="a-h-w-dt">{{this.getDt(item.dt)}}</span>
                                     <!-- 各种功能 -->
                                     <span class="a-h-w-func">
-                                        <span title="添加到播放列表" class="addSongLogo" @click="addMusic(item.id)"></span>
+                                        <span title="添加到播放列表" class="addSongLogo" @click="addMusics([item.id])"></span>
                                         <span title="收藏" class="collectLogo"></span>
                                         <span title="分享" class="shareLogo"></span>
                                         <span title="下载" class="downloadLogo"></span>

@@ -75,7 +75,7 @@
                                 <span id="playlist-song-dt">
                                     {{this.getDt(item.dt)}}
                                 </span>
-                                <div class="playlist-song-icon" title="加入播放列表" @click="addMusic(item.id)">
+                                <div class="playlist-song-icon" title="加入播放列表" @click="addMusics([item.id])">
                                 </div>
                                 <div class="playlist-song-icon" title="分享">
                                 </div>

@@ -124,7 +124,7 @@
 
 
   <!-- 登录弹出框 -->
-  <div id="loginDialog" v-if="isShowLogin">
+  <!-- <div id="loginDialog" v-if="isShowLogin">
     <p id="l-dg-h">
       手机号登录
       <span class="closeLogin">
@@ -137,11 +137,20 @@
       <p><button @click="Login()">登&nbsp;&nbsp;&nbsp;录</button></p>
     </div>
     <div class="login-bottom">
-    <el-button>默认按钮</el-button>
-    <el-button type="primary" @click="$message('只是一条消息提示')">主要按钮</el-button>
 
     </div>
-  </div>
+  </div> -->
+
+
+  <el-dialog title="提示" v-model="isShowLogin" width="30%">
+    <span>登录</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </template>
+  </el-dialog>
   <!-- 登录弹出框end -->
 
   <router-view :key="$route.fullPath"></router-view>
@@ -192,7 +201,7 @@
 
 
     },
-    
+
 
     methods: {
 
@@ -206,10 +215,7 @@
         this.isShowLogin = true
 
       },
-      // 点击登录弹出框的关闭图标
-      closeLogin() {
-        this.isShowLogin = false
-      },
+      
       // 点击登录弹出框中的登录按钮
       Login() {
         console.log("点击了登录按钮")
@@ -793,6 +799,7 @@
     width: 100%;
     height: 53px;
     background-color: rgba(0, 0, 0, .8);
+
     position: fixed;
     bottom: 0px;
     /* right: 0; */

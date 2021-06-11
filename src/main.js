@@ -7,13 +7,14 @@ import VueAxios from 'vue-axios'
 import '../public/basic.css'
 
 // elementui 按需引入
-import { ElButton, ElMessage } from 'element-plus'
+import { ElButton, ElMessage,ElDialog} from 'element-plus'
 
 const app = createApp(App)
 
 // 标签调用
 const components = [
     ElButton,
+    ElDialog
 
 ]
 // 方法调用
@@ -174,13 +175,16 @@ app.config.globalProperties.playMusics = async function (arr) {
     for (let i = 1; i < arr.length; i++) {
         this.addMusic(arr[i])
     }
-    console.log("点击了", arr)
 }
 // 歌单或者专辑加入播放列表 里面很多首歌 点击加入播放列表 
 app.config.globalProperties.addMusics = async function (arr) {
     for (let i = 0; i < arr.length; i++) {
         this.addMusic(arr[i])
     }
+    this.$message.success({
+        message:'加入播放列表成功',
+        type: 'success'
+    })
 }
 // 进入入歌单详情
 app.config.globalProperties.toPlatListDetail = function (id) {

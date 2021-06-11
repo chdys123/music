@@ -38,7 +38,7 @@
                     <!-- 一排收藏 分享按钮 -->
                     <div id="toplist-fun-btn">
                         <span title="播放" @click="playMusics(this.ids)">播放</span>
-                        <span title="添加到播放列表" @click="addMusic(this.ids)"></span>
+                        <span title="添加到播放列表" @click="addMusics(this.ids)"></span>
                         <span title="收藏">({{toplistDetail.playlist.subscribedCount}})</span>
                         <span title="分享">({{toplistDetail.playlist.shareCount}})</span>
                         <span title="下载">下载</span>
@@ -80,7 +80,7 @@
                         <span>
                             <span class="a-h-w-dt">{{this.getDt(item.dt)}}</span>
                             <span class="a-h-w-func">
-                                <span title="添加到播放列表" class="addSongLogo" @click="addMusic(item.id)"></span>
+                                <span title="添加到播放列表" class="addSongLogo" @click="addMusics([item.id])"></span>
                                 <span title="收藏" class="collectLogo"></span>
                                 <span title="分享" class="shareLogo"></span>
                                 <span title="下载" class="downloadLogo"></span>

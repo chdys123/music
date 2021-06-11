@@ -26,7 +26,7 @@
                     </div>
                     <div id="sdc-l-t-r-4">
                         <span @click="playMusic(this.songId)">播放</span>
-                        <span @click="addMusic(this.songId)"></span>
+                        <span @click="addMusics([this.songId])"></span>
                         <span>收藏</span>
                         <span>分享</span>
                         <span>下载</span>
@@ -151,7 +151,7 @@
                     <p :title="item.artists[0].name">{{item.artists[0].name}}</p>
                     <div>
                         <span @click="playMusic(item.id)" title="播放"></span>
-                        <span @click="addMusic(item.id)" title="加入播放列表"></span>
+                        <span @click="addMusics([item.id])" title="加入播放列表"></span>
                     </div>
                 </div>
 

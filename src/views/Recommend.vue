@@ -102,7 +102,8 @@
                             <div class="ftlDetail">
                                 <div v-for="(item,index) in toplistData[0].slice(0,10)" class="ftpDetail-item">
                                     <span class="ftpnum">{{index+1}}</span>
-                                    <span class="ftpname ellipsis" :title="item.name" @click="tosongDetail(item.id)">{{item.name}}</span>
+                                    <span class="ftpname ellipsis" :title="item.name"
+                                        @click="tosongDetail(item.id)">{{item.name}}</span>
                                 </div>
                             </div>
                             <br style="clear: both;">
@@ -123,11 +124,12 @@
                             <div class="ftlDetail">
                                 <div v-for="(item,index) in toplistData[1].slice(0,10)" class="ftpDetail-item">
                                     <span class="ftpnum">{{index+1}}</span>
-                                    <span class="ftpname ellipsis" :title="item.name" @click="tosongDetail(item.id)">{{item.name}}</span>
+                                    <span class="ftpname ellipsis" :title="item.name"
+                                        @click="tosongDetail(item.id)">{{item.name}}</span>
                                 </div>
                             </div>
                             <br style="clear: both;">
-                            
+
                         </div>
                         <!-- 原创榜 -->
                         <div>
@@ -144,7 +146,8 @@
                             <div class="ftlDetail">
                                 <div v-for="(item,index) in toplistData[2].slice(0,10)" class="ftpDetail-item">
                                     <span class="ftpnum">{{index+1}}</span>
-                                    <span class="ftpname ellipsis" :title="item.name" @click="tosongDetail(item.id)">{{item.name}}</span>
+                                    <span class="ftpname ellipsis" :title="item.name"
+                                        @click="tosongDetail(item.id)">{{item.name}}</span>
                                 </div>
                             </div>
                             <br style="clear: both;">
@@ -226,14 +229,14 @@
                     ]
                 ],
                 // 热门歌手
-                hotAr:[]
+                hotAr: []
             }
         },
         methods: {
             // 点击更多进入歌单路由
             toAllPlayList(type) {
                 console.log("进入到歌单组件")
-                this.$router.push({path:"/discover/playlist",query:{type:type}})
+                this.$router.push({ path: "/discover/playlist", query: { type: type } })
             },
             // 点击更多进入专辑路由
             toAllAl() {
@@ -338,29 +341,29 @@
                 })
             },
             // 进入榜单
-            toTopList(id){
-                this.$router.push({path:'/discover/toplist',query:{id:id}})
+            toTopList(id) {
+                this.$router.push({ path: '/discover/toplist', query: { id: id } })
             },
             // 进入歌曲详情
-            tosongDetail(id){
-                this.$router.push({path:'/discover/song',query:{id:id}})
+            tosongDetail(id) {
+                this.$router.push({ path: '/discover/song', query: { id: id } })
             },
             // 获取热门歌手
-            gethotAr(){
+            gethotAr() {
                 this.axios({
-                    method:'get',
-                    url:'/top/artists?limit=6'
-                }).then(res=>{
-                    this.hotAr=res.data.artists
-                }).catch(err=>{
+                    method: 'get',
+                    url: '/top/artists?limit=6'
+                }).then(res => {
+                    this.hotAr = res.data.artists
+                }).catch(err => {
                     console.log("获取热门歌手数据失败")
                 })
             },
             // 进入歌手路由
-            toallAr(){
+            toallAr() {
                 this.$router.push('/discover/artists')
             }
-            
+
 
         },
         components: {
@@ -382,7 +385,8 @@
 <style>
     .re-con {
         width: 983px;
-        height: 1600px;
+        height: 1400px;
+        /* margin-bottom: 60px; */
         margin: 0 auto;
         border: 1px solid #D3D3D3;
         border-top: none;
@@ -639,9 +643,11 @@
         font-size: 12px;
         line-height: 26px;
     }
-    .ftlDetail>div{
+
+    .ftlDetail>div {
         position: relative;
     }
+
     .ftlDetail div:nth-child(odd) {
         background-color: #E8E8E8;
     }
@@ -656,7 +662,7 @@
 
     }
 
-    .ftlDetail .ftpname{
+    .ftlDetail .ftpname {
         display: inline-block;
         margin-left: 5px;
         width: 192px;
@@ -665,47 +671,54 @@
         vertical-align: middle;
         cursor: pointer;
     }
-   
+
     .ftlDetail .ftpname:hover {
         text-decoration: underline;
     }
+
     /* 首页榜单end */
 
     /* 侧边栏热门歌手 */
-    .reco-r .fhotar>p{
+    .reco-r .fhotar>p {
         font-size: 12px;
         font-weight: 700;
         border-bottom: 1px solid #CCCCCC;
-        padding-bottom:10px ;
+        padding-bottom: 10px;
     }
-    .reco-r .fhotar p a{
-        color:#666666;
+
+    .reco-r .fhotar p a {
+        color: #666666;
         font-weight: 500;
         margin-left: 75px;
         cursor: pointer;
     }
-    .reco-r .fhotar p a:hover{
+
+    .reco-r .fhotar p a:hover {
         text-decoration: underline;
     }
-    .fhotar-item{
+
+    .fhotar-item {
         float: left;
         margin-left: 54px;
         margin-top: 20px;
     }
-    .reco-r .fhotar-item:nth-child(even){
+
+    .reco-r .fhotar-item:nth-child(even) {
         margin-left: 0px;
     }
-    .fhotar-item p{
+
+    .fhotar-item p {
         font-size: 14px;
         cursor: pointer;
         text-align: center;
         width: 62px;
     }
-    .fhotar-item p:hover{
+
+    .fhotar-item p:hover {
         text-decoration: underline;
     }
 
-    
+
 
 
 

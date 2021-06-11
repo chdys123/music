@@ -13,13 +13,17 @@
       </ul>
 
       <!-- 搜索框 -->
-      <input type="text" class="serch input" placeholder="音乐/视频/电台/用户" @input="serchSuggest($event)"
+      <input type="text" class="myserch input" placeholder="音乐/视频/电台/用户" @input="serchSuggest($event)"
         @focus="serchfocus($event)" id="serch1" @keydown="serch($event)">
       <!-- 创作者中心 -->
       <button id="cratebtn">创作者中心</button>
       <!-- 头像或者登录 -->
       <!-- 登录之后显示头像 登录字样消失 -->
-      <a id="loginspan" @click="clickLogin1()">登录</a>
+      <a id="loginspan" @click="clickLogin1()" v-show="isLogin==false">登录</a>
+      <!-- 头像 -->
+      <img :src="userImg" alt="" id="userImg" v-show="isLogin==true">
+
+
 
 
       <!-- 搜索建议 -->
@@ -121,36 +125,19 @@
     </div>
 
   </div>
-
-
   <!-- 登录弹出框 -->
-  <!-- <div id="loginDialog" v-if="isShowLogin">
-    <p id="l-dg-h">
-      手机号登录
-      <span class="closeLogin">
-        <i class="closeLoginLogo" @click="closeLogin()"></i>
-      </span>
-    </p>
+  <el-dialog title="手机号登录" v-model="isShowLogin" width="30%">
+    <span class="closeLogin">
+      <i class="closeLoginLogo" @click="handleClose()"></i>
+    </span>
     <div class="LoginInput">
       <p><input type="text" placeholder="请输入手机号" v-model="phone"></p>
       <p><input type="password" placeholder="请输入密码" v-model="password"></p>
       <p><button @click="Login()">登&nbsp;&nbsp;&nbsp;录</button></p>
     </div>
-    <div class="login-bottom">
-
-    </div>
-  </div> -->
-
-
-  <el-dialog title="提示" v-model="isShowLogin" width="30%">
-    <span>登录</span>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
-    </template>
+    <div class="login-bottom"></div>
   </el-dialog>
+
   <!-- 登录弹出框end -->
 
   <router-view :key="$route.fullPath"></router-view>
@@ -162,6 +149,12 @@
     data() {
       return {
         flag: 0,
+        // 用户id
+        userId: '',
+        // 用户头像url
+        userImg: '',
+        // 是否登录
+        isLogin: false,
         // 播放器播放的歌曲列表信息从浏览器本地获取的
         songList: [
           {
@@ -204,30 +197,74 @@
 
 
     methods: {
-
-      // 点击登录的时候
-      clickLogin1() {
-        console.log("点击了登录")
-
-        // 判断登录
-
-        // 如果没有登录 弹出登录框
-        this.isShowLogin = true
-
+      // 点击关闭的时候
+      handleClose() {
+        this.isShowLogin = false
       },
-      
+      // 加载组件的时候判断是否登录
+      status() {
+        this.axios({
+          method: 'get',
+          url: '/login/status'
+        }).then(res => {
+          if (res.data.data.account === null) {
+            this.$message.success({
+              message: '没有登录',
+              type: 'success'
+            })
+            this.isLogin = false
+          } else {
+            this.$message.success({
+              message: '已经登录了',
+              type: 'success'
+            })
+            this.isLogin = true
+            this.userId = res.data.data.account.id
+            this.userImg = res.data.data.profile.avatarUrl + '?param=30y30'
+          }
+        }).catch(err => {
+          console.log("获取登录状态失败")
+        })
+      },
+
+      // 点击登录的时候 弹出登录对话框
+      clickLogin1() {
+        this.isShowLogin = true
+      },
       // 点击登录弹出框中的登录按钮
       Login() {
-        console.log("点击了登录按钮")
+        // console.log("点击了登录按钮")
         this.axios({
           method: 'get',
           url: '/login/cellphone?phone=' + this.phone + '&password=' + this.password
         }).then(res => {
-          console.log(res.data)
+          console.log(res.data.code)
+          // 判断是否登录成功
+          if (res.data.code == 200) {
+            this.$message({
+              message: '登录成功',
+              type: 'success'
+            })
+            // 登录弹出框消失
+            this.isShowLogin = false
+            // 显示头像
+            this.id=res.data.account.id
+            this.userImg=res.data.profile.avatarUrl
+            this.isLogin=true
+          }else{
+            this.$message({
+              message: res.data.message,
+              type: 'error'
+            })
+
+          }
+
+
+
+
           // 登录成功之后把本地里面的vip歌曲全部重新获取
 
 
-          // 登录成功之后页面显示登录成功提示  封装一个组件
 
           // 退出登录后 把vip歌曲。。。。
         }).catch(err => {
@@ -463,6 +500,8 @@
 
     created() {
       let that = this
+      // 判断登录状态
+      this.status()
       this.$nextTick(() => {
         // 判断本地存储是否有track-queue
         let s = localStorage.getItem("track-queue")
@@ -580,7 +619,7 @@
     background-color: #000000;
   }
 
-  .serch {
+  .myserch {
     width: 158px;
     height: 32px;
     margin-top: 19px;
@@ -623,6 +662,13 @@
   #loginspan:hover {
     color: #ffffff;
     text-decoration: underline;
+  }
+
+  /* 用户头像 */
+  #userImg {
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-left: 20px;
   }
 
   /* 搜索建议 */
@@ -699,29 +745,6 @@
 
 
   /* 登录弹出框 */
-
-  #loginDialog {
-    position: fixed;
-    width: 530px;
-    height: 314px;
-    background-color: #FFFFFF;
-    z-index: 100;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: -1px -1px 8px 1px #242424;
-  }
-
-  #l-dg-h {
-    height: 40px;
-    background-color: #2D2D2D;
-    font-size: 14px;
-    color: #FFFFFF;
-    font-weight: 700;
-    padding: 0px 45px 0px 18px;
-    line-height: 40px;
-  }
-
   .closeLogin {
     position: absolute;
     top: 0px;
@@ -780,14 +803,6 @@
   .login-bottom {
     background-color: #F7F7F7;
   }
-
-
-
-
-
-
-
-
 
   /* 登录弹出框end*/
   .headerlibgc {

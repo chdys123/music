@@ -29,7 +29,6 @@
                     method: "get",
                     url: '/banner'
                 }).then(res => {
-                    
                     this.bannerData = res.data
                     let data=this.bannerData
                     let that=this
@@ -40,7 +39,8 @@
                     rotationImg.style.backgroundImage = `url(${data.banners[0].imageUrl})`
                     rotationCon.style.backgroundImage = `url(${data.banners[0].imageUrl})`
                     let timer=setInterval(function(){
-                        that.count=that.count%10
+                        that.count=that.count%9
+                        // console.log(that.count)
                         // console.log(num,data.banners[num].imageUrl)
                         rotationImg.style.backgroundImage = `url(${data.banners[that.count].imageUrl})`
                         rotationCon.style.backgroundImage = `url(${data.banners[that.count].imageUrl})`
@@ -65,9 +65,6 @@
                 this.dom1.style.backgroundImage=`url(${this.bannerData.banners[this.count].imageUrl})`
                 this.dom2.style.backgroundImage=`url(${this.bannerData.banners[this.count].imageUrl})`
             }
-            
-            
-
         },
         created() {
             //获取banner信息
@@ -82,7 +79,7 @@
     #rotationCon {
         position: relative;
         height: 285px;
-        background-color: pink;
+        /* background-color: pink; */
         background-repeat: no-repeat;
         background-size: 6000px;
         background-position: center;
@@ -106,7 +103,7 @@
     #downLoad {
         width: 254px;
         height: 285px;
-        background-color: pink;
+        /* background-color: pink; */
         position: absolute;
         top: 0px;
         right: 0px;

@@ -23,6 +23,9 @@ const SerLyrics=()=>import('../views/Serch/Lyrics')
 const SerPlaylist=()=>import('../views/Serch/Playlists')
 const SerVoice=()=>import('../views/Serch/VoiceAr')
 const SerUser=()=>import('../views/Serch/Users')
+const MyMusic=()=>import('../views/MyMusic/MyMusic')
+const MyAr=()=>import('../views/MyMusic/MyAr')
+const MyVedio=()=>import('../views/MyMusic/MyVedio')
 
 const routes = [
   { path: '', redirect: '/discover' },
@@ -87,6 +90,15 @@ const routes = [
       },
     ]
   },
+  {
+    // 我的音乐路由
+    path:'/mymusic',component:MyMusic,children:[
+      // 我的歌手
+      { path: '', redirect: '/mymusic/artist' },
+      { path: 'artist', component:MyAr},
+      { path: 'mv', component:MyVedio},
+    ]
+  }
 ]
 
 

@@ -5,7 +5,7 @@
       </div>
       <ul id="headermenu">
         <li @click="toDiscover(1)" class="headerlibgc">发现音乐</li>
-        <li @click="toMyMusic(2)">我的音乐</li>
+        <li @click="toMyMusic()">我的音乐</li>
         <li @click="toFriends(3)">朋友</li>
         <li @click="toMall(4)">商城</li>
         <li @click="toMusicMan(5)">音乐人</li>
@@ -19,11 +19,22 @@
       <button id="cratebtn">创作者中心</button>
       <!-- 头像或者登录 -->
       <!-- 登录之后显示头像 登录字样消失 -->
-      <a id="loginspan" @click="clickLogin1()" v-show="isLogin==false">登录</a>
+      <a id="loginspan" @click="clickLogin1()" v-if="isLogin==false">登录</a>
       <!-- 头像 -->
-      <img :src="userImg" alt="" id="userImg" v-show="isLogin==true">
+      <div id="userImg-con">
+        <img :src="userImg" alt="" id="userImg" v-if="isLogin==true">
+        <!-- 鼠标停在头像上面的时候 显示个人信息选项 -->
+        <div id="user-img-func">
+          <p><i class="wdzyLogo"></i>我的主页</p>
+          <p><i class="wdxxLogo"></i>我的消息</p>
+          <p><i class="wddjLogo"></i>我的等级</p>
+          <p><i class="viphyLogo"></i>VIP会员</p>
+          <p><i class="grszLogo"></i>个人设置</p>
+          <p><i class="smrzLogo"></i>实名认证</p>
+          <p><i class="tcLogo"></i>退出</p>
+        </div>
 
-
+      </div>
 
 
       <!-- 搜索建议 -->
@@ -201,11 +212,11 @@
       handleClose() {
         this.isShowLogin = false
       },
-      // 加载组件的时候判断是否登录
+      // 加载组件的时候判断是否登录 加时间戳
       status() {
         this.axios({
           method: 'get',
-          url: '/login/status'
+          url: '/login/status?timestamp=' + Date.now()
         }).then(res => {
           if (res.data.data.account === null) {
             this.$message.success({
@@ -213,6 +224,8 @@
               type: 'success'
             })
             this.isLogin = false
+
+            // 
           } else {
             this.$message.success({
               message: '已经登录了',
@@ -236,7 +249,7 @@
         // console.log("点击了登录按钮")
         this.axios({
           method: 'get',
-          url: '/login/cellphone?phone=' + this.phone + '&password=' + this.password
+          url: '/login/cellphone?phone=' + this.phone + '&password=' + this.password + '&timestamp=' + Date.now()
         }).then(res => {
           console.log(res.data.code)
           // 判断是否登录成功
@@ -248,10 +261,12 @@
             // 登录弹出框消失
             this.isShowLogin = false
             // 显示头像
-            this.id=res.data.account.id
-            this.userImg=res.data.profile.avatarUrl
-            this.isLogin=true
-          }else{
+            this.id = res.data.account.id
+            this.userImg = res.data.profile.avatarUrl
+            this.isLogin = true
+            // 刷新页面
+            location.reload()
+          } else {
             this.$message({
               message: res.data.message,
               type: 'error'
@@ -305,9 +320,8 @@
         console.log("进入发现音乐")
         this.$router.push('/discover')
       },
-      toMyMusic(num) {
-        this.changeHeaderliBgc(num)
-        console.log("进入我的音乐")
+      toMyMusic() {
+        this.$router.push({path:'/mymusic',query:{id:this.userId}})
       },
       toFriends(num) {
         this.changeHeaderliBgc(num)
@@ -586,7 +600,7 @@
 
 </script>
 
-<style scoped>
+<style>
   #myaudio {
     position: absolute;
     top: 0;
@@ -642,7 +656,7 @@
     color: #CCCCCC;
     background-color: #242424;
 
-    margin-left: 30px;
+    margin-left: 20px;
     font-size: 12px;
     cursor: pointer
   }
@@ -663,13 +677,92 @@
     color: #ffffff;
     text-decoration: underline;
   }
-
   /* 用户头像 */
+  #userImg-con{
+    display: inline-block;
+    /* background-color: pink; */
+    height: 30px;
+    width: 30px;
+    margin-left: 15px;
+    border-radius: 50%;
+  }
   #userImg {
     border-radius: 50%;
     vertical-align: middle;
-    margin-left: 20px;
   }
+
+  #userImg-con:hover #user-img-func {
+    display: inline-block;
+  }
+
+  /* 个人信息选项 */
+  #user-img-func {
+    position: absolute;
+    right: -33px;
+    top: 52px;
+    width: 160px;
+    height: 245px;
+    background-color: #2B2B2B;
+    z-index: 10;
+    color: #CCCCCC;
+    display: none;
+  }
+
+  #user-img-func p {
+    font-size: 12px;
+    line-height: 35px;
+    cursor: pointer;
+    padding: 0px 10px 0px 20px;
+  }
+
+  #user-img-func p:hover {
+    background-color: #353535;
+  }
+
+  #user-img-func p i {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: url('https://s2.music.126.net/style/web2/img/frame/toplist.png?787607357925eff0b50b673a2342d45d') no-repeat 0px 0px;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+
+  #user-img-func .wdzyLogo {
+    background-position: 0px -81px;
+  }
+
+  #user-img-func .wdxxLogo {
+    background-position: -20px -121px;
+  }
+
+  #user-img-func .wddjLogo {
+    background-position: 0 -100px;
+  }
+
+  #user-img-func .viphyLogo {
+    background-position: 0 -221px;
+  }
+
+  #user-img-func .grszLogo {
+    background-position: 0 -141px;
+  }
+
+  #user-img-func .smrzLogo {
+    background-position: -20px -143px;
+  }
+
+  #user-img-func .tcLogo {
+    background-position: 0 -201px;
+  }
+
+
+
+
+
+
+
+  /* 个人信息选项end */
 
   /* 搜索建议 */
   .ser-sugg {

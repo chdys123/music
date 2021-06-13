@@ -187,7 +187,7 @@ app.config.globalProperties.addMusics = async function (arr) {
     })
 }
 // 进入入歌单详情
-app.config.globalProperties.toPlatListDetail = function (id) {
+app.config.globalProperties.toPlayListDetail = function (id) {
     this.$router.push({ path: '/discover/playlistdetail', query: { id: id } })
 }
 // 进入歌曲详情

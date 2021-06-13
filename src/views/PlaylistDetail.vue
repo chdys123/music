@@ -110,7 +110,7 @@
                     <button>评论</button>
                 </div>
                 <!-- 精彩评论 -->
-                <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
+                <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1&&allComments.hotComments.length!=0">
                     精彩评论
                 </div>
                 <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
@@ -134,7 +134,7 @@
                     <br style="clear:both">
                 </div>
                 <!-- 最新评论 -->
-                <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
+                <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1&& allComments.comments.length!=0">
                     最新评论({{allComments.total}})
                 </div>
                 <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
@@ -188,11 +188,14 @@
         <!-- 侧边栏 -->
         <div id="playlistdetailRight">
             <!-- 最近收藏用户 userId-->
-            <p class="plut">喜欢这个歌单的人</p>
-            <div v-for="(item,index) in users" :class="{'pluser1':true,'pluser2':index%4==0}">
-                <img :src="item.avatarUrl+'?param=40y40'" alt="">
+            <div v-if="users.length!=0">
+                <p class="plut">喜欢这个歌单的人</p>
+                <div v-for="(item,index) in users" :class="{'pluser1':true,'pluser2':index%4==0}">
+                    <img :src="item.avatarUrl+'?param=40y40'" alt="">
+                </div>
+                <br style="clear: both;">
             </div>
-            <br style="clear: both;">
+
             <!-- 最近收藏用户end -->
 
             <!-- 热门歌单 -->
@@ -870,10 +873,11 @@
 
 
     /* start */
-    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(3){
+    #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(3) {
         background-position: 2px -172px;
 
     }
+
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(3):hover {
         background-position: -18px -172px;
     }
@@ -897,12 +901,13 @@
 
 
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(2) {
-        background: url("https://s2.music.126.net/style/web2/img/icon.png?a3fac54832f2c8d83755e92cfc65f3e4") no-repeat 6px -697px ;
+        background: url("https://s2.music.126.net/style/web2/img/icon.png?a3fac54832f2c8d83755e92cfc65f3e4") no-repeat 6px -697px;
     }
 
     #playlistdetailLeft-b-b table tr:nth-child(n+1) td .playlist-song-icon:nth-child(2):hover {
         background-position: -16px -697px;
     }
+
     /* end */
 
 
@@ -915,7 +920,9 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
-
+    #playlistdetailRight>div{
+        margin-bottom: 30px;
+    }
     #playlistdetailRight .pluser1 {
         float: left;
         margin-left: 13px;
@@ -926,7 +933,7 @@
     }
 
     .plut1 {
-        margin-top: 30px;
+        /* margin-top: 30px; */
         font-size: 12px;
         font-weight: 700;
         border-bottom: 1px solid #CCCCCC;

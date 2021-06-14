@@ -1,13 +1,15 @@
 <template>
     <div id="myAr-con">
         <p id="myAr-h">我的歌手&nbsp;({{acount}})</p>
-        <div v-for="item in ar" class="myArItem">
-            <img :src="item.picUrl+'?param=80y80'" alt="">
-            <div>
-                <p>{{item.name}}</p>
-                <p>{{item.albumSize}}个专辑{{item.mvSize}}个MV</p>
+        <div v-for="item in ar" class="myArItem" @click="toAr(item.id)">
+            <div class="myArItem-left">
+                <img :src="item.picUrl+'?param=80y80'" alt="">
             </div>
-            
+            <div class="myArItem-right">
+                <div>{{item.name}}</div>
+                <div>{{item.albumSize}}个专辑&nbsp;&nbsp;&nbsp;{{item.mvSize}}个MV</div>
+            </div>
+            <br style="clear: both;">            
 
         </div>
     </div>
@@ -63,6 +65,39 @@
         border-bottom: 2px solid #C20C0C;
         padding-bottom: 5px;
     }
+    .myArItem{
+        margin-top: 5px;
+        padding-bottom: 5px;
+        border-bottom:1px solid #DDDDDD ;
+    }
+    .myArItem-left{
+        float: left;
+        
+    }
+    .myArItem-left img{
+        vertical-align: middle;
+        cursor: pointer;
+    }
+    .myArItem-right{
+        float: left;
+        margin-left: 15px;
+        height: 80px;
+        width: 562px;
+    }
+    .myArItem-right div:nth-child(1){
+        font-size: 16px;
+        font-weight: 700;
+        height: 40px;
+        line-height: 40px;
+    }
+    .myArItem-right div:nth-child(2){
+        font-size: 12px;
+        color: #666666;
+        height: 40px;
+        line-height: 40px;
+    }
+
+
 
 
 

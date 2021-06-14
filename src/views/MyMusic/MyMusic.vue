@@ -186,8 +186,9 @@
     #myMusic-con {
         width: 980px;
         background-color: #FFFFFF;
-        height: 1200px;
+        /* height: 1200px; */
         border: 1px solid #D3D3D3;
+        padding-bottom: 50px;
         margin: 0 auto;
     }
 

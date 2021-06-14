@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="userId.length!=0">
         <!-- 红线 -->
         <div id="redLine-con">
             <div id="redLine">
@@ -41,7 +41,8 @@
                             <img :src="item.coverImgUrl+'?param=40y40'" alt="">
                             <div>
                                 <p class="my-pl-item-p1 ellipsis">{{item.name}}</p>
-                                <p class="my-pl-item-p2 ellipsis">{{item.trackCount}}首&nbsp;by&nbsp;{{item.creator.nickname}}</p>
+                                <p class="my-pl-item-p2 ellipsis">
+                                    {{item.trackCount}}首&nbsp;by&nbsp;{{item.creator.nickname}}</p>
                             </div>
                             <br style="clear: both;">
                         </div>
@@ -54,7 +55,6 @@
             </div>
             <br style="clear: both;">
         </div>
-
     </div>
 </template>
 
@@ -115,13 +115,13 @@
                 })
             },
             // 点击我的歌手
-            toMyAr(){
-                this.$router.push({path:'/mymusic/artist',query:{id:this.userId}})
+            toMyAr() {
+                this.$router.push({ path: '/mymusic/artist', query: { id: this.userId } })
                 // this.$router.push('/mymusic/artist')
             },
             // 点击我的视频
-            toMyVedio(){
-                this.$router.push({path:'/mymusic/mv',query:{id:this.userId}})
+            toMyVedio() {
+                this.$router.push({ path: '/mymusic/mv', query: { id: this.userId } })
                 // this.$router.push('/mymusic/mv')
             }
 
@@ -142,6 +142,13 @@
 
             // 获取用户id
             this.getUserId()
+            console.log("用户id",this.userId)
+            if (this.userId =='') {
+                this.$message.success({
+                    message: '您还没有登录,请先登录',
+                    type: 'success'
+                })
+            }
 
             // 获取各种数量
             this.getNumber()
@@ -254,7 +261,8 @@
         font-size: 12px;
         cursor: pointer;
     }
-    .my-pl-item:hover{
+
+    .my-pl-item:hover {
         background-color: #E6E6E6;
     }
 

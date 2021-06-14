@@ -59,6 +59,16 @@
 
             }
         },
+        created() {
+            let li = document.getElementById("headermenu").childNodes
+            for (let i = 0; i < li.length; i++) {
+                if (i == 0) {
+                    li[i].setAttribute("class", "headerlibgc")
+                } else {
+                    li[i].setAttribute("class", "")
+                }
+            }
+        },
 
     }
 </script>

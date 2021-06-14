@@ -7,7 +7,7 @@ import VueAxios from 'vue-axios'
 import '../public/basic.css'
 
 // elementui 按需引入
-import { ElButton, ElMessage,ElDialog} from 'element-plus'
+import { ElButton, ElMessage, ElDialog } from 'element-plus'
 
 const app = createApp(App)
 
@@ -182,14 +182,31 @@ app.config.globalProperties.addMusics = async function (arr) {
         this.addMusic(arr[i])
     }
     this.$message.success({
-        message:'加入播放列表成功',
+        message: '加入播放列表成功',
         type: 'success'
     })
 }
-// 进入入歌单详情
-app.config.globalProperties.toPlayListDetail = function (id) {
-    this.$router.push({ path: '/discover/playlistdetail', query: { id: id } })
-}
+
+
+
+// 获取音乐url
+app.config.globalProperties.getSongUrl = function (id) {
+    let p=this.axios({
+        method: 'get',
+        url: '/song/url?id=' + id
+    })
+    // .then(res=>{
+    //     return res.data.data[0].url
+    // }).catch(err=>{
+    //     console.log("获取音乐url失败")
+    // })
+    return p
+
+},
+    // 进入入歌单详情
+    app.config.globalProperties.toPlayListDetail = function (id) {
+        this.$router.push({ path: '/discover/playlistdetail', query: { id: id } })
+    }
 // 进入歌曲详情
 app.config.globalProperties.toSongDetail = function (id) {
     this.$router.push({ path: '/discover/song', query: { id: id } })
@@ -206,6 +223,8 @@ app.config.globalProperties.toAl = function (id) {
 app.config.globalProperties.toMv = function (id) {
     this.$router.push({ path: '/discover/mv', query: { id: id } })
 }
+
+
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true

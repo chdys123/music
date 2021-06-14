@@ -25,13 +25,13 @@
         <img :src="userImg" alt="" id="userImg" v-if="isLogin==true">
         <!-- 鼠标停在头像上面的时候 显示个人信息选项 -->
         <div id="user-img-func">
-          <p><i class="wdzyLogo"></i>我的主页</p>
+          <p @click="toMyMusic()"><i class="wdzyLogo"></i>我的主页</p>
           <p><i class="wdxxLogo"></i>我的消息</p>
           <p><i class="wddjLogo"></i>我的等级</p>
           <p><i class="viphyLogo"></i>VIP会员</p>
           <p><i class="grszLogo"></i>个人设置</p>
           <p><i class="smrzLogo"></i>实名认证</p>
-          <p><i class="tcLogo"></i>退出</p>
+          <p @click="logout()"><i class="tcLogo"></i>退出</p>
         </div>
 
       </div>
@@ -90,8 +90,9 @@
 
   <!-- 播放器绝对定位到底部 -->
   <div id="player">
-    <!-- 不显示 自己写样式只是用audio的属性即可 -->
+    <!-- 不显示 自己写样式只是用audio的属性即可 自己根据id获取播放地址-->
     <audio ref="myaudio" :src="songList[index].src" id="myaudio" preload></audio>
+    <!-- <audio ref="myaudio" :src="src" id="myaudio" preload></audio> -->
 
     <div id="player-con">
       <!-- 前一首 播放暂停 后一首 -->
@@ -180,6 +181,8 @@
         ],
         //当前音乐在歌曲列表的位置
         index: 0,
+        // 当前音乐的实时播放路径
+        src: '',
         // 音频实时播放时间
         time: 0,
         // 是否展示控制音量slider
@@ -202,7 +205,12 @@
         // 登录密码
         password: ''
       }
-
+    },
+    watch: {
+      // index(newindex,oldindex){
+      //   let id=this.songList[newindex].songid
+      //   this.src= this.getSrc(id)
+      // }
 
     },
 
@@ -219,18 +227,17 @@
           url: '/login/status?timestamp=' + Date.now()
         }).then(res => {
           if (res.data.data.account === null) {
-            this.$message.success({
-              message: '没有登录',
-              type: 'success'
-            })
+            // this.$message.success({
+            //   message: '没有登录',
+            //   type: 'success'
+            // })
             this.isLogin = false
-
             // 
           } else {
-            this.$message.success({
-              message: '已经登录了',
-              type: 'success'
-            })
+            // this.$message.success({
+            //   message: '已经登录了',
+            //   type: 'success'
+            // })
             this.isLogin = true
             this.userId = res.data.data.account.id
             this.userImg = res.data.data.profile.avatarUrl + '?param=30y30'
@@ -264,8 +271,13 @@
             this.id = res.data.account.id
             this.userImg = res.data.profile.avatarUrl
             this.isLogin = true
+            // 登录成功后跳转到首页
+            this.$router.push('/discover/recommend')
             // 刷新页面
-            location.reload()
+            setTimeout(() => {
+              location.reload()
+            }, 1)
+
           } else {
             this.$message({
               message: res.data.message,
@@ -274,16 +286,28 @@
 
           }
 
-
-
-
           // 登录成功之后把本地里面的vip歌曲全部重新获取
-
-
-
           // 退出登录后 把vip歌曲。。。。
         }).catch(err => {
           console.log("登录失败")
+        })
+      },
+
+      // 退出登录
+      logout(){
+        this.axios({
+          method:'get',
+          url:'/logout'+ '?timestamp=' + Date.now()
+        }).then(res=>{
+          if(res.data.code==200){
+            this.$router.push('/discover/recommend')
+            // 刷新页面
+            setTimeout(() => {
+              location.reload()
+            }, 1)
+          }
+        }).catch(err=>{
+          console.log("退出登录失败")
         })
       },
       // 搜索框输入的时候
@@ -321,7 +345,7 @@
         this.$router.push('/discover')
       },
       toMyMusic() {
-        this.$router.push({path:'/mymusic',query:{id:this.userId}})
+        this.$router.push({ path: '/mymusic', query: { id: this.userId } })
       },
       toFriends(num) {
         this.changeHeaderliBgc(num)
@@ -366,6 +390,12 @@
           switchBtn.setAttribute("class", "player-pause")
         }
       },
+      // 获取播放地址
+      async getSrc(id) {
+        let res = await this.getSongUrl(id)
+        console.log("音乐播放地址:", res.data.data[0].url)
+        return res.data.data[0].url
+      },
       //点击上一首
       playerForward() {
         let switchBtn = this.$refs.switchBtn
@@ -379,7 +409,7 @@
           this.index = (this.index - 1 + len) % len
           switchBtn.setAttribute("class", "player-open")
           setTimeout(() => {
-            audio.play()
+            myaudio.play()
           }, 500);
         } else {
           // 先暂停
@@ -524,6 +554,7 @@
           let queue = JSON.parse(s)
           that.songList = queue
           that.index = index
+          // 获取当前src
         }
       })
     },
@@ -547,6 +578,10 @@
             that.index = index
             that.playerSwitch()
           }
+
+          // 获取当前src
+
+
         })
         // window监听自定义事件 监听queue改变 但是index不改变
         window.addEventListener("StorageEvent2", function () {
@@ -577,6 +612,16 @@
         audio.addEventListener("error", function () {
           console.log("错误状态")
           // 就要关闭歌曲 提示错误。
+          // let audio = this.$refs.myaudio
+          // let switchBtn = this.$refs.switchBtn
+          // if (audio.paused) {
+
+          // } else {
+          //   audio.pause()
+          //   console.log("暂停")
+          //   switchBtn.setAttribute("class", "player-pause")
+          // }
+
         })
         // 监听暂停事件
         let switchBtn = that.$refs.switchBtn
@@ -677,8 +722,9 @@
     color: #ffffff;
     text-decoration: underline;
   }
+
   /* 用户头像 */
-  #userImg-con{
+  #userImg-con {
     display: inline-block;
     /* background-color: pink; */
     height: 30px;
@@ -686,6 +732,7 @@
     margin-left: 15px;
     border-radius: 50%;
   }
+
   #userImg {
     border-radius: 50%;
     vertical-align: middle;

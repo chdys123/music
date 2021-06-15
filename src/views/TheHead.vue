@@ -91,8 +91,8 @@
   <!-- 播放器绝对定位到底部 -->
   <div id="player">
     <!-- 不显示 自己写样式只是用audio的属性即可 自己根据id获取播放地址-->
-    <audio ref="myaudio" :src="songList[index].src" id="myaudio" preload></audio>
-    <!-- <audio ref="myaudio" :src="src" id="myaudio" preload></audio> -->
+    <!-- <audio ref="myaudio" :src="songList[index].src" id="myaudio" preload></audio> -->
+    <audio ref="myaudio" :src="src" id="myaudio" preload></audio>
 
     <div id="player-con">
       <!-- 前一首 播放暂停 后一首 -->
@@ -178,9 +178,18 @@
             songid: '',
             time: ''
           },
+          {
+            songname: '',
+            src: '',
+            arid: [],
+            arname: [],
+            imgsrc: '',
+            songid: '',
+            time: ''
+          },
         ],
         //当前音乐在歌曲列表的位置
-        index: 0,
+        index:1,
         // 当前音乐的实时播放路径
         src: '',
         // 音频实时播放时间
@@ -207,10 +216,11 @@
       }
     },
     watch: {
-      // index(newindex,oldindex){
-      //   let id=this.songList[newindex].songid
-      //   this.src= this.getSrc(id)
-      // }
+      index(newindex,oldindex){
+        console.log("index改变了,newindex:",newindex,"oldindex:",oldindex)
+        let id=this.songList[newindex].songid
+        this.getSrc(id)
+      }
 
     },
 
@@ -393,8 +403,15 @@
       // 获取播放地址
       async getSrc(id) {
         let res = await this.getSongUrl(id)
-        console.log("音乐播放地址:", res.data.data[0].url)
-        return res.data.data[0].url
+        console.log("音乐实时播放地址:", res.data.data[0].url)
+        this.src=res.data.data[0].url
+        if(this.src==null){
+          this.$message({
+            message:'当前音乐需要单独付费',
+            type:'error'
+          })
+          // this.playerBack()
+        }
       },
       //点击上一首
       playerForward() {

@@ -128,11 +128,25 @@
         <!-- 调节音量 -->
         <span @click="vc()"></span>
         <span></span>
+        <!-- 播放列表图标 -->
         <span>{{songList.length}}</span>
+        
       </div>
       <div id="volumeControl" ref="volumeControl" v-show="vControl" @mouseleave="vcmouseleave()">
         <input type="range" id="myvolumeslider" min="0" max="100" value="100" ref="myvolumeslider"
           @input="volumeslider()">
+      </div>
+      <!-- 显示播放列表 -->
+      <div id="playQueue">
+        <div id="playQueue-left">
+          <p>播放列表{{songList.length}}</p>
+        </div>
+        <div id="playQueue-right">
+
+        </div>
+        <br style="clear: both;">
+
+        
       </div>
     </div>
 
@@ -189,7 +203,7 @@
           },
         ],
         //当前音乐在歌曲列表的位置
-        index:1,
+        index: 1,
         // 当前音乐的实时播放路径
         src: '',
         // 音频实时播放时间
@@ -216,9 +230,9 @@
       }
     },
     watch: {
-      index(newindex,oldindex){
-        console.log("index改变了,newindex:",newindex,"oldindex:",oldindex)
-        let id=this.songList[newindex].songid
+      index(newindex, oldindex) {
+        console.log("index改变了,newindex:", newindex, "oldindex:", oldindex)
+        let id = this.songList[newindex].songid
         this.getSrc(id)
       }
 
@@ -281,13 +295,13 @@
             this.id = res.data.account.id
             this.userImg = res.data.profile.avatarUrl
             this.isLogin = true
+            localStorage.setItem('uid', this.id)
             // 登录成功后跳转到首页
             this.$router.push('/discover/recommend')
             // 刷新页面
             setTimeout(() => {
               location.reload()
             }, 1)
-
           } else {
             this.$message({
               message: res.data.message,
@@ -304,19 +318,19 @@
       },
 
       // 退出登录
-      logout(){
+      logout() {
         this.axios({
-          method:'get',
-          url:'/logout'+ '?timestamp=' + Date.now()
-        }).then(res=>{
-          if(res.data.code==200){
+          method: 'get',
+          url: '/logout' + '?timestamp=' + Date.now()
+        }).then(res => {
+          if (res.data.code == 200) {
             this.$router.push('/discover/recommend')
             // 刷新页面
             setTimeout(() => {
               location.reload()
             }, 1)
           }
-        }).catch(err=>{
+        }).catch(err => {
           console.log("退出登录失败")
         })
       },
@@ -404,11 +418,11 @@
       async getSrc(id) {
         let res = await this.getSongUrl(id)
         console.log("音乐实时播放地址:", res.data.data[0].url)
-        this.src=res.data.data[0].url
-        if(this.src==null){
+        this.src = res.data.data[0].url
+        if (this.src == null) {
           this.$message({
-            message:'当前音乐需要单独付费',
-            type:'error'
+            message: '当前音乐需要单独付费',
+            type: 'error'
           })
           // this.playerBack()
         }
@@ -1228,6 +1242,35 @@
 
   #volumeControl input::-webkit-slider-thumb:hover {
     box-shadow: 0 .125em .125em #3b4547;
-
   }
+
+
+  /* 显示播放列表 */
+
+  #playQueue{
+    position: absolute;
+    border-top-right-radius:10px;
+    border-top-left-radius:10px;
+    left:0px;
+    top: 0px;
+    transform: translateY(-100%);
+    height: 304px;
+    width: 982px;
+    background-color: rgba(0, 0, 0,0.9);
+  }
+  #playQueue-left{
+    float: left;
+    width: 556px;
+    height: 304px;
+    background-color: pink;
+  }
+  #playQueue-right{
+    float: left;
+    width: 425px;
+    height: 304px;
+  }
+
+  
+
+  
 </style>

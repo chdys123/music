@@ -7,13 +7,12 @@ import VueAxios from 'vue-axios'
 import '../public/basic.css'
 
 // elementui 按需引入
-import { ElButton, ElMessage, ElDialog } from 'element-plus'
+import { ElMessage, ElDialog } from 'element-plus'
 
 const app = createApp(App)
 
 // 标签调用
 const components = [
-    ElButton,
     ElDialog
 
 ]
@@ -191,19 +190,17 @@ app.config.globalProperties.addMusics = async function (arr) {
 
 // 获取音乐url
 app.config.globalProperties.getSongUrl = function (id) {
-    let p=this.axios({
+    let p = this.axios({
         method: 'get',
         url: '/song/url?id=' + id
     })
-    // .then(res=>{
-    //     return res.data.data[0].url
-    // }).catch(err=>{
-    //     console.log("获取音乐url失败")
-    // })
     return p
 
 },
-    // 进入入歌单详情
+
+
+
+// 进入入歌单详情
     app.config.globalProperties.toPlayListDetail = function (id) {
         this.$router.push({ path: '/discover/playlistdetail', query: { id: id } })
     }

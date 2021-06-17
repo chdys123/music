@@ -130,7 +130,7 @@
         <span></span>
         <!-- 播放列表图标 -->
         <span>{{songList.length}}</span>
-        
+
       </div>
       <div id="volumeControl" ref="volumeControl" v-show="vControl" @mouseleave="vcmouseleave()">
         <input type="range" id="myvolumeslider" min="0" max="100" value="100" ref="myvolumeslider"
@@ -139,14 +139,53 @@
       <!-- 显示播放列表 -->
       <div id="playQueue">
         <div id="playQueue-left">
-          <p>播放列表{{songList.length}}</p>
+          <p class="playQueue-left-p">
+            <span class="playQueue-left-p-1">
+              播放列表({{songList.length}})
+            </span>
+            <span class="playQueue-left-p-2">
+              <span class="collectLogo"></span>
+              <span>
+                收藏全部
+              </span>
+            </span>
+            <span class="playQueue-left-p-3">
+              <span></span>
+              <span>
+                清除
+              </span>
+            </span>
+          </p>
+          <!-- 播放列表主体 -->
+          <div id="playQueue-body">
+
+            <div class="playQueue-item" v-for="(item,myindex) in songList" :class="{'playQueue-item-active':index==myindex}">
+              <span class="playQueue-item-songname ellipsis">{{item.songname}}
+                <span class="current-play-logo"></span>
+              </span>
+              <span class="playQueue-item-func">
+                功能
+              </span>
+              <span class="playQueue-item-arname ellipsis">
+                <span v-for="(item1,index1) in item.arname">
+                  <span v-if="index1!=0">
+                    /
+                  </span>
+                  {{item1}}</span>
+              </span>
+              <span class="playQueue-item-dt">{{getDt(item.time)}}</span>
+            </div>
+
+          </div>
+
+
         </div>
         <div id="playQueue-right">
 
         </div>
         <br style="clear: both;">
 
-        
+
       </div>
     </div>
 
@@ -666,8 +705,6 @@
             that.isShow = false
           }
         })
-
-
       })
     },
 
@@ -1247,30 +1284,186 @@
 
   /* 显示播放列表 */
 
-  #playQueue{
+  #playQueue {
+    /* display: none; */
     position: absolute;
-    border-top-right-radius:10px;
-    border-top-left-radius:10px;
-    left:0px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    left: 0px;
     top: 0px;
     transform: translateY(-100%);
     height: 304px;
     width: 982px;
-    background-color: rgba(0, 0, 0,0.9);
+    background-color: rgba(0, 0, 0, 0.8);
   }
-  #playQueue-left{
+
+  #playQueue-left {
     float: left;
     width: 556px;
     height: 304px;
-    background-color: pink;
+    /* background-color: pink; */
   }
-  #playQueue-right{
+
+  #playQueue-right {
     float: left;
     width: 425px;
     height: 304px;
   }
 
-  
+  #playQueue-left .playQueue-left-p {
+    height: 30px;
+    /* background-color: green; */
+    line-height: 30px;
+    border-bottom: 1px solid #141313;
+  }
 
-  
+  .playQueue-left-p-1 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 10px;
+  }
+
+  .playQueue-left-p-2 {
+    font-size: 12px;
+    margin-left: 309px;
+    cursor: pointer;
+    color: #B6B6B6;
+
+  }
+
+  .playQueue-left-p-2:hover span:nth-child(2) {
+    color: white;
+    text-decoration: underline;
+  }
+
+  .playQueue-left-p-2:hover span:nth-child(1) {
+    background-position: -24px -20px;
+  }
+
+  .playQueue-left-p-2 span:nth-child(1) {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url('https://s2.music.126.net/style/web2/img/frame/playlist.png?1cfae23fa907b538d9b7f7d8678b2c07') no-repeat -24px 0px;
+    vertical-align: middle;
+  }
+
+  .playQueue-left-p-3 {
+    font-size: 12px;
+    margin-left: 20px;
+    cursor: pointer;
+    color: #B6B6B6;
+  }
+
+  .playQueue-left-p-3:hover span:nth-child(2) {
+    color: white;
+    text-decoration: underline;
+  }
+
+  .playQueue-left-p-3:hover span:nth-child(1) {
+    background-position: -51px -20px;
+  }
+
+  .playQueue-left-p-3 span:nth-child(1) {
+    background: url('https://s2.music.126.net/style/web2/img/frame/playlist.png?1cfae23fa907b538d9b7f7d8678b2c07') no-repeat -51px 0;
+    display: inline-block;
+    width: 13px;
+    height: 16px;
+    vertical-align: middle;
+  }
+
+  /* 播放列表主体 */
+  #playQueue-body {
+    height: 273px;
+    /* background-color: skyblue; */
+    overflow: scroll;
+    font-size: 12px;
+    color: #CCCCCC;
+  }
+
+
+  #playQueue-body::-webkit-scrollbar {
+    width: 6px;
+    background-color: pink;
+    height: 0px;
+  }
+
+  /*滚动条滑块*/
+  #playQueue-body::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px #d8d8d8;
+    background: #535353;
+  }
+
+  /*滚动条轨道*/
+  #playQueue-body::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow: inset 0 0 5px #d8d8d8;
+    border-radius: 10px;
+    background: #ededed;
+  }
+  .playQueue-item{
+    height: 36px;
+    line-height: 36px;
+  }
+  .playQueue-item:hover {
+    background-color:black;
+    color: white;
+  }
+  .playQueue-item-active{
+    background-color:black;
+    color: white;
+  }
+
+  /* .playQueue-item:hover  */
+
+  .playQueue-item-songname {
+    position: relative;
+    cursor: pointer;
+    float: left;
+    /* display: inline-block; */
+    width: 258px;
+    /* background-color: orange; */
+    padding-left: 10px;
+  }
+  .current-play-logo{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    height: 20px;
+    width: 20px;
+    background-color: pink;
+  }
+
+
+  .playQueue-item-func {
+    cursor: pointer;
+    text-align: center;
+    float: left;
+    /* display: inline-block; */
+    width: 92px;
+    /* background-color: pink; */
+  }
+
+  .playQueue-item-arname {
+    cursor: pointer;
+    float: left;
+    /* display: inline-block; */
+    width: 110px;
+    /* background-color: yellow; */
+  }
+
+  .playQueue-item-arname>span:hover {
+    text-decoration: underline;
+  }
+
+  .playQueue-item-dt {
+    /* float: right; */
+    display: inline-block;
+    text-align: center;
+    width: 74px;
+    margin-left: 6px;
+    /* background-color: hotpink; */
+  }
 </style>

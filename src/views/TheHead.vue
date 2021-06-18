@@ -129,7 +129,7 @@
         <span @click="vc()"></span>
         <span></span>
         <!-- 播放列表图标 -->
-        <span>{{songList.length}}</span>
+        <span @click="isShowPlayQueue=!isShowPlayQueue">{{songList.length}}</span>
 
       </div>
       <div id="volumeControl" ref="volumeControl" v-show="vControl" @mouseleave="vcmouseleave()">
@@ -137,7 +137,7 @@
           @input="volumeslider()">
       </div>
       <!-- 显示播放列表 -->
-      <div id="playQueue">
+      <div id="playQueue" v-show="isShowPlayQueue" >
         <div id="playQueue-left">
           <p class="playQueue-left-p">
             <span class="playQueue-left-p-1">
@@ -149,7 +149,7 @@
                 收藏全部
               </span>
             </span>
-            <span class="playQueue-left-p-3">
+            <span class="playQueue-left-p-3" @click="deleteMusics()">
               <span></span>
               <span>
                 清除
@@ -159,15 +159,19 @@
           <!-- 播放列表主体 -->
           <div id="playQueue-body">
 
-            <div class="playQueue-item" v-for="(item,myindex) in songList" :class="{'playQueue-item-active':index==myindex}">
+            <div class="playQueue-item" v-for="(item,myindex) in songList" :class="{'playQueue-item-active':index==myindex}"
+            @click="playMusic(item.songid)">
               <span class="playQueue-item-songname ellipsis">{{item.songname}}
-                <span class="current-play-logo"></span>
+                <span :class="{'current-play-logo':index==myindex}"
+                ></span>
               </span>
               <span class="playQueue-item-func">
-                功能
+                <span class="playQueue-item-sub" title="收藏" @click="subMusic($event,item.songid)"></span>
+                <span class="playQueue-item-share" title="分享" @click="shareMusic($event,item.id)"></span>
+                <span class="playQueue-item-delete" title="删除" @click="deleteMusic($event,item.id)"></span>
               </span>
               <span class="playQueue-item-arname ellipsis">
-                <span v-for="(item1,index1) in item.arname">
+                <span v-for="(item1,index1) in item.arname" @click="playQueueToArDetail($event,item.arid[index1])">
                   <span v-if="index1!=0">
                     /
                   </span>
@@ -213,6 +217,8 @@
     name: 'thehead',
     data() {
       return {
+        // 是否显示播放列表
+        isShowPlayQueue:false,
         flag: 0,
         // 用户id
         userId: '',
@@ -609,7 +615,39 @@
         }
       },
 
+      // 播放列表收藏歌曲
+      subMusic(e,id){
+        console.log("点击了收藏")
+        e.stopPropagation()
+      },
 
+      // 播放列表分享音乐
+      shareMusic(e,id){
+        console.log("点击了分享音乐")
+        e.stopPropagation()
+      },
+      // 播放列表删除音乐
+      deleteMusic(e,id){
+        console.log("点击了删除音乐")
+        e.stopPropagation()
+
+      },
+      // 删除播放列表全部音乐
+      deleteMusics(){
+        
+        // 直接清空本地存储
+        localStorage.removeItem("track-queue")
+        localStorage.removeItem("index")
+        // 手动清空index和songList
+        let songList=this.songList[this.index]
+        this.index=0
+        this.songList=[songList]
+      },
+      // 播放列表到歌手详情
+      playQueueToArDetail(e,id){
+        e.stopPropagation()
+        this.$router.push({ path: '/discover/artist', query: { id: id } })
+      }
     },
 
     created() {
@@ -1320,7 +1358,7 @@
   .playQueue-left-p-1 {
     font-size: 14px;
     font-weight: 700;
-    margin-left: 10px;
+    margin-left: 16px;
   }
 
   .playQueue-left-p-2 {
@@ -1411,6 +1449,9 @@
     background-color:black;
     color: white;
   }
+  .playQueue-item:hover .playQueue-item-func{
+    visibility: visible;
+  }
   .playQueue-item-active{
     background-color:black;
     color: white;
@@ -1423,17 +1464,21 @@
     cursor: pointer;
     float: left;
     /* display: inline-block; */
-    width: 258px;
+    width: 252px;
     /* background-color: orange; */
-    padding-left: 10px;
+    padding-left: 16px;
   }
   .current-play-logo{
     position: absolute;
-    left: 0px;
-    top: 0px;
-    height: 20px;
-    width: 20px;
-    background-color: pink;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* height: 20px; */
+    /* width: 20px; */
+    /* background-color: pink; */
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10.2px solid red;
   }
 
 
@@ -1441,11 +1486,11 @@
     cursor: pointer;
     text-align: center;
     float: left;
-    /* display: inline-block; */
     width: 92px;
-    /* background-color: pink; */
+    /* background-color: gray; */
+    /* display: flex; */
+    visibility: hidden;
   }
-
   .playQueue-item-arname {
     cursor: pointer;
     float: left;
@@ -1466,4 +1511,40 @@
     margin-left: 6px;
     /* background-color: hotpink; */
   }
+  /* 播放列表中的收藏 分享 删除图标 */
+  .playQueue-item-sub,
+  .playQueue-item-share,
+  .playQueue-item-delete{
+    background: url('https://s2.music.126.net/style/web2/img/frame/playlist.png?1cfae23fa907b538d9b7f7d8678b2c07') no-repeat 0px 0px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    /* background-color: pink; */
+    /* flex:1; */
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: middle;
+    /* display: none; */
+  }
+  .playQueue-item-sub{
+    background-position: -24px 0px;
+  }
+  .playQueue-item-sub:hover{
+    background-position: -24px -20px;
+
+  }
+  .playQueue-item-share{
+    background-position: 1px 0px;
+  }
+  .playQueue-item-share:hover{
+    background-position: 1px -20px;
+  }
+  .playQueue-item-delete{
+    background-position: -49px 0px;
+    margin-left: 4px;
+  }
+  .playQueue-item-delete:hover{
+    background-position: -49px -20px;
+  }
+
 </style>

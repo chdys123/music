@@ -9,7 +9,7 @@
                         <div id="sdc-l-t-r-1-r">
                             <span>
                                 {{songData.songs[0].name}}
-                                <span v-show="songData.songs[0].mv!=0"></span>
+                                <span v-show="songData.songs[0].mv!=0" @click="toMv(songData.songs[0].mv)"></span>
                             </span>
                         </div>
                         <br style="clear:both">

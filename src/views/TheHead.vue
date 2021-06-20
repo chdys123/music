@@ -129,7 +129,9 @@
         <span @click="vc()"></span>
         <span></span>
         <!-- 播放列表图标 -->
-        <span @click="isShowPlayQueue=!isShowPlayQueue">{{songList.length}}</span>
+        <!-- 初始状态的时候显示0-->
+        <span @click="isShowPlayQueue=!isShowPlayQueue" v-if="isFirst">{{songList.length}}</span>
+        <span @click="isShowPlayQueue=!isShowPlayQueue" v-else>0</span>
 
       </div>
       <div id="volumeControl" ref="volumeControl" v-show="vControl" @mouseleave="vcmouseleave()">
@@ -137,11 +139,14 @@
           @input="volumeslider()">
       </div>
       <!-- 显示播放列表 -->
-      <div id="playQueue" v-show="isShowPlayQueue" >
+      <div id="playQueue" v-show="isShowPlayQueue">
         <div id="playQueue-left">
           <p class="playQueue-left-p">
-            <span class="playQueue-left-p-1">
+            <span class="playQueue-left-p-1" v-if="isFirst">
               播放列表({{songList.length}})
+            </span>
+            <span class="playQueue-left-p-1" v-else>
+              播放列表(0)
             </span>
             <span class="playQueue-left-p-2">
               <span class="collectLogo"></span>
@@ -158,12 +163,11 @@
           </p>
           <!-- 播放列表主体 -->
           <div id="playQueue-body">
-
-            <div class="playQueue-item" v-for="(item,myindex) in songList" :class="{'playQueue-item-active':index==myindex}"
-            @click="playMusic(item.songid)">
+            <!-- 如果是初始状态 则不显示 -->
+            <div class="playQueue-item" v-for="(item,myindex) in songList"
+              :class="{'playQueue-item-active':index==myindex}" @click="playMusic(item.songid)" v-if="isFirst">
               <span class="playQueue-item-songname ellipsis">{{item.songname}}
-                <span :class="{'current-play-logo':index==myindex}"
-                ></span>
+                <span :class="{'current-play-logo':index==myindex}"></span>
               </span>
               <span class="playQueue-item-func">
                 <span class="playQueue-item-sub" title="收藏" @click="subMusic($event,item.songid)"></span>
@@ -180,19 +184,24 @@
               <span class="playQueue-item-dt">{{getDt(item.time)}}</span>
             </div>
 
+
           </div>
-
-
         </div>
         <div id="playQueue-right">
-
+          <p class="playQueue-right-p">
+            {{songList[index].songname}}
+          </p>
+          <div class="playQueue-lyric" v-if="isHasLyric" id="playQueue-lyric">
+            <p v-for="(item,index) in lyric" :class="{'lyricActive':index==getIndex()}" class="lyricItem"
+              @click="tolyric(index)">{{item}}</p>
+          </div>
+          <div v-if="!isHasLyric" class="playQueue-noLyric">
+            纯音乐 无歌词
+          </div>
         </div>
         <br style="clear: both;">
-
-
       </div>
     </div>
-
   </div>
   <!-- 登录弹出框 -->
   <el-dialog title="手机号登录" v-model="isShowLogin" width="30%">
@@ -217,8 +226,10 @@
     name: 'thehead',
     data() {
       return {
+        // 是否初始状态
+        isFirst: false,
         // 是否显示播放列表
-        isShowPlayQueue:false,
+        isShowPlayQueue: false,
         flag: 0,
         // 用户id
         userId: '',
@@ -251,8 +262,18 @@
         index: 1,
         // 当前音乐的实时播放路径
         src: '',
+        // 当前音乐的播放信息
+        // currentMusic: {},
+        // 歌词时间数组
+        lyricTime: [0, 0],
+        // 歌词数组
+        lyric: [],
+        // 是否纯音乐
+        isHasLyric: false,
         // 音频实时播放时间
         time: 0,
+        // 当前歌词在 lyricTime中位置
+        lyricIndex: 0,
         // 是否展示控制音量slider
         vControl: false,
         // 搜索建议
@@ -276,15 +297,62 @@
     },
     watch: {
       index(newindex, oldindex) {
-        console.log("index改变了,newindex:", newindex, "oldindex:", oldindex)
-        let id = this.songList[newindex].songid
-        this.getSrc(id)
+        // console.log("index改变了,newindex:", newindex, "oldindex:", oldindex)
+        if (!this.isFirst && this.index == 1) {
+
+        } else {
+          let id = this.songList[newindex].songid
+          // 播放位置改变 进入非初始状态
+          this.isFirst = true
+          // 获取歌曲实时地址
+          this.getSrc(id)
+          // 获取歌曲歌词
+          this.getlyric(id)
+        }
+      },
+      lyricIndex(newData, oldData) {
+        // 获取歌词滚动盒子
+        let dom = document.getElementById("playQueue-lyric")
+        if (this.lyricTime.length > 9) {
+          if (newData < 4 && newData >= 0) {
+            dom.scrollTo(0, 0)
+          }
+          if (oldData >= 4 && oldData < (this.lyricTime.length - 4)) {
+            dom.scrollTo(0, 30 * (newData - 4))
+          }
+          if (oldData >= (this.lyricTime.length - 4)) {
+            dom.scrollTo(0, 9999)
+          }
+
+        }
       }
+
+    },
+    computed: {
+
 
     },
 
 
     methods: {
+      // 点击歌词
+      tolyric(index) {
+        // 改变音乐实时播放位置
+        let time = this.lyricTime[index] + 1
+        let audio = document.getElementById("myaudio")
+        // this.time = audio.currentTime * 1000
+        audio.currentTime = time / 1000
+      },
+
+      // 获取当前播放位置对应lyricTime的位置
+      getIndex() {
+        for (let i = 0; i < this.lyricTime.length - 1; i++) {
+          if (this.time >= this.lyricTime[i] && this.time <= this.lyricTime[i + 1]) {
+            this.lyricIndex = i
+            return i
+          }
+        }
+      },
       // 点击关闭的时候
       handleClose() {
         this.isShowLogin = false
@@ -461,15 +529,61 @@
       },
       // 获取播放地址
       async getSrc(id) {
-        let res = await this.getSongUrl(id)
-        console.log("音乐实时播放地址:", res.data.data[0].url)
-        this.src = res.data.data[0].url
-        if (this.src == null) {
-          this.$message({
-            message: '当前音乐需要单独付费',
-            type: 'error'
+        if (this.isFirst) {
+          let res = await this.getSongUrl(id)
+          // console.log("音乐实时播放地址:", res.data.data[0].url)
+          this.src = res.data.data[0].url
+          if (this.src == null) {
+            this.$message({
+              message: '当前音乐需要单独付费',
+              type: 'error'
+            })
+            // this.playerBack()
+          }
+        }
+      },
+      // 获取歌词
+      getlyric(id) {
+        if (this.isFirst) {
+          this.axios({
+            method: 'get',
+            url: '/lyric?id=' + id
+          }).then(res => {
+            // 如果有歌词
+            if (res.data.hasOwnProperty('lrc')) {
+              let str = res.data.lrc.lyric.trim()
+              // console.log(str)
+              // this.lyric=str
+              let pattern1 = /\[(.*?)\](.*)/
+              let pattern2 = /(.*?):(.*)/
+              let num1 = str.split('\n')
+              let num2 = []
+              let num3 = []
+              // console.log(num1.length)
+              for (let i = 0; i < num1.length; i++) {
+                let match1 = pattern1.exec(num1[i])
+                let match2 = pattern2.exec(match1[1])
+                let t1 = parseInt(match2[1]) * 60 * 1000
+                let t2 = parseInt(match2[2]) * 1000
+                if (match1[2].length != 0) {
+                  num2.push(t1 + t2)
+                  num3.push(match1[2])
+                }
+              }
+              this.lyricTime = num2
+              this.lyric = num3
+
+              this.isHasLyric = true
+
+            } else {
+              // console.log("无歌词 纯音乐")
+              this.isHasLyric = false
+            }
+
+            // console.log(num3)
+          }).catch(err => {
+            console.log(err)
           })
-          // this.playerBack()
         }
       },
       //点击上一首
@@ -556,11 +670,14 @@
       },
       //拖动进度条
       slider() {
+        // 影响audio播放时间
         let myslider = this.$refs.myslider
         myslider.style.backgroundSize = myslider.value + "% 100%"
         // 改变时间
         let audio = this.$refs.myaudio
         audio.currentTime = parseInt(audio.duration * myslider.value / 100)
+
+
       },
       // 点击音量图标
       vc() {
@@ -616,35 +733,61 @@
       },
 
       // 播放列表收藏歌曲
-      subMusic(e,id){
+      subMusic(e, id) {
         console.log("点击了收藏")
         e.stopPropagation()
       },
 
       // 播放列表分享音乐
-      shareMusic(e,id){
+      shareMusic(e, id) {
         console.log("点击了分享音乐")
         e.stopPropagation()
       },
       // 播放列表删除音乐
-      deleteMusic(e,id){
+      deleteMusic(e, id) {
         console.log("点击了删除音乐")
         e.stopPropagation()
 
       },
       // 删除播放列表全部音乐
-      deleteMusics(){
-        
+      deleteMusics() {
+        // 进入初始状态
+        this.isFirst = false
         // 直接清空本地存储
         localStorage.removeItem("track-queue")
         localStorage.removeItem("index")
         // 手动清空index和songList
-        let songList=this.songList[this.index]
-        this.index=0
-        this.songList=[songList]
+        // let songList = this.songList[this.index]
+        this.index = 1
+        this.songList = [
+          {
+            songname: '',
+            src: '',
+            arid: [],
+            arname: [],
+            imgsrc: '',
+            songid: '',
+            time: ''
+          },
+          {
+            songname: '',
+            src: '',
+            arid: [],
+            arname: [],
+            imgsrc: '',
+            songid: '',
+            time: ''
+          },
+        ]
+        if (this.isFirst) {
+          console.log("不是初始状态")
+        } else {
+          console.log("初始状态")
+        }
+
       },
       // 播放列表到歌手详情
-      playQueueToArDetail(e,id){
+      playQueueToArDetail(e, id) {
         e.stopPropagation()
         this.$router.push({ path: '/discover/artist', query: { id: id } })
       }
@@ -662,11 +805,13 @@
           let queue = JSON.parse(s)
           that.songList = queue
           that.index = index
-          // 获取当前src
+          // 如果有则不是初始状态
+          this.isFirst = true
         }
       })
     },
     mounted() {
+
       let that = this
       this.$nextTick(function () {
         // 监听自定义事件 监听播放的index改变
@@ -702,12 +847,16 @@
         let audio = document.getElementById("myaudio")
         let myslider = that.$refs.myslider
         audio.addEventListener("timeupdate", function () {
+          // 播放位置改变 改变data中的time
           that.time = audio.currentTime * 1000
+          // console.log("实时播放时间:",that.time)
           let totolTime = isNaN(audio.duration) ? 1 : audio.duration
           // console.log("当前时间:",audio.currentTime,"总时长:",totolTime)
           myslider.value = audio.currentTime / totolTime * 100
           // console.log("进度条的值",myslider.value)
           myslider.style.backgroundSize = myslider.value + "% 100%"
+
+
 
         })
         // 监听播放结束后
@@ -1202,6 +1351,7 @@
     border-radius: 3px;
     background: #151616 -webkit-linear-gradient(#C70C0C, #C70C0C) no-repeat;
     background-size: 0% 100%;
+    /* transition: all .01s; */
   }
 
   #myslider::-webkit-slider-thumb {
@@ -1230,6 +1380,7 @@
   }
 
   #player-function span {
+    cursor: pointer;
     float: left;
     height: 25px;
     width: 25px;
@@ -1441,19 +1592,23 @@
     border-radius: 10px;
     background: #ededed;
   }
-  .playQueue-item{
+
+  .playQueue-item {
     height: 36px;
     line-height: 36px;
   }
+
   .playQueue-item:hover {
-    background-color:black;
+    background-color: black;
     color: white;
   }
-  .playQueue-item:hover .playQueue-item-func{
+
+  .playQueue-item:hover .playQueue-item-func {
     visibility: visible;
   }
-  .playQueue-item-active{
-    background-color:black;
+
+  .playQueue-item-active {
+    background-color: black;
     color: white;
   }
 
@@ -1468,7 +1623,8 @@
     /* background-color: orange; */
     padding-left: 16px;
   }
-  .current-play-logo{
+
+  .current-play-logo {
     position: absolute;
     left: 5px;
     top: 50%;
@@ -1491,6 +1647,7 @@
     /* display: flex; */
     visibility: hidden;
   }
+
   .playQueue-item-arname {
     cursor: pointer;
     float: left;
@@ -1511,10 +1668,11 @@
     margin-left: 6px;
     /* background-color: hotpink; */
   }
+
   /* 播放列表中的收藏 分享 删除图标 */
   .playQueue-item-sub,
   .playQueue-item-share,
-  .playQueue-item-delete{
+  .playQueue-item-delete {
     background: url('https://s2.music.126.net/style/web2/img/frame/playlist.png?1cfae23fa907b538d9b7f7d8678b2c07') no-repeat 0px 0px;
     display: inline-block;
     width: 16px;
@@ -1526,25 +1684,101 @@
     vertical-align: middle;
     /* display: none; */
   }
-  .playQueue-item-sub{
+
+  .playQueue-item-sub {
     background-position: -24px 0px;
   }
-  .playQueue-item-sub:hover{
+
+  .playQueue-item-sub:hover {
     background-position: -24px -20px;
 
   }
-  .playQueue-item-share{
+
+  .playQueue-item-share {
     background-position: 1px 0px;
   }
-  .playQueue-item-share:hover{
+
+  .playQueue-item-share:hover {
     background-position: 1px -20px;
   }
-  .playQueue-item-delete{
+
+  .playQueue-item-delete {
     background-position: -49px 0px;
     margin-left: 4px;
   }
-  .playQueue-item-delete:hover{
+
+  .playQueue-item-delete:hover {
     background-position: -49px -20px;
   }
 
+  /* 播放列表歌词 */
+  #playQueue-right .playQueue-right-p {
+    height: 30px;
+    /* background-color: green; */
+    line-height: 30px;
+    font-size: 14px;
+    text-align: center;
+    border-bottom: 1px solid #141313;
+
+  }
+
+  .playQueue-lyric {
+    overflow: scroll;
+    font-size: 12px;
+    height: 273px;
+    text-align: center;
+    line-height: 30px;
+    color: #838384;
+    transition: all .5s ease;
+    scroll-behavior: smooth
+  }
+
+  /* 纯音乐样式 */
+  .playQueue-noLyric {
+    height: 273px;
+    text-align: center;
+    font-size: 16px;
+    color: #838384;
+    line-height: 273px;
+  }
+
+  /* .playQueue-lyric p{
+    height: 30px;
+    background-color: pink;
+    margin-bottom: 10px;
+
+  } */
+
+  .lyricItem {
+    cursor: pointer;
+    transition: all .5s ease;
+  }
+
+  /* 歌词高亮 */
+  .lyricActive {
+    color: yellow;
+    font-size: 14px;
+  }
+
+  .playQueue-lyric::-webkit-scrollbar {
+    width: 6px;
+    /* background-color: pink; */
+    height: 0px;
+  }
+
+  /*滚动条滑块*/
+  .playQueue-lyric::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px #d8d8d8;
+    background: #535353;
+  }
+
+  /*滚动条轨道*/
+  .playQueue-lyric::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow: inset 0 0 5px #d8d8d8;
+    border-radius: 10px;
+    background: #ededed;
+  }
 </style>

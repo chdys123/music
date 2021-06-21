@@ -292,7 +292,8 @@
         // 手机号码,
         phone: '',
         // 登录密码
-        password: ''
+        password: '',
+        userImg2:''
       }
     },
     watch: {
@@ -369,6 +370,8 @@
             //   type: 'success'
             // })
             this.isLogin = false
+            this.$store.commit('updateIsLogin',false)
+
             // 
           } else {
             // this.$message.success({
@@ -378,6 +381,9 @@
             this.isLogin = true
             this.userId = res.data.data.account.id
             this.userImg = res.data.data.profile.avatarUrl + '?param=30y30'
+            this.userImg2= res.data.data.profile.avatarUrl + '?param=50y50'
+            this.$store.commit('updateIsLogin',true)
+            this.$store.commit('Img',this.userImg2)
           }
         }).catch(err => {
           console.log("获取登录状态失败")
@@ -408,6 +414,10 @@
             this.id = res.data.account.id
             this.userImg = res.data.profile.avatarUrl
             this.isLogin = true
+            // 登录成功之后 把登录状态存入全局状态
+            this.$store.commit('updateIsLogin',true)
+            this.$store.commit('Img',this.userImg2)
+
             localStorage.setItem('uid', this.id)
             // 登录成功后跳转到首页
             this.$router.push('/discover/recommend')
@@ -438,6 +448,8 @@
         }).then(res => {
           if (res.data.code == 200) {
             this.$router.push('/discover/recommend')
+            this.$store.commit('updateIsLogin',false)
+            this.$store.commit('Img',"http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50")
             // 刷新页面
             setTimeout(() => {
               location.reload()

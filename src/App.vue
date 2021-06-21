@@ -1,7 +1,6 @@
 <template>
   <div id="nav">
     <thehead></thehead>
-
   </div>
 </template>
 

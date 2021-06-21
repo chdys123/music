@@ -105,15 +105,15 @@
                     <span>共{{allComments.total}}条评论</span>
                 </div>
                 <div class="sdc-cty-m">
-                    <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
-                    <textarea placeholder="评论"></textarea>
-                    <button>评论</button>
+                    <img :src="this.$store.state.userImg" alt="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50">
+                    <textarea placeholder="评论" v-model="myComment"></textarea>
+                    <button @click="sentComment()">评论</button>
                 </div>
                 <!-- 精彩评论 -->
                 <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1&&allComments.hotComments.length!=0">
                     精彩评论
                 </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments" :key="item.time">
                     <img :src="item.user.avatarUrl" alt="">
                     <div class="sdc-cty-g-b-i-b">
                         <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -137,7 +137,7 @@
                 <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1&& allComments.comments.length!=0">
                     最新评论({{allComments.total}})
                 </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments" :key="item.time">
                     <img :src="item.user.avatarUrl" alt="">
                     <div class="sdc-cty-g-b-i-b">
                         <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -151,15 +151,10 @@
                             <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
                                 </span> ({{item.likedCount}})</span>
                             <br style="clear:both">
-
                         </div>
                     </div>
                     <br style="clear:both">
                 </div>
-
-
-
-
                 <!-- 分页 -->
                 <div class="f-page">
                     <div class="f-page-c">
@@ -176,12 +171,8 @@
                                 oninput="value=value.replace(/[^\d]/g,'')" />页</span>
                     </div>
                 </div>
-
                 <br style="clear:both">
-
             </div>
-
-
             <!-- 评论end -->
         </div>
 
@@ -220,6 +211,7 @@
         name: "playlistdetails",
         data() {
             return {
+                // 歌单id
                 playlistId: 0,
                 //请求过来的数据
                 data: { playlist: { name: '', coverImgUrl: '', creator: { avatarUrl: '', nickname: '' }, createTime: 11111111, subscribedCount: 0, shareCount: 0, commentCount: 0, tags: [], description: '', trackCount: 0, playCount: 0, tracks: [] } },
@@ -262,7 +254,11 @@
                 // 最近收藏用户
                 users: [],
                 // 相关歌单
-                repl: []
+                repl: [],
+                // 输入的评论
+                myComment: '',
+                // 剩余可输入字数
+                MycommentLength:140,
 
 
             }
@@ -290,6 +286,45 @@
 
         },
         methods: {
+
+            // 点击评论执行的函数
+            sentComment() {
+
+                // 判断是否登录
+                console.log("点击了发送")
+                // let cookie=document.cookie
+                // console.log(cookie)
+                console.log(this.myComment)
+                console.log(this.$store.state.isLogin)
+                // 如果登录了
+                if (this.$store.state.isLogin) {
+                    this.axios({
+                        method: 'get',
+                        url: '/comment?t=1&type=2&id=' + this.playlistId + '&content=' + this.myComment
+                    }).then(res => {
+                        console.log(res.data)
+                        let obj=res.data.comment
+                        obj.likedCount=0
+                        obj.liked=false
+                        obj.beReplied=[]
+                        this.allComments.comments.unshift(obj)
+                        this.allComments.total = this.allComments.total + 1
+                        this.myComment=''
+                        this.data.playlist.commentCount++
+                        this.$message({
+                            message:"评论成功",
+                            type:"success"
+                        })
+                    }).catch(err => {
+                        console.log("评论失败")
+                    })
+                } else {
+                    this.$message({
+                        message: '请先登录',
+                        type: 'success'
+                    })
+                }
+            },
             // 数量格式化
             getnumber(num) {
                 num = parseInt(num)
@@ -920,9 +955,11 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
-    #playlistdetailRight>div{
+
+    #playlistdetailRight>div {
         margin-bottom: 30px;
     }
+
     #playlistdetailRight .pluser1 {
         float: left;
         margin-left: 13px;

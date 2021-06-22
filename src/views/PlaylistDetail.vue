@@ -104,10 +104,16 @@
                 <div class="sdc-cty-t">评论
                     <span>共{{allComments.total}}条评论</span>
                 </div>
+                
                 <div class="sdc-cty-m">
-                    <img :src="this.$store.state.userImg" alt="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50">
-                    <textarea placeholder="评论" v-model="myComment"></textarea>
+                    <!-- 加 -->
+                    <img :src="this.$store.state.userImg"
+                        alt="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50">
+                    <!-- 加防抖？ -->
+                    <textarea placeholder="评论" v-model="myComment" @input="handerinput()"></textarea>
                     <button @click="sentComment()">评论</button>
+                    <span class="my-comment-len">{{MycommentLength}}</span>
+                    <!-- 加end -->
                 </div>
                 <!-- 精彩评论 -->
                 <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1&&allComments.hotComments.length!=0">
@@ -155,6 +161,9 @@
                     </div>
                     <br style="clear:both">
                 </div>
+
+
+
                 <!-- 分页 -->
                 <div class="f-page">
                     <div class="f-page-c">
@@ -258,7 +267,7 @@
                 // 输入的评论
                 myComment: '',
                 // 剩余可输入字数
-                MycommentLength:140,
+                MycommentLength: 140,
 
 
             }
@@ -286,38 +295,48 @@
 
         },
         methods: {
-
+            // 在评论框输入的时候
+            handerinput() {
+                if (this.myComment.length <= 140) {
+                    this.MycommentLength = 140 - this.myComment.length
+                } else {
+                    this.MycommentLength = 0
+                    
+                }
+            },
             // 点击评论执行的函数
             sentComment() {
-
                 // 判断是否登录
-                console.log("点击了发送")
-                // let cookie=document.cookie
-                // console.log(cookie)
-                console.log(this.myComment)
-                console.log(this.$store.state.isLogin)
                 // 如果登录了
                 if (this.$store.state.isLogin) {
-                    this.axios({
-                        method: 'get',
-                        url: '/comment?t=1&type=2&id=' + this.playlistId + '&content=' + this.myComment
-                    }).then(res => {
-                        console.log(res.data)
-                        let obj=res.data.comment
-                        obj.likedCount=0
-                        obj.liked=false
-                        obj.beReplied=[]
-                        this.allComments.comments.unshift(obj)
-                        this.allComments.total = this.allComments.total + 1
-                        this.myComment=''
-                        this.data.playlist.commentCount++
+                    if (this.myComment.length > 140) {
                         this.$message({
-                            message:"评论成功",
-                            type:"success"
+                            message: '评论内容不能超过140个字',
+                            type: 'success'
                         })
-                    }).catch(err => {
-                        console.log("评论失败")
-                    })
+                    } else {
+                        this.axios({
+                            method: 'get',
+                            url: '/comment?t=1&type=2&id=' + this.playlistId + '&content=' + this.myComment
+                        }).then(res => {
+                            console.log(res.data)
+                            let obj = res.data.comment
+                            obj.likedCount = 0
+                            obj.liked = false
+                            obj.beReplied = []
+                            this.allComments.comments.unshift(obj)
+                            this.allComments.total = this.allComments.total + 1
+                            this.myComment = ''
+                            this.MycommentLength=140
+                            this.data.playlist.commentCount++
+                            this.$message({
+                                message: "评论成功",
+                                type: "success"
+                            })
+                        }).catch(err => {
+                            console.log("评论失败")
+                        })
+                    }
                 } else {
                     this.$message({
                         message: '请先登录',
@@ -325,6 +344,8 @@
                     })
                 }
             },
+           
+           
             // 数量格式化
             getnumber(num) {
                 num = parseInt(num)

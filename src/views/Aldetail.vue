@@ -59,7 +59,8 @@
                         <div id="al-s-b-b">
                             <div class="a-h-w-b-item" v-for="(item,index) in albumData.songs">
                                 <!-- 播放按钮 -->
-                                <span>{{index+1}} <span class="playLogo" title="播放" @click="playMusic(item.id)"></span></span>
+                                <span>{{index+1}} <span class="playLogo" title="播放"
+                                        @click="playMusic(item.id)"></span></span>
                                 <!-- 歌曲标题 和mv图标 -->
                                 <span>
                                     <span :title="item.name" @click="toSongDetail(item.id)">{{item.name}}</span>
@@ -94,9 +95,12 @@
                     <span>共{{allComments.total}}条评论</span>
                 </div>
                 <div class="sdc-cty-m">
-                    <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
-                    <textarea placeholder="评论"></textarea>
-                    <button>评论</button>
+                    <img :src="this.$store.state.userImg"
+                        alt="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50">
+                    <!-- 加防抖？ -->
+                    <textarea placeholder="评论" v-model="myComment" @input="handerinput()"></textarea>
+                    <button @click="sentComment()">评论</button>
+                    <span class="my-comment-len">{{MycommentLength}}</span>
                 </div>
                 <!-- 精彩评论 -->
                 <div class="sdc-cty-g-body-titile" v-if="allComments.hotComments!='' ">
@@ -190,7 +194,7 @@
             return {
                 albumId: '',
                 // id数组
-                ids:[],
+                ids: [],
                 albumData: {
                     songs: [],
                     album: {
@@ -242,6 +246,10 @@
                 },
                 // 当前页数
                 currentPage: 1,
+                // 输入的评论
+                myComment: '',
+                // 剩余可输入字数
+                MycommentLength: 140
             }
         },
         computed: {
@@ -251,6 +259,61 @@
             }
         },
         methods: {
+
+            // 在评论框输入的时候
+            handerinput() {
+                if (this.myComment.length <= 140) {
+                    this.MycommentLength = 140 - this.myComment.length
+                } else {
+                    this.MycommentLength = 0
+
+                }
+            },
+            // 点击评论执行的函数
+            sentComment() {
+                // 判断是否登录
+                // 如果登录了
+                if (this.$store.state.isLogin) {
+                    if (this.myComment.length > 140) {
+                        this.$message({
+                            message: '评论内容不能超过140个字',
+                            type: 'success'
+                        })
+                    } else {
+                        this.axios({
+                            method: 'get',
+                            url: '/comment?t=1&type=3&id=' + this.albumId + '&content=' + this.myComment
+                        }).then(res => {
+                            console.log(res.data)
+                            let obj = res.data.comment
+                            obj.likedCount = 0
+                            obj.liked = false
+                            obj.beReplied = []
+                            this.allComments.comments.unshift(obj)
+                            this.allComments.total = this.allComments.total + 1
+                            this.myComment = ''
+                            this.MycommentLength = 140
+                            // this.data.playlist.commentCount++
+                            this.$message({
+                                message: "评论成功",
+                                type: "success"
+                            })
+                        }).catch(err => {
+                            // console.log(err)
+                            this.$message({
+                                message:"别试了这个接口有问题",
+                                type:'error'
+                            })
+                        })
+                    }
+                } else {
+                    this.$message({
+                        message: '请先登录',
+                        type: 'success'
+                    })
+                }
+            },
+
             // 获取专辑id
             getAlbumId() {
                 this.albumId = this.$route.query.id
@@ -396,7 +459,7 @@
                 }
                 return str1 + ':' + str2
             },
-            
+
 
 
         },

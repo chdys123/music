@@ -148,7 +148,7 @@
                 this.getAll(1)
             },
 
-            // 获取全部新碟
+            // 获取全部歌单
             getAll(num) {
                 this.currentPage = num
                 this.axios({

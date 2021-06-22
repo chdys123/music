@@ -30,7 +30,7 @@
                         <span>收藏</span>
                         <span>分享</span>
                         <span>下载</span>
-                        <span>12345</span>
+                        <span>{{allComments.total}}</span>
                     </div>
                     <div id="sdc-l-t-r-5" :class="{'isClose':!isClose}">
                         {{lyric}}
@@ -43,17 +43,17 @@
                 </div>
                 <br style="clear:both">
             </div>
-
-
-
             <div class="sdc-cty">
                 <div class="sdc-cty-t">评论
                     <span>共{{allComments.total}}条评论</span>
                 </div>
                 <div class="sdc-cty-m">
-                    <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
-                    <textarea placeholder="评论"></textarea>
-                    <button>评论</button>
+                    <img :src="this.$store.state.userImg"
+                        alt="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50">
+                    <!-- 加防抖？ -->
+                    <textarea placeholder="评论" v-model="myComment" @input="handerinput()"></textarea>
+                    <button @click="sentComment()">评论</button>
+                    <span class="my-comment-len">{{MycommentLength}}</span>
                 </div>
                 <!-- 精彩评论 -->
                 <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
@@ -231,10 +231,65 @@
                 // 歌词
                 lyric: '',
                 // 判断显示展开还是收起
-                isClose: false
+                isClose: false,
+                // 输入的评论
+                myComment: '',
+                // 剩余可输入字数
+                MycommentLength: 140,
             }
         },
         methods: {
+
+            // 在评论框输入的时候
+            handerinput() {
+                if (this.myComment.length <= 140) {
+                    this.MycommentLength = 140 - this.myComment.length
+                } else {
+                    this.MycommentLength = 0
+
+                }
+            },
+            // 点击评论执行的函数
+            sentComment() {
+                // 判断是否登录
+                // 如果登录了
+                if (this.$store.state.isLogin) {
+                    if (this.myComment.length > 140) {
+                        this.$message({
+                            message: '评论内容不能超过140个字',
+                            type: 'success'
+                        })
+                    } else {
+                        this.axios({
+                            method: 'get',
+                            url: '/comment?t=1&type=0&id=' + this.songId + '&content=' + this.myComment
+                        }).then(res => {
+                            console.log(res.data)
+                            let obj = res.data.comment
+                            obj.likedCount = 0
+                            obj.liked = false
+                            obj.beReplied = []
+                            this.allComments.comments.unshift(obj)
+                            this.allComments.total = this.allComments.total + 1
+                            this.myComment = ''
+                            this.MycommentLength = 140
+                            // this.data.playlist.commentCount++
+                            this.$message({
+                                message: "评论成功",
+                                type: "success"
+                            })
+                        }).catch(err => {
+                            console.log(err)
+                        })
+                    }
+                } else {
+                    this.$message({
+                        message: '请先登录',
+                        type: 'success'
+                    })
+                }
+            },
+
             // 获取歌曲详情数据
             getSongData() {
                 this.axios({
@@ -340,9 +395,9 @@
                     }
                 }
             },
-            
-            
-           
+
+
+
             // 获取歌词
             getlyric() {
                 this.axios({
@@ -376,8 +431,8 @@
                     return '收起'
                 }
             },
-            
-            
+
+
         },
         computed: {
             isVipsong() {
@@ -412,7 +467,7 @@
             this.getComments(1)
             // 获取歌词
             this.getlyric()
-            
+
         }
     }
 </script>

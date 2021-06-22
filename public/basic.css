@@ -269,6 +269,17 @@ textarea{
     padding: 5px 5px;
 }
 
+/* 剩余可输入评论数目 */
+.sdc-cty-m .my-comment-len{
+    float: right;
+    /* background-color: yellow; */
+    margin-top: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #9999A6;
+    /* z-index: 100; */
+}
+
 .sdc-cty-m button {
     float: right;
     margin-top: 4px;

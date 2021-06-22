@@ -72,8 +72,9 @@
                     <div :class="{'a-h-w-b-item':true,'tl-s-img':index==0||index==1||index==2}"
                         v-for="(item,index) in toplistDetail.playlist.tracks">
                         <span>{{index+1}} <span class="playLogo" @click="playMusic(item.id)" title="播放"></span></span>
-                        <span >
-                            <img :src="item.al.picUrl+'?param=50y50'" alt="" v-if="index==2||index==0||index==1" @click="toSongDetail(item.id)" :title="item.name">
+                        <span>
+                            <img :src="item.al.picUrl+'?param=50y50'" alt="" v-if="index==2||index==0||index==1"
+                                @click="toSongDetail(item.id)" :title="item.name">
                             <span :title="item.name" @click="toSongDetail(item.id)">{{item.name}}</span>
                             <span class="mvLogo" v-if="item.mv!=0" title="播放mv" @click="toMv(item.mv)"></span>
                         </span>
@@ -87,7 +88,8 @@
                                 <br style="clear: both;">
                             </span>
                         </span>
-                        <span :title="item.ar[0].name" class="tp-s-b-sn" @click="toAr(item.ar[0].id)">{{item.ar[0].name}}</span>
+                        <span :title="item.ar[0].name" class="tp-s-b-sn"
+                            @click="toAr(item.ar[0].id)">{{item.ar[0].name}}</span>
                         <br style="clear:both">
                     </div>
                 </div>
@@ -95,81 +97,84 @@
             <!-- 歌曲列表end -->
 
             <!-- 评论模块 -->
-                <!-- 评论 -->
-                <div class="sdc-cty-t">评论
-                    <span>共{{allComments.total}}条评论</span>
-                </div>
-                <div class="sdc-cty-m">
-                    <img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" alt="">
-                    <textarea placeholder="评论"></textarea>
-                    <button>评论</button>
-                </div>
-                <!-- 精彩评论 -->
-                <div class="sdc-cty-g-body-titile" v-if="allComments.hotComments!='' ">
-                    精彩评论
-                </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
-                    <img :src="item.user.avatarUrl" alt="">
-                    <div class="sdc-cty-g-b-i-b">
-                        <a>{{item.user.nickname}}</a> ：{{item.content}}
-                        <p v-if="item.beReplied.length!=0">
-                            <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
-                            <br style="clear:both">
-                        </p>
-                        <div>
-                            <span>{{contentTime(item.time)}}</span>
-                            <span>回复</span>
-                            <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
-                                </span> ({{item.likedCount}})</span>
-                            <br style="clear:both">
+            <!-- 评论 -->
+            <div class="sdc-cty-t">评论
+                <span>共{{allComments.total}}条评论</span>
+            </div>
+            <div class="sdc-cty-m">
+                <img :src="this.$store.state.userImg"
+                    alt="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50">
+                <!-- 加防抖？ -->
+                <textarea placeholder="评论" v-model="myComment" @input="handerinput()"></textarea>
+                <button @click="sentComment()">评论</button>
+                <span class="my-comment-len">{{MycommentLength}}</span>
+            </div>
+            <!-- 精彩评论 -->
+            <div class="sdc-cty-g-body-titile" v-if="allComments.hotComments!='' ">
+                精彩评论
+            </div>
+            <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+                <img :src="item.user.avatarUrl" alt="">
+                <div class="sdc-cty-g-b-i-b">
+                    <a>{{item.user.nickname}}</a> ：{{item.content}}
+                    <p v-if="item.beReplied.length!=0">
+                        <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                        <br style="clear:both">
+                    </p>
+                    <div>
+                        <span>{{contentTime(item.time)}}</span>
+                        <span>回复</span>
+                        <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                            </span> ({{item.likedCount}})</span>
+                        <br style="clear:both">
 
-                        </div>
-                    </div>
-
-                    <br style="clear:both">
-                </div>
-                <!-- 最新评论 -->
-                <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
-                    最新评论({{allComments.total}})
-                </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
-                    <img :src="item.user.avatarUrl" alt="">
-                    <div class="sdc-cty-g-b-i-b">
-                        <a>{{item.user.nickname}}</a> ：{{item.content}}
-                        <p v-if="item.beReplied.length!=0">
-                            <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
-                            <br style="clear:both">
-                        </p>
-                        <div>
-                            <span>{{contentTime(item.time)}}</span>
-                            <span>回复</span>
-                            <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
-                                </span> ({{item.likedCount}})</span>
-                            <br style="clear:both">
-
-                        </div>
-                    </div>
-                    <br style="clear:both">
-                </div>
-                <!-- 评论模块end -->
-
-                <!-- 分页 -->
-                <div class="f-page">
-                    <div class="f-page-c">
-
-                        <a @click="toFirstPage()" :class="{'disable':this.currentPage==1}">首页</a>
-                        <a @click="toPrePage()" :class="{'disable':this.currentPage==1}">&lt;上一页</a>
-                        <a @click="toNextPage()"
-                            :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
-                        <a @click="toTailPage()"
-                            :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
-                        <span>当前页：{{this.currentPage}}</span>
-                        <span>总页数：{{totalPage}}</span>
-                        <span>跳转到：<input type="text" @keydown="jumpPage($event)"
-                                oninput="value=value.replace(/[^\d]/g,'')" />页</span>
                     </div>
                 </div>
-                <!-- 分页结束 -->
+
+                <br style="clear:both">
+            </div>
+            <!-- 最新评论 -->
+            <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
+                最新评论({{allComments.total}})
+            </div>
+            <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+                <img :src="item.user.avatarUrl" alt="">
+                <div class="sdc-cty-g-b-i-b">
+                    <a>{{item.user.nickname}}</a> ：{{item.content}}
+                    <p v-if="item.beReplied.length!=0">
+                        <a>{{item.beReplied[0].user.nickname}}</a> ： {{item.beReplied[0].content}}
+                        <br style="clear:both">
+                    </p>
+                    <div>
+                        <span>{{contentTime(item.time)}}</span>
+                        <span>回复</span>
+                        <span><span :class="{'content-like':item.liked==false,'content-liked':item.liked==true}">
+                            </span> ({{item.likedCount}})</span>
+                        <br style="clear:both">
+
+                    </div>
+                </div>
+                <br style="clear:both">
+            </div>
+            <!-- 评论模块end -->
+
+            <!-- 分页 -->
+            <div class="f-page">
+                <div class="f-page-c">
+
+                    <a @click="toFirstPage()" :class="{'disable':this.currentPage==1}">首页</a>
+                    <a @click="toPrePage()" :class="{'disable':this.currentPage==1}">&lt;上一页</a>
+                    <a @click="toNextPage()"
+                        :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">下一页&gt;</a>
+                    <a @click="toTailPage()"
+                        :class="{'disable':this.currentPage==this.totalPage||this.totalPage==1}">尾页</a>
+                    <span>当前页：{{this.currentPage}}</span>
+                    <span>总页数：{{totalPage}}</span>
+                    <span>跳转到：<input type="text" @keydown="jumpPage($event)"
+                            oninput="value=value.replace(/[^\d]/g,'')" />页</span>
+                </div>
+            </div>
+            <!-- 分页结束 -->
 
 
         </div>
@@ -221,7 +226,7 @@
                 // 当前榜单详情id
                 id: 0,
                 // 当前榜单歌曲id数组
-                ids:[],
+                ids: [],
                 // 评论
                 allComments: {
                     // 热门评论
@@ -250,6 +255,11 @@
                 // 当前页数
                 currentPage: 1,
 
+                // 输入的评论
+                myComment: '',
+                // 剩余可输入字数
+                MycommentLength: 140
+
 
 
             }
@@ -261,9 +271,60 @@
             }
         },
         methods: {
+             // 在评论框输入的时候
+             handerinput() {
+                if (this.myComment.length <= 140) {
+                    this.MycommentLength = 140 - this.myComment.length
+                } else {
+                    this.MycommentLength = 0
+
+                }
+            },
+            // 点击评论执行的函数
+            sentComment() {
+                // 判断是否登录
+                // 如果登录了
+                if (this.$store.state.isLogin) {
+                    if (this.myComment.length > 140) {
+                        this.$message({
+                            message: '评论内容不能超过140个字',
+                            type: 'success'
+                        })
+                    } else {
+                        this.axios({
+                            method: 'get',
+                            url: '/comment?t=1&type=2&id=' + this.id + '&content=' + this.myComment
+                        }).then(res => {
+                            console.log(res.data)
+                            let obj = res.data.comment
+                            obj.likedCount = 0
+                            obj.liked = false
+                            obj.beReplied = []
+                            this.allComments.comments.unshift(obj)
+                            this.allComments.total = this.allComments.total + 1
+                            this.myComment = ''
+                            this.MycommentLength = 140
+                            // this.data.playlist.commentCount++
+                            this.toplistDetail.playlist.commentCount++
+                            this.$message({
+                                message: "评论成功",
+                                type: "success"
+                            })
+                        }).catch(err => {
+                            console.log(err)
+                        })
+                    }
+                } else {
+                    this.$message({
+                        message: '请先登录',
+                        type: 'success'
+                    })
+                }
+            },
+
             // 获取榜单数据
             getTopList(id) {
-                
+
                 this.axios({
                     method: 'get',
                     url: '/toplist'
@@ -399,7 +460,7 @@
         },
 
         created() {
-            window.scrollTo(0,0)
+            window.scrollTo(0, 0)
             let li = document.getElementById("discoverlittleList").childNodes
             for (let i = 0; i < li.length; i++) {
                 if (i == 1) {
@@ -410,8 +471,8 @@
                 }
             }
             // 获取传过来的榜单id
-            let id=this.$route.query.id
-            console.log("id",id)
+            let id = this.$route.query.id
+            console.log("id", id)
             // 获取榜单列表
             this.getTopList(id)
 

@@ -165,14 +165,15 @@
           <div id="playQueue-body">
             <!-- 如果是初始状态 则不显示 -->
             <div class="playQueue-item" v-for="(item,myindex) in songList"
-              :class="{'playQueue-item-active':index==myindex}" @click="playMusic(item.songid)" v-if="isFirst">
+              :class="{'playQueue-item-active':index==myindex}" @click="playMusic(item.songid)" v-if="isFirst"
+              :key="item.songid">
               <span class="playQueue-item-songname ellipsis">{{item.songname}}
                 <span :class="{'current-play-logo':index==myindex}"></span>
               </span>
               <span class="playQueue-item-func">
                 <span class="playQueue-item-sub" title="收藏" @click="subMusic($event,item.songid)"></span>
                 <span class="playQueue-item-share" title="分享" @click="shareMusic($event,item.id)"></span>
-                <span class="playQueue-item-delete" title="删除" @click="deleteMusic($event,item.id)"></span>
+                <span class="playQueue-item-delete" title="删除" @click="deleteMusic($event,myindex)"></span>
               </span>
               <span class="playQueue-item-arname ellipsis">
                 <span v-for="(item1,index1) in item.arname" @click="playQueueToArDetail($event,item.arid[index1])">
@@ -293,12 +294,12 @@
         phone: '',
         // 登录密码
         password: '',
-        userImg2:''
+        userImg2: ''
       }
     },
     watch: {
       index(newindex, oldindex) {
-        // console.log("index改变了,newindex:", newindex, "oldindex:", oldindex)
+        console.log("index改变了,newindex:", newindex, "oldindex:", oldindex)
         if (!this.isFirst && this.index == 1) {
 
         } else {
@@ -329,12 +330,6 @@
       }
 
     },
-    computed: {
-
-
-    },
-
-
     methods: {
       // 点击歌词
       tolyric(index) {
@@ -370,7 +365,7 @@
             //   type: 'success'
             // })
             this.isLogin = false
-            this.$store.commit('updateIsLogin',false)
+            this.$store.commit('updateIsLogin', false)
 
             // 
           } else {
@@ -381,9 +376,9 @@
             this.isLogin = true
             this.userId = res.data.data.account.id
             this.userImg = res.data.data.profile.avatarUrl + '?param=30y30'
-            this.userImg2= res.data.data.profile.avatarUrl + '?param=50y50'
-            this.$store.commit('updateIsLogin',true)
-            this.$store.commit('Img',this.userImg2)
+            this.userImg2 = res.data.data.profile.avatarUrl + '?param=50y50'
+            this.$store.commit('updateIsLogin', true)
+            this.$store.commit('Img', this.userImg2)
           }
         }).catch(err => {
           console.log("获取登录状态失败")
@@ -415,8 +410,8 @@
             this.userImg = res.data.profile.avatarUrl
             this.isLogin = true
             // 登录成功之后 把登录状态存入全局状态
-            this.$store.commit('updateIsLogin',true)
-            this.$store.commit('Img',this.userImg2)
+            this.$store.commit('updateIsLogin', true)
+            this.$store.commit('Img', this.userImg2)
 
             localStorage.setItem('uid', this.id)
             // 登录成功后跳转到首页
@@ -448,8 +443,8 @@
         }).then(res => {
           if (res.data.code == 200) {
             this.$router.push('/discover/recommend')
-            this.$store.commit('updateIsLogin',false)
-            this.$store.commit('Img',"http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50")
+            this.$store.commit('updateIsLogin', false)
+            this.$store.commit('Img', "http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50")
             // 刷新页面
             setTimeout(() => {
               location.reload()
@@ -543,7 +538,8 @@
       async getSrc(id) {
         if (this.isFirst) {
           let res = await this.getSongUrl(id)
-          // console.log("音乐实时播放地址:", res.data.data[0].url)
+          console.log("音乐实时播放地址:", res.data.data[0].url)
+          console.log("当前歌曲名:", this.songList[this.index].songname)
           this.src = res.data.data[0].url
           if (this.src == null) {
             this.$message({
@@ -756,10 +752,64 @@
         e.stopPropagation()
       },
       // 播放列表删除音乐
-      deleteMusic(e, id) {
+      deleteMusic(e, index) {
         console.log("点击了删除音乐")
         e.stopPropagation()
+        // 如果是最后一首歌
+        if (this.songList.length == 1) {
+          this.deleteMusics()
+        } else {
+          // 如果不是最后一首歌
 
+          // 要判断播放的index是否改变
+          if (this.index < index) {
+            // 清空本地存储
+            localStorage.removeItem("track-queue")
+            localStorage.removeItem("index")
+            localStorage.setItem("index", this.index)
+            this.songList.splice(index, 1)
+            let s = JSON.stringify(this.songList)
+            localStorage.setItem("track-queue", s)
+          } else if (this.index > index) {
+            // 清空本地存储
+            localStorage.removeItem("track-queue")
+            localStorage.removeItem("index")
+            this.songList.splice(index, 1)
+            this.index = this.index - 1
+            localStorage.setItem("index", this.index)
+            let s = JSON.stringify(this.songList)
+            localStorage.setItem("track-queue", s)
+          } else if (this.index == index) {
+            this.playerBack()
+
+
+            let that=this
+            setTimeout(() => {
+            localStorage.removeItem("track-queue")
+              localStorage.removeItem("index")
+              this.songList.splice(index, 1)
+              that.index = that.index - 1
+              localStorage.setItem("index", that.index)
+              let s = JSON.stringify(that.songList)
+              localStorage.setItem("track-queue", s)
+            }, 1)
+
+
+
+            // this.deleteMusic(e, index)
+
+            // localStorage.removeItem("track-queue")
+            // localStorage.removeItem("index")
+            // this.songList.splice(index, 1)
+            // this.index = this.index - 1
+
+            // localStorage.setItem("index", this.index)
+            // let s = JSON.stringify(this.songList)
+            // localStorage.setItem("track-queue", s)
+
+            console.log("hello")
+          }
+        }
       },
       // 删除播放列表全部音乐
       deleteMusics() {

@@ -135,9 +135,9 @@
             </div>
             <div id="sdc-r-simi-pl-body" v-if="playlists.length!=0">
                 <div id="sdc-r-simi-pl-body-item" v-for="item in playlists">
-                    <img :src="item.coverImgUrl" alt="" :title="item.name" @click="toPlatListDetail(item.id)">
+                    <img :src="item.coverImgUrl" alt="" :title="item.name" @click="toPlayListDetail(item.id)">
                     <div>
-                        <p :title="item.name" @click="toPlatListDetail(item.id)">{{item.name}}</p>
+                        <p :title="item.name" @click="toPlayListDetail(item.id)">{{item.name}}</p>
                         <p>by <span :title="item.creator.nickname">{{item.creator.nickname}}</span></p>
                     </div>
                 </div>
@@ -148,7 +148,7 @@
             <div id="sdc-r-simi-s-body">
                 <div id="sdc-r-simi-s-body-item" v-for="item in songs">
                     <p @click="toSongDetail(item.id)" :title="item.name">{{item.name}}</p>
-                    <p :title="item.artists[0].name">{{item.artists[0].name}}</p>
+                    <p :title="item.artists[0].name" @click="toAr(item.artists[0].id)">{{item.artists[0].name}}</p>
                     <div>
                         <span @click="playMusic(item.id)" title="播放"></span>
                         <span @click="addMusics([item.id])" title="加入播放列表"></span>

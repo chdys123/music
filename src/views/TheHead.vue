@@ -1630,7 +1630,10 @@
     overflow: scroll;
     font-size: 12px;
     color: #CCCCCC;
+    scrollbar-width: none;
+    scrollbar-color: light;
   }
+
 
 
   #playQueue-body::-webkit-scrollbar {
@@ -1786,6 +1789,8 @@
 
   .playQueue-lyric {
     overflow: scroll;
+    scrollbar-width: none;
+    scrollbar-color: light;
     font-size: 12px;
     height: 273px;
     text-align: center;

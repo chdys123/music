@@ -1,6 +1,6 @@
 <template>
     <div id="ar-al-con">
-        <div v-for="(item,index) in albums" class="album-item">
+        <div v-for="item in albums" class="album-item" :key="item.id">
             <img :src="item.picUrl+'?param=120y120'" alt="" @click="toAldetail(item.id)">
             <p class="ellipsis al-name" :title="item.name" @click="toAldetail(item.id)">{{item.name}}</p>
             <p class="al-pt">{{getPulishTime(item.publishTime)}}</p>

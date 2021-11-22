@@ -21,7 +21,7 @@
                     </p>
 
                     <div v-show="!open1">
-                        <div v-for="item in playList1" class="my-pl-item" @click="toPlayListDetail(item.id)">
+                        <div v-for="item in playList1" class="my-pl-item" @click="toPlayListDetail(item.id)" :key="item.id">
                             <img :src="item.coverImgUrl+'?param=40y40'" alt="">
                             <div>
                                 <p class="my-pl-item-p1 ellipsis">{{item.name}}</p>
@@ -37,7 +37,7 @@
                         </span>收藏的歌单({{data.subPlaylistCount}})
                     </p>
                     <div v-show="!open2">
-                        <div v-for="item in playList2" class="my-pl-item" @click="toPlayListDetail(item.id)">
+                        <div v-for="item in playList2" class="my-pl-item" @click="toPlayListDetail(item.id)" :key="item.id">
                             <img :src="item.coverImgUrl+'?param=40y40'" alt="">
                             <div>
                                 <p class="my-pl-item-p1 ellipsis">{{item.name}}</p>

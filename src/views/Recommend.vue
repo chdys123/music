@@ -26,7 +26,7 @@
                     <!-- 首页热门推荐歌单展示部分 -->
                     <div>
                         <div v-for="(item,index) in hotplaylist" :class="{'h-p-f':true,'h-p-f-b':index%4==0}"
-                            :title="item.name">
+                            :title="item.name" :key="item.id">
                             <img :src="item.picUrl+'?param=140y140'" alt="" @click="toAllPlayListDetail(item.id)">
                             <p @click="toAllPlayListDetail(item.id)">{{item.name}}</p>
                             <div>
@@ -60,11 +60,11 @@
                         <span class="fnalLLogo fnalLLogo1" @click="toLeft()"></span>
                         <div class="f-nal-bb">
                             <div v-for="(item,index) in hotAl.slice(0,10)"
-                                :class="{'f-nal-b-item':true,'f-nal-b-item-b':index%5==0}">
+                                :class="{'f-nal-b-item':true,'f-nal-b-item-b':index%5==0}" :key="item.id">
                                 <img :src="item.picUrl+'?param=100y100'" alt="" @click="toAlDetail(item.id)">
                                 <p class="ellipsis" :title="item.name" @click="toAlDetail(item.id)">{{item.name}}</p>
                                 <p class="ellipsis"><span v-for="item1 in item.artists" :title="item1.name"
-                                        @click="toArDetail(item1.id)">{{item1.name }}</span></p>
+                                        @click="toArDetail(item1.id)" :key="item1.id">{{item1.name }}</span></p>
                             </div>
                         </div>
                         <span class="fnalRLogo fnalRLogo1" @click="toRight()"></span>
@@ -100,7 +100,7 @@
                             </div>
 
                             <div class="ftlDetail">
-                                <div v-for="(item,index) in toplistData[0].slice(0,10)" class="ftpDetail-item">
+                                <div v-for="(item,index) in toplistData[0].slice(0,10)" class="ftpDetail-item" :key="item.id">
                                     <span class="ftpnum">{{index+1}}</span>
                                     <span class="ftpname ellipsis" :title="item.name"
                                         @click="tosongDetail(item.id)">{{item.name}}</span>
@@ -122,7 +122,7 @@
                             </div>
 
                             <div class="ftlDetail">
-                                <div v-for="(item,index) in toplistData[1].slice(0,10)" class="ftpDetail-item">
+                                <div v-for="(item,index) in toplistData[1].slice(0,10)" class="ftpDetail-item" :key="item.id">
                                     <span class="ftpnum">{{index+1}}</span>
                                     <span class="ftpname ellipsis" :title="item.name"
                                         @click="tosongDetail(item.id)">{{item.name}}</span>
@@ -144,7 +144,7 @@
                             </div>
 
                             <div class="ftlDetail">
-                                <div v-for="(item,index) in toplistData[2].slice(0,10)" class="ftpDetail-item">
+                                <div v-for="(item,index) in toplistData[2].slice(0,10)" class="ftpDetail-item" :key="item.id">
                                     <span class="ftpnum">{{index+1}}</span>
                                     <span class="ftpname ellipsis" :title="item.name"
                                         @click="tosongDetail(item.id)">{{item.name}}</span>
@@ -173,7 +173,7 @@
                 <div class="fhotar">
                     <p>热门歌手<a @click="toallAr()">查看全部&gt;</a></p>
 
-                    <div v-for="(item,index) in hotAr" class="fhotar-item">
+                    <div v-for="item in hotAr" class="fhotar-item" :key="item.id">
                         <img :src="item.picUrl+'?param=62y62'" alt="" @click="toArDetail(item.id)">
                         <p :title="item.name" class="ellipsis" @click="toArDetail(item.id)">{{item.name}}</p>
                     </div>

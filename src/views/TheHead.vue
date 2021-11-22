@@ -43,8 +43,8 @@
         <div v-if="serchData.songs!=null">
           <p><span class="serSong"></span><span>单曲</span></p>
           <div>
-            <p v-for="item in serchData.songs" class="ellipsis" @click="toSongDetail(item.id)">
-              <span>{{item.name}}</span>-<span v-for="item1 in item.artists">{{item1.name}}&nbsp;</span>
+            <p v-for="item in serchData.songs" class="ellipsis" @click="toSongDetail(item.id)" :key="item.id">
+              <span>{{item.name}}</span>-<span v-for="item1 in item.artists" :key="item1.name">{{item1.name}}&nbsp;</span>
             </p>
           </div>
           <br style="clear: both;">
@@ -53,7 +53,7 @@
         <div v-if="serchData.artists!=null">
           <p><span class="serAr"></span><span>歌手</span></p>
           <div class="ser-sugg-bgc1">
-            <p v-for="item in serchData.artists" class="ellipsis" @click="toArDetail(item.id)">
+            <p v-for="item in serchData.artists" class="ellipsis" @click="toArDetail(item.id)" :key="item.id">
               <span>{{item.name}}</span>
             </p>
           </div>
@@ -63,7 +63,7 @@
         <div v-if="serchData.albums!=null">
           <p><span class="serAl"></span><span>专辑</span></p>
           <div>
-            <p v-for="item in serchData.albums" class="ellipsis" @click="toAlDetail(item.id)">
+            <p v-for="item in serchData.albums" class="ellipsis" @click="toAlDetail(item.id)" :key="item.id">
               <span>{{item.name}}-{{item.artist.name}}</span>
             </p>
           </div>
@@ -74,13 +74,13 @@
           <p><span class="serPlaylist"></span><span>歌单</span></p>
 
           <div class="ser-sugg-bgc1">
-            <p v-for="item in serchData.playlists" class="ellipsis" @click="toplaylistDetail(item.id)">
+            <p v-for="item in serchData.playlists" class="ellipsis" @click="toplaylistDetail(item.id)" :key="item.id">
               <span>{{item.name}}</span>
             </p>
           </div>
           <br style="clear: both;">
         </div>
-      </div>
+      </div> 
       <!-- 搜索建议end -->
     </div>
 
@@ -111,7 +111,7 @@
         <div>
           <span @click="toSongDetail(songList[index].songid)">{{songList[index].songname}}</span>
           <span v-for="(item,index1) in songList[index].arname"
-            @click="toAr(songList[index].arid[index1])">{{item}}</span>
+            @click="toAr(songList[index].arid[index1])" :key="item">{{item}}</span>
         </div>
         <!-- 进度条和时间盒子 -->
         <div id="ProgressbarCon">
@@ -165,9 +165,11 @@
           <div id="playQueue-body">
             <!-- 如果是初始状态 则不显示 -->
             <div class="playQueue-item" v-for="(item,myindex) in songList"
-              :class="{'playQueue-item-active':index==myindex}" @click="playMusic(item.songid)" v-if="isFirst"
+              :class="{'playQueue-item-active':index==myindex}" @click="playMusic(item.songid)" 
               :key="item.songid">
-              <span class="playQueue-item-songname ellipsis">{{item.songname}}
+
+              <div v-if="isFirst">
+                <span class="playQueue-item-songname ellipsis">{{item.songname}}
                 <span :class="{'current-play-logo':index==myindex}"></span>
               </span>
               <span class="playQueue-item-func">
@@ -176,13 +178,17 @@
                 <span class="playQueue-item-delete" title="删除" @click="deleteMusic($event,myindex)"></span>
               </span>
               <span class="playQueue-item-arname ellipsis">
-                <span v-for="(item1,index1) in item.arname" @click="playQueueToArDetail($event,item.arid[index1])">
+                <span v-for="(item1,index1) in item.arname" @click="playQueueToArDetail($event,item.arid[index1])" :key="item1">
                   <span v-if="index1!=0">
                     /
                   </span>
                   {{item1}}</span>
               </span>
               <span class="playQueue-item-dt">{{getDt(item.time)}}</span>
+
+              </div>
+           
+              
             </div>
 
 
@@ -193,7 +199,7 @@
             {{songList[index].songname}}
           </p>
           <div class="playQueue-lyric" v-if="isHasLyric" id="playQueue-lyric">
-            <p v-for="(item,index) in lyric" :class="{'lyricActive':index==getIndex()}" class="lyricItem"
+            <p v-for="(item,index) in lyric" :key="item" :class="{'lyricActive':index==getIndex()}" class="lyricItem"
               @click="tolyric(index)">{{item}}</p>
           </div>
           <div v-if="!isHasLyric" class="playQueue-noLyric">

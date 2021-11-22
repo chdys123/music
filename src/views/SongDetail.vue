@@ -16,7 +16,7 @@
                     </div>
                     <div id="sdc-l-t-r-2">
                         歌手：
-                        <span v-for="(item,index) in songData.songs[0].ar">
+                        <span v-for="(item,index) in songData.songs[0].ar" :key="item">
                             <span v-if="index>0" class="xiegang">/</span>
                             <span @click="toAr(item.id)" class="sdetailar">{{item.name}}</span>
                         </span>
@@ -59,7 +59,7 @@
                 <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
                     精彩评论
                 </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments" :key="item">
                     <img :src="item.user.avatarUrl" alt="">
                     <div class="sdc-cty-g-b-i-b">
                         <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -83,7 +83,7 @@
                 <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
                     最新评论({{allComments.total}})
                 </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments" :key="item">
                     <img :src="item.user.avatarUrl" alt="">
                     <div class="sdc-cty-g-b-i-b">
                         <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -134,7 +134,7 @@
                 包含这首歌曲的歌单
             </div>
             <div id="sdc-r-simi-pl-body" v-if="playlists.length!=0">
-                <div id="sdc-r-simi-pl-body-item" v-for="item in playlists">
+                <div id="sdc-r-simi-pl-body-item" v-for="item in playlists" :key="item.id">
                     <img :src="item.coverImgUrl" alt="" :title="item.name" @click="toPlayListDetail(item.id)">
                     <div>
                         <p :title="item.name" @click="toPlayListDetail(item.id)">{{item.name}}</p>
@@ -146,7 +146,7 @@
                 相似歌曲
             </div>
             <div id="sdc-r-simi-s-body">
-                <div id="sdc-r-simi-s-body-item" v-for="item in songs">
+                <div id="sdc-r-simi-s-body-item" v-for="item in songs" :key="item.id">
                     <p @click="toSongDetail(item.id)" :title="item.name">{{item.name}}</p>
                     <p :title="item.artists[0].name" @click="toAr(item.artists[0].id)">{{item.artists[0].name}}</p>
                     <div>

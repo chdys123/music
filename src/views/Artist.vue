@@ -28,7 +28,7 @@
                 <span>热门歌手</span>
             </div>
             <div id="a-c-r-c">
-                <div :class="{'artist-con-r-item':true,'a-c-r-i-l':index%3==0}" v-for="(item,index) in hotArtists">
+                <div :class="{'artist-con-r-item':true,'a-c-r-i-l':index%3==0}" v-for="(item,index) in hotArtists" :key="item.id">
                     <img :src="item.img1v1Url+'?param=50y50'" alt="" :title="item.name" @click="toArtist(item.id)">
                     <p :title="item.name" @click="item.id">{{item.name}}</p>
                 </div>

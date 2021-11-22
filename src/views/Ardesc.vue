@@ -2,7 +2,7 @@
     <div id="ar-desc-con">
         <h2>简介</h2>
         <p>{{briefDesc}}</p>
-        <div v-for="item in introduction">
+        <div v-for="item in introduction" :key="item">
             <h2>{{item.ti}}</h2>
             <p>{{item.txt}}</p>
         </div>

@@ -11,7 +11,7 @@
                         <span class="fg1"></span> <span class="cat-hhh">语种</span>
                     </div>
                     <div class="cat-item">
-                        <span v-for="item in catlist[0]">
+                        <span v-for="item in catlist[0]" :key="item">
                             <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
@@ -22,7 +22,7 @@
                         <span class="fg2"></span><span class="cat-hhh">风格</span>
                     </div>
                     <div class="cat-item">
-                        <span v-for="item in catlist[1]">
+                        <span v-for="item in catlist[1]" :key="item">
                             <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
@@ -33,7 +33,7 @@
                         <span class="fg3"></span><span class="cat-hhh">场景</span>
                     </div>
                     <div class="cat-item">
-                        <span v-for="item in catlist[2]">
+                        <span v-for="item in catlist[2]" :key="item">
                             <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
@@ -44,7 +44,7 @@
                         <span class="fg4"></span><span class="cat-hhh">情感</span>
                     </div>
                     <div class="cat-item">
-                        <span v-for="item in catlist[3]">
+                        <span v-for="item in catlist[3]" :key="item">
                             <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
@@ -55,7 +55,7 @@
                         <span class="fg5"></span><span class="cat-hhh">主题</span>
                     </div>
                     <div class="cat-item">
-                        <span v-for="item in catlist[4]">
+                        <span v-for="item in catlist[4]" :key="item">
                             <span @click="getdata(item)">{{item}}</span>|
                         </span>
                     </div>
@@ -66,7 +66,7 @@
         </div>
         <div id="playlistBody">
             <ul>
-                <li v-for="(item,index) in playlistData.playlists" :class="{Edge:index%5==0}">
+                <li v-for="(item,index) in playlistData.playlists" :class="{Edge:index%5==0}" :key="item.id">
                     <img :src="item.coverImgUrl" alt="" @click="toplaylist(item.id)">
                     <div id="playlistMsk">
                         <span></span>

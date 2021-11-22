@@ -1,13 +1,13 @@
 <template>
     <div class="con als-con">
         <h2>热门新碟</h2>
-        <div v-for="(item,index) in hotAl.slice(0,10)" :class="{'als-item':true,'als-border':index%5==0}">
+        <div v-for="(item,index) in hotAl.slice(0,10)" :class="{'als-item':true,'als-border':index%5==0}" :key="item.id">
             <div>
                 <img :src="item.picUrl+'?param=130y130'" alt="" @click="toAldetail(item.id)">
             </div> 
             <p :title="item.name" class="ellipsis" @click="toAldetail(item.id)">{{item.name}}</p>
             <p class="ellipsis">
-                <span v-for="item2 in item.artists" :title="item2.name" @click="toArdetail(item2.id)">
+                <span v-for="item2 in item.artists" :title="item2.name" @click="toArdetail(item2.id)" :key="item2.id">
                     {{item2.name}}&nbsp;
                 </span>
             </p>
@@ -15,13 +15,13 @@
         <br style="clear: both;">
 
         <h2>全部新碟</h2>
-        <div v-for="(item,index) in allAl" :class="{'als-item':true,'als-border':index%5==0}">
+        <div v-for="(item,index) in allAl" :class="{'als-item':true,'als-border':index%5==0}" :key="item.id">
             <div>
                 <img :src="item.picUrl+'?param=130y130'" alt="" @click="toAldetail(item.id)">
             </div>
             <p :title="item.name" class="ellipsis" @click="toAldetail(item.id)">{{item.name}}</p>
             <p class="ellipsis">
-                <span v-for="item2 in item.artists" :title="item2.name" @click="toArdetail(item2.id)">
+                <span v-for="item2 in item.artists" :title="item2.name" @click="toArdetail(item2.id)" :key="item2.id">
                     {{item2.name}}&nbsp;
                 </span>
             </p>

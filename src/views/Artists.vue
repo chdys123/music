@@ -35,14 +35,14 @@
         <div id="ars-r">
             <h2>{{title}}</h2>
             <div id="ars-choose" v-if="!ishot">
-                <span v-for="(item,index) in initials" @click="choose(item,$event)" :class="{'choose-active':index==0}">
+                <span v-for="(item,index) in initials" @click="choose(item,$event)" :class="{'choose-active':index==0}" :key="item">
                     {{item}}
                 </span>
                 <br style="clear: both;">
             </div>
 
 
-            <div v-for='(item,index) in hotars.slice(0,10)' :class="{'ars-border':index%5==0,'ars-item1':true}">
+            <div v-for='(item,index) in hotars.slice(0,10)' :class="{'ars-border':index%5==0,'ars-item1':true}" :key="item.id">
                 <div @click="toArdetail(item.id)">
                     <img :src="item.img1v1Url+'?param=130y130'" alt="">
                 </div>
@@ -52,7 +52,7 @@
                 </p>
             </div>
 
-            <div v-for="(item,index) in hotars.slice(10)" :class="{'ars-item2':true,'ars-border':index%5==0}">
+            <div v-for="(item,index) in hotars.slice(10)" :class="{'ars-item2':true,'ars-border':index%5==0}" :key="item.id">
                 <p :title="item.name" class="ellipsis" @click="toArdetail(item.id)">
                     {{item.name}}
                 </p>

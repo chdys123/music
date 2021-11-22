@@ -27,8 +27,8 @@
                     </div>
                     <div id="playlist-tag" v-if="data.playlist.tags.length!=0">
                         <span>标签:</span>
-                        <span class="playlistTags" v-for="(item,index) in data.playlist.tags"
-                            @click="totypeplaylist(item)">
+                        <span class="playlistTags" v-for="item in data.playlist.tags"
+                            @click="totypeplaylist(item)" :key="item">
                             {{item}}
                         </span>
                     </div>
@@ -57,7 +57,7 @@
                             <th>歌手</th>
                             <th>专辑</th>
                         </tr>
-                        <tr v-for="(item,index) in data.playlist.tracks">
+                        <tr v-for="(item,index) in data.playlist.tracks" :key="item.id">
                             <td>
                                 <span id="playlist-index">
                                     {{index}}
@@ -190,7 +190,7 @@
             <!-- 最近收藏用户 userId-->
             <div v-if="users.length!=0">
                 <p class="plut">喜欢这个歌单的人</p>
-                <div v-for="(item,index) in users" :class="{'pluser1':true,'pluser2':index%4==0}">
+                <div v-for="(item,index) in users" :class="{'pluser1':true,'pluser2':index%4==0}" :key="item">
                     <img :src="item.avatarUrl+'?param=40y40'" alt="">
                 </div>
                 <br style="clear: both;">
@@ -200,7 +200,7 @@
 
             <!-- 热门歌单 -->
             <p class="plut1">热门歌单</p>
-            <div v-for="(item,index) in repl" class="repl">
+            <div v-for="item in repl" class="repl" :key="item.id">
                 <img :src="item.coverImgUrl+'?param=50y50'" alt="" :title="item.name" @click="toplaylist(item.id)">
                 <div>
                     <p class="ellipsis" :title="item.name" @click="toplaylist(item.id)">{{item.name}}</p>

@@ -1,7 +1,7 @@
 <template>
     <p v-if="total==0" style="margin-bottom: 40px;">暂无mv</p>
     <div v-if="total!=0" style="margin-bottom: 40px;">
-        <div class="ar-mv-item" v-for="(item,index) in mvs">
+        <div class="ar-mv-item" v-for="item in mvs" :key="item.id">
                 <img :src="item.imgurl16v9+'?param=137y103'" alt="" @click="toMvDetail(item.id)">
                 <p class="al-mv-name ellipsis" :title="item.name" @click="toMvDetail(item.id)">{{item.name}}</p>
                 <span id="ar-mv-icon" class="mvPlayLogo" @click="toMvDetail(item.id)"></span>

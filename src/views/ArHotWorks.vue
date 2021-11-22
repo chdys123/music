@@ -6,7 +6,7 @@
             <span>收藏</span>
         </div>
 
-        <div class="a-h-w-b-item" v-for="(item,index) in hotSongs">
+        <div class="a-h-w-b-item" v-for="(item,index) in hotSongs" :key="item.id">
             <span>{{index+1}} <span class="playLogo" @click="playMusic(item.id)" title="播放"></span></span>
             <span  >
                <span @click="toSongDetail(item.id)" :title="item.name">{{item.name}}</span>

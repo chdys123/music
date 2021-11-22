@@ -8,7 +8,7 @@
                         <p><span class="albumLogo"></span>{{albumData.album.name}}</p>
                         <p>
                             歌手：
-                            <span v-for="item in albumData.album.artists" @click="toAr(item.id)">
+                            <span v-for="item in albumData.album.artists" @click="toAr(item.id)" :key="item.id">
                                 {{item.name}}&nbsp;
                             </span>
                         </p>
@@ -57,7 +57,7 @@
 
                         <!-- 歌曲列表 -->
                         <div id="al-s-b-b">
-                            <div class="a-h-w-b-item" v-for="(item,index) in albumData.songs">
+                            <div class="a-h-w-b-item" v-for="(item,index) in albumData.songs" :key="item.id">
                                 <!-- 播放按钮 -->
                                 <span>{{index+1}} <span class="playLogo" title="播放"
                                         @click="playMusic(item.id)"></span></span>
@@ -106,7 +106,7 @@
                 <div class="sdc-cty-g-body-titile" v-if="allComments.hotComments!='' ">
                     精彩评论
                 </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments" :key="item">
                     <img :src="item.user.avatarUrl" alt="">
                     <div class="sdc-cty-g-b-i-b">
                         <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -130,7 +130,7 @@
                 <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
                     最新评论({{allComments.total}})
                 </div>
-                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+                <div class="sdc-cty-g-body-item" v-for="item in allComments.comments" :key="item">
                     <img :src="item.user.avatarUrl" alt="">
                     <div class="sdc-cty-g-b-i-b">
                         <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -171,7 +171,7 @@
             <div class="con-r">
                 <!-- 右侧其他专辑 -->
                 <h5 id="al-r-t">ta的其他热门专辑</h5>
-                <div class="al-r-item" v-for="item in albums">
+                <div class="al-r-item" v-for="item in albums" :key="item.id">
                     <img :src="item.picUrl+'?param=50y50'" alt="" @click="toAl(item.id)" :title="item.name">
                     <div>
                         <p class="ellipsis al-name" :title="item.name" @click="toAl(item.id)">{{item.name}}</p>

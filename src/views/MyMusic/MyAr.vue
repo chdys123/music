@@ -1,7 +1,7 @@
 <template>
     <div id="myAr-con">
         <p id="myAr-h">我的歌手&nbsp;({{acount}})</p>
-        <div v-for="item in ar" class="myArItem" @click="toAr(item.id)">
+        <div v-for="item in ar" class="myArItem" @click="toAr(item.id)" :key="item.id">
             <div class="myArItem-left">
                 <img :src="item.picUrl+'?param=80y80'" alt="">
             </div>

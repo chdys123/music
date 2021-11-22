@@ -3,7 +3,7 @@
         <div class="con-l">
             <div id="mv-t">
                 <h2><span class="mvDetailLogo"></span>{{mvDetail.name}}</h2>
-                <span v-for="(item,index) in mvDetail.artists" :title="item.name">{{item.name}}</span>
+                <span v-for="item in mvDetail.artists" :title="item.name" :key="item">{{item.name}}</span>
             </div>
 
 
@@ -34,7 +34,7 @@
             <div class="sdc-cty-g-body-titile" v-if="this.currentPage==1">
                 精彩评论
             </div>
-            <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+            <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments" :key="item">
                 <img :src="item.user.avatarUrl" alt="">
                 <div class="sdc-cty-g-b-i-b">
                     <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -58,7 +58,7 @@
             <div class="sdc-cty-n-body-titile" v-if="this.currentPage==1">
                 最新评论({{allComments.total}})
             </div>
-            <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+            <div class="sdc-cty-g-body-item" v-for="item in allComments.comments" :key="item">
                 <img :src="item.user.avatarUrl" alt="">
                 <div class="sdc-cty-g-b-i-b">
                     <a>{{item.user.nickname}}</a> ：{{item.content}}
@@ -105,7 +105,7 @@
 
             <div class="mv-d-r-b">相关推荐</div>
 
-            <div v-for="item in simimvs" class="mv-d-r-simimv">
+            <div v-for="item in simimvs" class="mv-d-r-simimv" :key="item.id">
                 <img :src="item.cover+'?param=96y54'" alt="" :title="item.name" @click="toMv(item.id)">
                 <div>
                     <p class="ellipsis" :title="item.name" @click="toMv(item.id)">{{item.name}}</p>

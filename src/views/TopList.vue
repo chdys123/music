@@ -9,6 +9,7 @@
           'tp-item-active': item.id == id,
         }"
         v-for="item in toplist.slice(0, 4)"
+        :key="item.id"
         @click="getTopListDetail(item.id)"
       >
         <img :src="item.coverImgUrl + '?param=40y40'" alt="" />
@@ -25,7 +26,8 @@
           'tp-item-hover': item.id != id,
           'tp-item-active': item.id == id,
         }"
-        v-for="(item, index) in toplist.slice(4, 33)"
+        v-for="item in toplist.slice(4, 33)"
+        :key="item.id"
         @click="getTopListDetail(item.id)"
       >
         <img :src="item.coverImgUrl + '?param=40y40'" alt="" />
@@ -95,6 +97,7 @@
               'a-h-w-b-item': true,
               'tl-s-img': index == 0 || index == 1 || index == 2,
             }"
+            :key="item.id"
             v-for="(item, index) in toplistDetail.playlist.tracks"
           >
             <span
@@ -173,7 +176,7 @@
       <div class="sdc-cty-g-body-titile" v-if="allComments.hotComments != ''">
         精彩评论
       </div>
-      <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments">
+      <div class="sdc-cty-g-body-item" v-for="item in allComments.hotComments" :key="item.id">
         <img :src="item.user.avatarUrl" alt="" />
         <div class="sdc-cty-g-b-i-b">
           <a>{{ item.user.nickname }}</a> ：{{ item.content }}
@@ -205,7 +208,7 @@
       <div class="sdc-cty-n-body-titile" v-if="this.currentPage == 1">
         最新评论({{ allComments.total }})
       </div>
-      <div class="sdc-cty-g-body-item" v-for="item in allComments.comments">
+      <div class="sdc-cty-g-body-item" v-for="item in allComments.comments" :key="item.id">
         <img :src="item.user.avatarUrl" alt="" />
         <div class="sdc-cty-g-b-i-b">
           <a>{{ item.user.nickname }}</a> ：{{ item.content }}

@@ -1,11 +1,11 @@
 <template>
     <div id="myVedio-con">
         <p id="myVedio-h">我的视频({{count}})</p>
-        <div v-for="(item,index) in mv" class="myVedio-item" :class="{'myVedio-item-b':index%4==0}">
+        <div v-for="(item,index) in mv" class="myVedio-item" :class="{'myVedio-item-b':index%4==0}" :key="item.vid">
             <img :src="item.coverUrl+'?param=159y90'" alt="" @click="toMv(item.vid)">
             <p class="ellipsis" :title="item.title" @click="toMv(item.vid)">{{item.title}}</p>
             <p class="ellipsis">
-                <span v-for="item1 in item.creator" :title="item1.userName" @click="toAr(item1.userId)">{{item1.userName}}&nbsp;&nbsp;</span>
+                <span v-for="item1 in item.creator" :title="item1.userName" @click="toAr(item1.userId)" :key="item1.userId">{{item1.userName}}&nbsp;&nbsp;</span>
             </p>
         </div>
         <br style="clear:both;">

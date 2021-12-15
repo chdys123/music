@@ -224,7 +224,8 @@ app.config.globalProperties.toMv = function (id) {
 
 
 
-axios.defaults.baseURL = "http://localhost:3000"
+// axios.defaults.baseURL = "http://localhost:3000"
+axios.defaults.baseURL = "https://netease-cloud-music-api-lyart-tau.vercel.app/"
 axios.defaults.withCredentials = true
 app.use(store).use(router).use(VueAxios, axios).mount('#app')
 
